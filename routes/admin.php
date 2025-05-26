@@ -25,7 +25,6 @@ Route::group(['middleware' => ['role:admin']], function () {
     Route::get('sistema/carreras/create', [App\Http\Controllers\CarreraController::class, 'create'])->name('carreras.create');
     Route::get('sistema/carreras/edit', [App\Http\Controllers\CarreraController::class, 'edit'])->name('sistema.carreras.edit');
     Route::get('sistema/calificacion/create', [App\Http\Controllers\CalificacionController::class, 'create'])->name('calificacion.create');
-    Route::get('sistema/calificacion/{id}', [App\Http\Controllers\CalificacionController::class, 'show'])->name('calificacion.show');
 
 
 
