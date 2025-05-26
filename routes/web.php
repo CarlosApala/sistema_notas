@@ -65,35 +65,24 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware('role:admin')->group(function () {
-    Route::resource('sistema/alumno', AlumnoController::class);
-    Route::resource('sistema/profesor', ProfesorController::class);
-    Route::resource('sistema/materias', MateriaController::class);
-    Route::resource('sistema/carreras', CarreraController::class);
+
     Route::resource('permissions', App\Http\Controllers\PermissionController::class);
 
 });
 
 Route::middleware('role:admin|maestro')->group(function () {
-    Route::resource('sistema/alumno', AlumnoController::class);
-    Route::resource('sistema/materias', MateriaController::class);
-    Route::resource('sistema/calificacion', CalificacionController::class);
-    Route::resource('sistema/asistencias', AsistenciaController::class);
-    Route::get('sistema/asistencias/lista', [AsistenciaController::class, 'showAll'])->name('asistencias.showAll');
-    Route::resource('sistema/usuarios', UserController::class);
-    Route::resource('sistema/cursos', CursoController::class);
-    Route::resource('sistema/turnos',TurnoController::class);
-    Route::resource('sistema/paralelos', ParaleloController::class);
+
 
     Route::resource('permissions', App\Http\Controllers\PermissionController::class);
 
 });
 Route::middleware('role:admin|maestro|alumno')->group(function (){
-    Route::resource('sistema/mensajes',MensajeController::class);
+
 });
 
 
 Route::middleware('role:admin|alumno|maestro')->group(function () {
-    Route::resource('sistema/calificacion', CalificacionController::class);
+
     Route::resource('permissions', App\Http\Controllers\PermissionController::class);
 });
 
