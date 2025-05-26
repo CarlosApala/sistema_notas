@@ -28,16 +28,6 @@ Route::group(['middleware' => ['role:admin']], function () {
     Route::get('sistema/calificacion/{id}', [App\Http\Controllers\CalificacionController::class, 'show'])->name('calificacion.show');
 
 
-    
-});
-
-Route::group(['middleware' => ['role:maestro']], function () {
-    // Rutas para maestro
-    Route::get('sistema/calificacion/edit', [App\Http\Controllers\CalificacionController::class, 'edit'])->name('sistema.calificacion.edit');
 
 });
 
-
-Route::group(['middleware' => ['role:alumno']], function () {
-    // Rutas para maestro
-});
