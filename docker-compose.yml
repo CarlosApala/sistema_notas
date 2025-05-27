@@ -5,6 +5,6 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:9000"  # Puedes cambiar el puerto si es necesario
+      - "3000:8080"  # Puedes cambiar el puerto si es necesario
     volumes:
       - .:/var/www/html

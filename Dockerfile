@@ -1,26 +1,26 @@
-# Usa la imagen oficial PHP 8 con FPM (más común para Laravel)
+# Usa la imagen oficial PHP 8 con FPM
 FROM php:8.1-fpm
 
-# Instala dependencias de sistema necesarias y el driver de PostgreSQL
+# Instala dependencias necesarias
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     unzip zip git curl \
     && docker-php-ext-install pdo pdo_pgsql
 
-# Instala Composer globalmente (desde la imagen oficial de Composer)
+# Instala Composer globalmente
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Establece el directorio de trabajo
+# Establece directorio de trabajo
 WORKDIR /var/www/html
 
-# Copia todo el código fuente al contenedor
+# Copia los archivos del proyecto
 COPY . .
 
-# Instala las dependencias PHP del proyecto (sin paquetes de desarrollo)
+# Instala dependencias PHP del proyecto
 RUN composer install --no-dev --optimize-autoloader
 
-# Exponer puerto (solo si usas php-fpm con un proxy, generalmente 9000)
-EXPOSE 9000
+# Expone el puerto correcto para Laravel (built-in server)
+EXPOSE 8080
 
-# Comando para ejecutar PHP-FPM
-CMD ["php-fpm"]
+# Ejecuta Laravel en el servidor interno
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8080"]
