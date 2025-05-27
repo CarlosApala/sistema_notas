@@ -9,6 +9,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.title', 'Sistema') }}</title>
+    <base href="https://sistema-notas-pl4c.onrender.com/">
+
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
