@@ -60,6 +60,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('sistema/profesor', ProfesorController::class);
     Route::resource('sistema/materias', MateriaController::class);
     Route::resource('sistema/carreras', CarreraController::class); */
+    Route::resource('sistema/usuarios',UserController::class);
     Route::resource('permissions', App\Http\Controllers\PermissionController::class);
 
 });

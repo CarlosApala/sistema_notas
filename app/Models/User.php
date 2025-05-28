@@ -49,22 +49,5 @@ class User extends Authenticatable
         $this->attributes['password'] = bcrypt($value);
     }
 
-     // Mensajes que el usuario recibe (muchos a muchos)
-    public function mensajes()
-    {
-        return $this->belongsToMany(Mensaje::class, 'tbl_mensaje_usuario', 'id_usuario', 'id_mensaje')
-                    ->withPivot('leido', 'leido_en')
-                    ->withTimestamps();
-    }
-
-    // Mensajes que el usuario creó (uno a muchos)
-public function mensajesCreados()
-{
-    return $this->hasMany(Mensaje::class, 'id_usuario', 'id');
-}
-public function mensajesCreadosActivos()
-{
-    return $this->hasMany(Mensaje::class, 'id_usuario', 'id')->where('estado', 1);
-}
 
 }

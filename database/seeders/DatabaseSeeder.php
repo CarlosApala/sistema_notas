@@ -16,15 +16,23 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call([
+        /* $this->call([
             AdminUserSeeder::class,
             // aquí puedes agregar otros seeders si tienes
+        ]); */
+        $this->call([
+            RoleSeeder::class
+        ]);
+
+        $this->call([
+            PermissionSeeder::class,
+        ]);
+
+        $this->call([
+            RolePermissionSeeder::class
         ]);
         $this->call([
-            PermisosSeeder::class,
-        ]);
-        $this->call([
-            AsignarPermisosSeeder::class
+            UserRoleSeeder::class
         ]);
     }
 }
