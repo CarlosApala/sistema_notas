@@ -130,8 +130,6 @@
                     <div class="col-md-12">
                         <div class="box">
                             <div class="box-header with-border">
-                                <h3 class="box-title">Sistema de control Escolar</h3>
-                                <p>Este parrafo es publico</p>
 
                                 @role('maestro')
                                 <p>Solo profesor</p>
