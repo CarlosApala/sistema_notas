@@ -12,9 +12,11 @@
                     <div class="card" style="border-radius: 1rem;">
                         <div class="row g-0">
                             <div class="col-md-6 col-lg-5 d-none d-md-block">
-                                <img src="" alt="" class="img-fluid"
-                                    style="border-radius: 1rem 0 0 1rem;" />
+                                <div class="d-flex justify-content-center align-items-center mb-3 pb-1">
+                                    <img src="{{ asset('assets/img/logoCOSMOL.jpg') }}" class="img-fluid" style="max-width: 90%;" />
+                                </div>
                             </div>
+
                             <div class="col-md-6 col-lg-7 d-flex align-items-center">
                                 <div class="card-body p-4 p-lg-5 text-black">
 
@@ -22,12 +24,12 @@
                                         @csrf
                                         @include('layouts.partials.messages')
 
-                                        <div class="d-flex align-items-center mb-3 pb-1">
-                                            <img src="" width="90%" class="img-responsive"
-                                                style="margin:0 auto;" />
-                                        </div>
 
-                                        <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">U.E. Marcelino Champagnat</h5>
+
+                                        <h5 class="fw-normal mb-3 pb-3 text-center" style="letter-spacing: 1px;">
+                                            Sistema de Gestión
+                                        </h5>
+
 
                                         <div class="form-outline mb-4">
 

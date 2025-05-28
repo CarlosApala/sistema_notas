@@ -31,16 +31,15 @@ use Spatie\Permission\Contracts\Role;
 
 //Homepage route
 Route::get('/', function () {
-    return view('home/index');
-});
+    return view('home.index');
+})->middleware('auth');
 
 // Login routes
 // Route::get('/register',  [RegisterController::class, 'show']);
 
 // Route::post('/register', [RegisterController::class, 'register']);
 
-Route::get('/login',  [LoginController::class, 'show']);
-
+Route::get('/login', [LoginController::class, 'show'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 
 Route::get('/home',  [HomeController::class, 'index']);
