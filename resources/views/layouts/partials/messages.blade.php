@@ -16,14 +16,14 @@
                 <i class="fa fa-check"></i>
                 {{ $message}}
             </div>
-    
+
         @endforeach
     @else
         <div class="alert alert-success">
             <i class="fa fa-check"></i>
             {{ $data}}
         </div>
-    
+
     @endif
-    
+
 @endif

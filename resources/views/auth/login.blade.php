@@ -13,7 +13,7 @@
                         <div class="row g-0">
                             <div class="col-md-6 col-lg-5 d-none d-md-block">
                                 <div class="d-flex justify-content-center align-items-center mb-3 pb-1">
-                                    <img src="{{ asset('assets/img/logoCOSMOL.jpg') }}" class="img-fluid" style="max-width: 90%;" />
+                                    <img src="{{ asset('assets/img/LogoCOSMOL.jpg') }}" class="img-fluid" style="max-width: 90%;" />
                                 </div>
                             </div>
 

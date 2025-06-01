@@ -131,15 +131,7 @@
                         <div class="box">
                             <div class="box-header with-border">
 
-                                @role('maestro')
-                                <p>Solo profesor</p>
-                                @endrole
-                                @role('alumno')
-                                <p>Este acceso es publico</p>
-                                @endrole
-                                @role('admin')
-                                <p>solo administrador</p>
-                                @endrole
+
                                 @guest
                                 {{-- <script>
                     alert("este texto es el que modificas");

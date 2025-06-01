@@ -23,27 +23,25 @@ class LoginController extends Controller
 
     public function login(LoginRequest $request)
     {
-        $credentials = $request->getCredentials();
+        try {
+            $credentials = $request->getCredentials();
 
-        $user = \App\Models\User::where('email', $credentials['email'])->first();
+            $user = \App\Models\User::where('email', $credentials['email'])->first();
 
-        if (!$user) {
-            dd('Usuario no encontrado');
+            if (!$user || !Auth::validate($credentials)) {
+                return redirect()->back()
+                    ->withErrors(['email' => 'Correo o contraseña incorrectos.'])
+                    ->withInput($request->only('email'));
+            }
+
+            Auth::login($user);
+
+            return $this->authenticated($request, $user);
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withErrors(['error' => 'Ha ocurrido un error inesperado.'])
+                ->withInput($request->only('email'));
         }
-
-        /* dd([
-            'Credenciales' => $credentials,
-            'Usuario' => $user->only('email', 'password'),
-            'Contraseña coincide' => Hash::check($credentials['password'], $user->password),
-        ]);
- */
-        if (!Auth::validate($credentials)) {
-            dd('Credenciales inválidas');
-        }
-
-        Auth::login($user);
-
-        return $this->authenticated($request, $user);
     }
 
 
