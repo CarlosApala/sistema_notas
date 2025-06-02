@@ -7,7 +7,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Faker\Factory as Faker;
 
-class RutasSeeder extends Seeder
+class ZonasSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -18,9 +18,9 @@ class RutasSeeder extends Seeder
     {
         $faker = Faker::create();
 
-        for ($i = 1; $i <= 200; $i++) {
-            DB::table('rutas')->insert([
-                'NombreRuta' => 'Ruta ' . $i . ' - ' . ucfirst($faker->word()),
+        for ($i = 0; $i < 100; $i++) {
+            DB::table('zonas')->insert([
+                'NombreZona' => 'Zona ' . $i . ' - ' . ucfirst($faker->word()),
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

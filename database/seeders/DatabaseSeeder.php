@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\Predio;
 use Illuminate\Database\Seeder;
 use Database\Seeders\AdminUserSeeder;
 
@@ -33,6 +35,12 @@ class DatabaseSeeder extends Seeder
         ]);
         $this->call([
             UserRoleSeeder::class
+        ]);
+        $this->call([
+            PredioSeeder::class,
+            InstalacionSeeder::class,
+            RutasSeeder::class,
+            ZonasSeeder::class
         ]);
     }
 }
