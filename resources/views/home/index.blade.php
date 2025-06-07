@@ -98,7 +98,7 @@
 
                     <li class="treeview">
                         <a href="/sistema/usuarios">
-                            <i class="fa fa-user"></i>
+                            <i class="fa fa-users"></i>
                             <span>Usuarios</span>
 
                         </a>
@@ -108,6 +108,12 @@
                         <a href="{{ route('instalaciones.index') }}">
                             <i class="fa fa-cogs"></i>
                             <span>Instalaciones</span>
+                        </a>
+                    </li>
+                    <li class="treeview">
+                        <a href="{{ route('lecturadores.index') }}">
+                            <i class="fa fa-address-card"></i>
+                            <span>Lecturadores</span>
                         </a>
                     </li>
 

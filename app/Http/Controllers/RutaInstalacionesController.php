@@ -7,6 +7,7 @@ use App\Models\RutaInstalaciones;
 use App\Models\Rutas;
 use App\Models\Zonas;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class RutaInstalacionesController extends Controller
 {
@@ -16,13 +17,24 @@ class RutaInstalacionesController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-    {
+{
+    try {
         $search = $request->input('search');
+        $onlyDeleted = $request->boolean('deleted');
 
-        $rutas = RutaInstalaciones::leftJoin('zonas', 'ruta_instalaciones.idZona', '=', 'zonas.id')
+        $query = RutaInstalaciones::leftJoin('zonas', 'ruta_instalaciones.idZona', '=', 'zonas.id')
             ->leftJoin('rutas', 'ruta_instalaciones.idRuta', '=', 'rutas.id')
             ->leftJoin('predio', 'ruta_instalaciones.idPredio', '=', 'predio.id')
-            ->where(function ($query) use ($search) {
+            ->withTrashed();
+
+        if ($onlyDeleted) {
+            $query->whereNotNull('ruta_instalaciones.deleted_at');
+        } else {
+            $query->whereNull('ruta_instalaciones.deleted_at');
+        }
+
+        if ($search) {
+            $query->where(function ($query) use ($search) {
                 $query->where('ruta_instalaciones.nInstalacion', 'ilike', "%{$search}%")
                     ->orWhere('zonas.NombreZona', 'ilike', "%{$search}%")
                     ->orWhere('rutas.NombreRuta', 'ilike', "%{$search}%")
@@ -35,15 +47,25 @@ class RutaInstalacionesController extends Controller
                         "concat_ws('.', zonas.id::text, rutas.id::text, predio.id::text, ruta_instalaciones.\"nInstalacion\"::text) ilike ?",
                         ["%{$search}%"]
                     );
-            })
-            ->select('ruta_instalaciones.*')
-            ->paginate(10)->withQueryString();
+            });
+        }
 
-
-
+        $rutas = $query->select('ruta_instalaciones.*')
+            ->paginate(10)
+            ->withQueryString();
 
         return view('sistema.instalaciones.index', compact('rutas'));
+
+    } catch (\Exception $e) {
+        // Log del error si lo deseas
+        Log::error('Error en index de RutaInstalaciones: ' . $e->getMessage());
+
+        // Redirecciona con un mensaje de error
+        return redirect()->back()->with('error', 'Ocurrió un error al buscar las instalaciones. Intenta nuevamente.');
     }
+}
+
+
 
 
 
@@ -52,14 +74,14 @@ class RutaInstalacionesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-        public function create()
-        {
-            $zonas = Zonas::all();
-            $rutas = Rutas::all();
-            $predios = Predio::all();
+    public function create()
+    {
+        $zonas = Zonas::all();
+        $rutas = Rutas::all();
+        $predios = Predio::all();
 
-            return view('sistema.instalaciones.create', compact('zonas', 'rutas', 'predios'));
-        }
+        return view('sistema.instalaciones.create', compact('zonas', 'rutas', 'predios'));
+    }
 
 
     /**
@@ -80,6 +102,15 @@ class RutaInstalacionesController extends Controller
         RutaInstalaciones::create($validated);
 
         return redirect()->route('instalaciones.index')->with('success', 'Ruta de instalación creada correctamente.');
+    }
+
+    public function restore($id)
+    {
+        $instalacion = RutaInstalaciones::onlyTrashed()->findOrFail($id);
+        $instalacion->restore();
+
+        return redirect()->route('instalaciones.index', ['deleted' => true])
+            ->with('success', 'Instalación restaurada correctamente.');
     }
 
 
@@ -145,8 +176,12 @@ class RutaInstalacionesController extends Controller
      * @param  \App\Models\RutaInstalaciones  $rutaInstalaciones
      * @return \Illuminate\Http\Response
      */
-    public function destroy(RutaInstalaciones $rutaInstalaciones)
+    public function destroy($id)
     {
-        //
+        $instalacion = RutaInstalaciones::findOrFail($id);
+        $instalacion->delete();
+
+        return redirect()->route('instalaciones.index')
+            ->with('success', 'Instalación eliminada correctamente.');
     }
 }

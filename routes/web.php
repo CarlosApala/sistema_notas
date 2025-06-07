@@ -7,6 +7,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RutaInstalacionesController;
+use App\Http\Controllers\RutasLecturadorController;
+use App\Models\RutasLecturador;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,12 +51,15 @@ Route::middleware('auth')->group(function () {
     Route::resource('sistema/profesor', ProfesorController::class);
     Route::resource('sistema/materias', MateriaController::class);
     Route::resource('sistema/carreras', CarreraController::class); */
-    Route::get('sistema/rutas/{id}', function ($id) {
-        $ruta = App\Models\Rutas::with('zona')->findOrFail($id);
-        return response()->json($ruta);
-    });
+
     Route::resource('sistema/usuarios',UserController::class);
     Route::resource('sistema/instalaciones', RutaInstalacionesController::class)->names('instalaciones');
+    Route::post('instalaciones/{id}/restore', [RutaInstalacionesController::class, 'restore'])->name('instalaciones.restore');
+
+    Route::resource('sistema/lecturadores', RutasLecturadorController::class)->names('lecturadores');
+    Route::post('lecturadores/{id}/restore', [RutasLecturadorController::class, 'restore'])->name('lecturadores.restore');
+
+
     Route::resource('permissions', App\Http\Controllers\PermissionController::class);
 
 });
