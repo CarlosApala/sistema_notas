@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Zonas extends Model
 {
     use HasFactory;
+    protected $table = 'zonas';
+    public function getNombreAttribute()
+    {
+        return $this->NombreZona;
+    }
+
 }

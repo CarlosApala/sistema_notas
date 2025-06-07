@@ -1,22 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AlumnoController;
-use App\Http\Controllers\AsistenciaController;
-use App\Http\Controllers\ProfesorController;
-use App\Http\Controllers\MateriaController;
-use App\Http\Controllers\CarreraController;
-use App\Http\Controllers\CalificacionController;
-use App\Http\Controllers\RegisterController;
+
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\CursoController;
-use App\Http\Controllers\MensajeController;
-use App\Http\Controllers\TurnoController;
-use App\Http\Controllers\ParaleloController;
-use Spatie\Permission\Contracts\Role;
+use App\Http\Controllers\RutaInstalacionesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,7 +49,12 @@ Route::middleware('auth')->group(function () {
     Route::resource('sistema/profesor', ProfesorController::class);
     Route::resource('sistema/materias', MateriaController::class);
     Route::resource('sistema/carreras', CarreraController::class); */
+    Route::get('sistema/rutas/{id}', function ($id) {
+        $ruta = App\Models\Rutas::with('zona')->findOrFail($id);
+        return response()->json($ruta);
+    });
     Route::resource('sistema/usuarios',UserController::class);
+    Route::resource('sistema/instalaciones', RutaInstalacionesController::class)->names('instalaciones');
     Route::resource('permissions', App\Http\Controllers\PermissionController::class);
 
 });

@@ -13,10 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->unsignedBigInteger('personal_id')->nullable()->after('id');
-
-            $table->foreign('personal_id')->references('id')->on('personals')->onDelete('set null');
+        Schema::table('ruta_instalaciones', function (Blueprint $table) {
+            $table->string('nInstalacion')->nullable();
         });
     }
 
@@ -27,9 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign(['personal_id']);
-            $table->dropColumn('personal_id');
+        Schema::table('ruta_instalaciones', function (Blueprint $table) {
+            $table->dropColumn('nInstalacion');
         });
     }
 };

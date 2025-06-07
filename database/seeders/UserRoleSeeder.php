@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\User;
+use Spatie\Permission\Models\Role;
+
 
 class UserRoleSeeder extends Seeder
 {
@@ -12,24 +14,24 @@ class UserRoleSeeder extends Seeder
         $users = [
             [
                 'name' => 'Admin User',
-                'email' => 'admin@example.com',
-                'username' => 'admin',
+                'email' => 'admin1@example.com',
+                'username' => 'admin1',
                 'password' => 'password',  // Recuerda que debe encriptarse con mutator o bcrypt
                 'role' => 'admin',
             ],
             [
-                'name' => 'Editor User',
-                'email' => 'editor@example.com',
-                'username' => 'editor',
-                'password' => 'password',
-                'role' => 'editor',
+                'name' => 'Admin User',
+                'email' => 'admin2@example.com',
+                'username' => 'admin2',
+                'password' => 'password',  // Recuerda que debe encriptarse con mutator o bcrypt
+                'role' => 'admin',
             ],
             [
-                'name' => 'Viewer User',
-                'email' => 'viewer@example.com',
-                'username' => 'viewer',
-                'password' => 'password',
-                'role' => 'viewer',
+                'name' => 'Admin User',
+                'email' => 'admin3@example.com',
+                'username' => 'admin3',
+                'password' => 'password',  // Recuerda que debe encriptarse con mutator o bcrypt
+                'role' => 'admin',
             ],
         ];
 
@@ -49,6 +51,30 @@ class UserRoleSeeder extends Seeder
 
             $user->assignRole($data['role']);
             $this->command->info("Usuario creado y asignado al rol: {$data['role']} - {$data['email']}");
+        }
+
+        $viewerRole = Role::findByName('lecturador','web');
+
+        // Crear 10 usuarios viewer
+        for ($i = 1; $i <= 10; $i++) {
+            $email = "lecturador{$i}@example.com";
+            $username = "lecturador{$i}";
+
+            $user = User::firstOrCreate(
+                ['email' => $email],
+                [
+                    'name' => "lecturador User {$i}",
+                    'username' => $username,
+                    'password' => bcrypt('password'),
+                ]
+            );
+
+            // Asignar permisos y rol
+            $user->givePermissionTo($viewerRole->permissions);
+            $user->assignRole($viewerRole);
+
+            $this->command->info("Usuario lecturador{$i} creado - {$email}");
+
         }
     }
 }

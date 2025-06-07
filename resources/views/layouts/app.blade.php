@@ -18,6 +18,7 @@
     <!-- Bootstrap 4.0.0 -->
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/bootstrap.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/font-awesome.css') }}">
+    <link rel="stylesheet" href="{{assets/css/app.css}}">
     <!-- Scripts -->
 
 </head>

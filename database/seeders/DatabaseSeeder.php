@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 use App\Models\Predio;
+use App\Models\RutasLecturador;
 use Illuminate\Database\Seeder;
 use Database\Seeders\AdminUserSeeder;
 
@@ -40,7 +41,10 @@ class DatabaseSeeder extends Seeder
             PredioSeeder::class,
             InstalacionSeeder::class,
             RutasSeeder::class,
-            ZonasSeeder::class
+            ZonasSeeder::class,
+            RutaInstalacionesSeeder::class,
+            RutasLecturadorSeeder::class
+
         ]);
     }
 }

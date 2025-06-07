@@ -104,6 +104,13 @@
                         </a>
 
                     </li>
+                    <li class="treeview">
+                        <a href="{{ route('instalaciones.index') }}">
+                            <i class="fa fa-cogs"></i>
+                            <span>Instalaciones</span>
+                        </a>
+                    </li>
+
 
                     <li class="treeview">
                         <a href="/logout">

@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Predio extends Model
 {
     use HasFactory;
+
+    protected $table = 'predio'; // Indica el nombre correcto de la tabla
 }
