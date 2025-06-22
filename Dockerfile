@@ -8,27 +8,26 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 
-# Copiar solo composer para cachear dependencias
-COPY composer.json composer.lock ./
-
-RUN composer install --no-dev --optimize-autoloader
-
-# Copiar todo el código (sin node_modules ni vendor)
+# Copiar TODO el código fuente primero (incluyendo artisan, app/, etc.)
 COPY . .
+
+# Instalar dependencias PHP (ya existe artisan y service providers)
+RUN composer install --no-dev --optimize-autoloader
 
 # Etapa 2: Construcción de assets con Node
 FROM node:18 as node-build
 
 WORKDIR /app
 
+# Copiar package files primero
 COPY package.json package-lock.json ./
 
 RUN npm install
 
-# Copiar el código completo (incluyendo vendor de php-base para imports si se necesitan)
+# Copiar el proyecto completo desde php-base, que ya contiene vendor/
 COPY --from=php-base /app .
 
-# Ejecutar build (produce /public/build)
+# Ejecutar build (esto genera public/build)
 RUN npm run build
 
 # Etapa final: PHP + Laravel listo para producción
@@ -41,16 +40,18 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# Copiar el código y vendor completo desde php-base
+# Copiar el código completo desde php-base
 COPY --from=php-base /app /var/www/html
 
-# Copiar los assets compilados de node-build (public/build)
+# Copiar los assets compilados de node-build
 COPY --from=node-build /app/public/build /var/www/html/public/build
 
-# NO COPIAR EL .env - usar variables de entorno externas
+# No se copia .env aquí: Render lo inyecta desde la UI
 
-# Cachear configuraciones para producción (opcional)
-RUN php artisan config:cache && php artisan route:cache && php artisan view:cache
+# Cachear configuraciones (siempre después de tener .env en entorno)
+RUN php artisan config:cache \
+ && php artisan route:cache \
+ && php artisan view:cache
 
 EXPOSE 8080
 
