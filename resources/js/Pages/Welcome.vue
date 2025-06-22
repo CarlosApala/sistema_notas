@@ -4,7 +4,6 @@
             <div class="mb-4">
                 <img src="/assets/img/LogoCOSMOL.jpg" class="img-fluid mx-auto d-block" style="max-width: 250px;"
                     alt="Logo del Sistema" />
-c:\wamp64\www\sistema_facturacion\scripts
             </div>
             <h1 class="display-5 fw-bold mb-3">Bienvenido al Sistema de Lecturación</h1>
             <p class="lead">

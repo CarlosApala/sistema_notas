@@ -37,7 +37,7 @@
             <section class="sidebar">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <Link href="/sistema" class="nav-link">
+                        <Link href="/dashboard" class="nav-link">
                         <i class="fa fa-home"></i> Inicio
                         </Link>
                     </li>
