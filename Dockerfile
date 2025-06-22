@@ -1,3 +1,21 @@
+# Etapa 1: Construcción de dependencias y assets
+FROM node:18 as node-build
+
+# Establece el directorio de trabajo
+WORKDIR /app
+
+# Copia los archivos necesarios para instalar dependencias
+COPY package.json package-lock.json ./
+
+# Instala dependencias Node.js
+RUN npm install
+
+# Copia el resto del proyecto (para compilar los assets)
+COPY . .
+
+# Compila los assets con Vite
+RUN npm run build
+
 # Usa la imagen oficial PHP 8 con FPM
 FROM php:8.1-fpm
 
