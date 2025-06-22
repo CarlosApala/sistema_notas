@@ -9,12 +9,14 @@ php artisan cache:clear
 php artisan route:clear
 php artisan view:clear
 
+
 # Compilar assets con Vite
 if [ -f package.json ]; then
     npm install
     npm run build
 fi
-
+npm install
+npm run build
 # Generar la APP_KEY
 php artisan key:generate
 
