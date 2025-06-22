@@ -38,6 +38,9 @@ Route::get('/', function () {
     ]);
 });
 
+
+Route::post('/login', [LoginController::class, 'login'])->name('login');
+
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 
@@ -50,6 +53,7 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+
     Route::resource('/sistema/usuarios', UserController::class);
     Route::resource('/sistema/lecturadores', RutasLecturadorController::class);
     Route::post('/sistema/lecturadores/{id}/restore', [RutasLecturadorController::class, 'restore'])

@@ -16,25 +16,25 @@ class LoginController extends Controller
 
     // Método para login
     public function login(Request $request)
-    {
-        $request->validate([
-            'username' => 'required|string',
-            'password' => 'required|string',
-        ]);
+{
+    $request->validate([
+        'username' => 'required|string',
+        'password' => 'required|string',
+    ]);
 
+    $credentials = $request->only('username', 'password');
 
-        $credentials = $request->only('username', 'password');
-
-
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            return redirect()->intended('/dashboard'); // o la ruta que desees
-        }
-
-        return back()->withErrors([
-            'email' => 'Usuario o contraseña incorrectos.',
-        ]);
+    if (Auth::attempt($credentials)) {
+        $request->session()->regenerate();
+        return redirect()->intended('/dashboard');
     }
+
+    return back()->withErrors([
+        'username' => 'Usuario o contraseña incorrectos.',
+    ]);
+}
+
+
 
     // Método para logout
     public function logout(Request $request)

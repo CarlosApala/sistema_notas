@@ -18,19 +18,21 @@
                       Sistema de Gestión
                     </h5>
 
+                    <!-- Campo de usuario -->
                     <div class="form-outline mb-4">
                       <input
-                        id="email"
-                        v-model="form.email"
+                        id="username"
+                        v-model="form.username"
                         type="text"
                         class="form-control"
                         required
                         autofocus
                       />
-                      <label for="email" class="form-label">Nombre de Usuario</label>
-                      <div v-if="form.errors.email" class="text-danger">{{ form.errors.email }}</div>
+                      <label for="username" class="form-label">Nombre de Usuario</label>
+                      <div v-if="form.errors.username" class="text-danger">{{ form.errors.username }}</div>
                     </div>
 
+                    <!-- Campo de contraseña -->
                     <div class="form-outline mb-4">
                       <input
                         id="password"
@@ -69,10 +71,10 @@
 
 <script setup>
 import { useForm } from '@inertiajs/vue3'
-import { Link, router } from '@inertiajs/vue3'
+import { Link } from '@inertiajs/vue3'
 
 const form = useForm({
-  email: '',
+  username: '',
   password: ''
 })
 
