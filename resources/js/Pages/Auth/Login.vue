@@ -1,90 +1,82 @@
-<script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import AuthenticationCard from '@/Components/AuthenticationCard.vue';
-import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
-import Checkbox from '@/Components/Checkbox.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+<template>
+  <section class="vh-100" style="background-color: #1B396A;">
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col col-xl-10">
+          <div class="card" style="border-radius: 1rem;">
+            <div class="row g-0">
+              <div class="col-md-6 col-lg-5 d-none d-md-block">
+                <div class="d-flex justify-content-center align-items-center mb-3 pb-1">
+                  <img src="/assets/img/LogoCOSMOL.jpg" class="img-fluid" style="max-width: 90%;" />
+                </div>
+              </div>
 
-defineProps({
-    canResetPassword: Boolean,
-    status: String,
-});
+              <div class="col-md-6 col-lg-7 d-flex align-items-center">
+                <div class="card-body p-4 p-lg-5 text-black">
+                  <form @submit.prevent="submit">
+                    <h5 class="fw-normal mb-3 pb-3 text-center" style="letter-spacing: 1px;">
+                      Sistema de Gestión
+                    </h5>
+
+                    <div class="form-outline mb-4">
+                      <input
+                        id="email"
+                        v-model="form.email"
+                        type="email"
+                        class="form-control"
+                        required
+                        autofocus
+                      />
+                      <label for="email" class="form-label">Correo Electrónico</label>
+                      <div v-if="form.errors.email" class="text-danger">{{ form.errors.email }}</div>
+                    </div>
+
+                    <div class="form-outline mb-4">
+                      <input
+                        id="password"
+                        v-model="form.password"
+                        type="password"
+                        class="form-control"
+                        required
+                      />
+                      <label for="password" class="form-label">Contraseña</label>
+                      <div v-if="form.errors.password" class="text-danger">{{ form.errors.password }}</div>
+                    </div>
+
+                    <div class="pt-1 mb-4">
+                      <button type="submit" class="btn btn-dark btn-lg btn-block">
+                        Entrar
+                      </button>
+                    </div>
+
+                    <div class="d-flex flex-column gap-1">
+                      <Link class="small text-muted" :href="route('password.request')">
+                        ¿Olvidó su contraseña?
+                      </Link>
+                      <a href="#!" class="small text-muted">Terms of use</a>
+                      <a href="#!" class="small text-muted">Privacy policy</a>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</template>
+
+<script setup>
+import { useForm } from '@inertiajs/vue3'
+import { Link, router } from '@inertiajs/vue3'
 
 const form = useForm({
-    email: '',
-    password: '',
-    remember: false,
-});
+  email: '',
+  password: ''
+})
 
-const submit = () => {
-    form.transform(data => ({
-        ...data,
-        remember: form.remember ? 'on' : '',
-    })).post(route('login'), {
-        onFinish: () => form.reset('password'),
-    });
-};
+function submit() {
+  form.post('/login')
+}
 </script>
-
-<template>
-    <Head title="Log in" />
-
-    <AuthenticationCard>
-        <template #logo>
-            <AuthenticationCardLogo />
-        </template>
-
-        <div v-if="status" class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
-            {{ status }}
-        </div>
-
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="email" value="Email" />
-                <TextInput
-                    id="email"
-                    v-model="form.email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    required
-                    autofocus
-                    autocomplete="username"
-                />
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-                <TextInput
-                    id="password"
-                    v-model="form.password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="current-password"
-                />
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="block mt-4">
-                <label class="flex items-center">
-                    <Checkbox v-model:checked="form.remember" name="remember" />
-                    <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">Remember me</span>
-                </label>
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
-                <Link v-if="canResetPassword" :href="route('password.request')" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
-                    Forgot your password?
-                </Link>
-
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Log in
-                </PrimaryButton>
-            </div>
-        </form>
-    </AuthenticationCard>
-</template>
