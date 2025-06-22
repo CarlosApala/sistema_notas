@@ -1,32 +1,43 @@
-# Etapa 1: Construcción de dependencias y assets
+FROM php:8.1-fpm as php-base
+
+RUN apt-get update && apt-get install -y libpq-dev unzip zip git curl \
+    && docker-php-ext-install pdo pdo_pgsql
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+WORKDIR /app
+
+COPY composer.json composer.lock ./
+
+RUN composer install --no-dev --optimize-autoloader
+
+COPY . .
+
+# Stage node-build para assets
 FROM node:18 as node-build
 
 WORKDIR /app
 
 COPY package.json package-lock.json ./
+
 RUN npm install
 
+# Copiar el proyecto completo *incluyendo* vendor generado en stage anterior
+COPY --from=php-base /app/vendor ./vendor
 COPY . .
 
 RUN npm run build
 
-# Etapa 2: PHP con Laravel
+# Luego stage final PHP
+
 FROM php:8.1-fpm
 
-RUN apt-get update && apt-get install -y \
-    libpq-dev \
-    unzip zip git curl \
-    && docker-php-ext-install pdo pdo_pgsql
-
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# ...instalaciones y configuraciones...
 
 WORKDIR /var/www/html
 
-# Copia todos los archivos de proyecto excepto node_modules y public/build
-COPY . .
-
-# Copia la carpeta public/build generada en el stage node-build
-COPY --from=node-build /app/public/build ./public/build
+COPY --from=php-base /app /var/www/html
+COPY --from=node-build /app/public/build /var/www/html/public/build
 
 RUN composer install --no-dev --optimize-autoloader
 
