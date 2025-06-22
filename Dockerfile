@@ -1,44 +1,35 @@
 # Etapa 1: Construcción de dependencias y assets
 FROM node:18 as node-build
 
-# Establece el directorio de trabajo
 WORKDIR /app
 
-# Copia los archivos necesarios para instalar dependencias
 COPY package.json package-lock.json ./
-
-# Instala dependencias Node.js
 RUN npm install
 
-# Copia el resto del proyecto (para compilar los assets)
 COPY . .
 
-# Compila los assets con Vite
 RUN npm run build
 
-# Usa la imagen oficial PHP 8 con FPM
+# Etapa 2: PHP con Laravel
 FROM php:8.1-fpm
 
-# Instala dependencias necesarias
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     unzip zip git curl \
     && docker-php-ext-install pdo pdo_pgsql
 
-# Instala Composer globalmente
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Establece directorio de trabajo
 WORKDIR /var/www/html
 
-# Copia los archivos del proyecto
+# Copia todos los archivos de proyecto excepto node_modules y public/build
 COPY . .
 
-# Instala dependencias PHP del proyecto
+# Copia la carpeta public/build generada en el stage node-build
+COPY --from=node-build /app/public/build ./public/build
+
 RUN composer install --no-dev --optimize-autoloader
 
-# Expone el puerto correcto para Laravel (built-in server)
 EXPOSE 8080
 
-# Ejecuta Laravel en el servidor interno
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8080"]
