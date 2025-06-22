@@ -16,6 +16,9 @@ WORKDIR /var/www/html
 # Copia los archivos del proyecto
 COPY . .
 
+RUN npm install && npm run build
+
+
 # Instala dependencias PHP del proyecto
 RUN composer install --no-dev --optimize-autoloader
 
