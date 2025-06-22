@@ -27,7 +27,7 @@
                         required
                         autofocus
                       />
-                      <label for="email" class="form-label">Correo Electrónico</label>
+                      <label for="email" class="form-label">Nombre de Usuario</label>
                       <div v-if="form.errors.email" class="text-danger">{{ form.errors.email }}</div>
                     </div>
 

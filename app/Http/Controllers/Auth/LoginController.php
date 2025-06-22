@@ -18,11 +18,13 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required',
+            'username' => 'required|string',
+            'password' => 'required|string',
         ]);
 
-        $credentials = $request->only('email', 'password');
+
+        $credentials = $request->only('username', 'password');
+
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
@@ -43,5 +45,9 @@ class LoginController extends Controller
         $request->session()->regenerateToken();
 
         return Inertia::location('/login');
+    }
+    public function username()
+    {
+        return 'username';
     }
 }
