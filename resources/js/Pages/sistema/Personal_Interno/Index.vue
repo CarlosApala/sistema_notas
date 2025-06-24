@@ -188,8 +188,16 @@ function restaurar(id) {
 
 
 function paginar(url) {
-  router.get(url, {}, { preserveState: true, replace: true })
+  try {
+    const u = new URL(url, window.location.origin)
+    const relative = u.pathname + u.search
+    router.get(relative, {}, { preserveState: true, replace: true })
+  } catch (e) {
+    console.error("Error al parsear URL de paginación:", url)
+  }
 }
+
+
 </script>
 
 <style scoped>
