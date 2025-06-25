@@ -34,7 +34,7 @@
               </thead>
               <tbody>
                 <tr v-if="vista === 'zonas'" v-for="(zona, index) in listaActiva" :key="zona.id">
-                  <td>{{ index + 1 }}</td>
+                  <td>{{ zona.id }}</td>
                   <td>{{ zona.NombreZona }}</td>
                   <td class="text-nowrap">
                     <button class="btn btn-warning btn-sm me-1" @click="editar(zona)">Editar</button>
@@ -44,7 +44,7 @@
                 </tr>
 
                 <tr v-if="vista === 'rutas'" v-for="(ruta, index) in listaActiva" :key="ruta.id">
-                  <td>{{ index + 1 }}</td>
+                  <td>{{ ruta.id }}</td>
                   <td>{{ ruta.NombreRuta }}</td>
                   <td class="text-nowrap">
                     <button class="btn btn-warning btn-sm me-1" @click="editar(ruta)">Editar</button>
@@ -133,7 +133,7 @@ const listaActiva = computed(() => {
 async function loadZonas(url = '/sistema/zonas') {
   try {
     const res = await fetch(url, {
-      credentials: 'same-origin' // ¡IMPORTANTE! envía cookies para mantener sesión
+      credentials: 'include' // ¡IMPORTANTE! envía cookies para mantener sesión
     })
     if (!res.ok) throw new Error('Error al cargar zonas')
     zonas.value = await res.json()
@@ -145,7 +145,7 @@ async function loadZonas(url = '/sistema/zonas') {
 async function loadRutas(url = '/sistema/rutas') {
   try {
     const res = await fetch(url, {
-      credentials: 'same-origin' // ¡IMPORTANTE!
+      credentials: 'include' // ¡IMPORTANTE!
     })
     if (!res.ok) throw new Error('Error al cargar rutas')
     rutas.value = await res.json()
@@ -293,7 +293,7 @@ async function editar(item) {
   try {
     const res = await fetch(url, {
       method: 'PUT', // o PATCH según tu controlador
-      credentials: 'same-origin',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
@@ -334,7 +334,7 @@ async function eliminar(id) {
 
     const res = await fetch(`${urlBase}/${id}`, {
       method: 'DELETE',
-      credentials: 'same-origin',
+      credentials: 'include',
       headers: {
         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
         'Accept': 'application/json'
