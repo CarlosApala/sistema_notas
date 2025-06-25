@@ -340,6 +340,8 @@ async function eliminar(id) {
         'Accept': 'application/json'
       }
     });
+    var dod=document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+    console.log(dod)
     console.log("cual es el valor")
     console.log(res)
     if (!res.ok) throw new Error('Error al eliminar');
