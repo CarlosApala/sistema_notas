@@ -1,6 +1,8 @@
 <template>
     <div class="wrapper">
         <!-- Header -->
+         <meta name="csrf-token" content="{{ csrf_token() }}">
+
         <header class="main-header">
             <a href="/" class="logo">
                 <span class="logo-mini"><b>Sis</b></span>

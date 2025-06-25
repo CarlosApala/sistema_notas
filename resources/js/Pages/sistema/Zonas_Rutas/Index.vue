@@ -171,9 +171,13 @@ onMounted(() => {
 
 function cambiarPagina(link) {
   if (!link.url) return
-  if (vista.value === 'zonas') loadZonas(link.url)
-  if (vista.value === 'rutas') loadRutas(link.url)
+
+  const relativeUrl = new URL(link.url, window.location.origin).pathname + new URL(link.url).search
+
+  if (vista.value === 'zonas') loadZonas(relativeUrl)
+  if (vista.value === 'rutas') loadRutas(relativeUrl)
 }
+
 
 
 async function abrirModalRegistro(tipo) {
