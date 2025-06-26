@@ -38,7 +38,7 @@
                         <th class="border border-gray-300 px-4 py-2 text-left">Nombre</th>
                         <th class="border border-gray-300 px-4 py-2 text-left">Email</th>
                         <th class="border border-gray-300 px-4 py-2 text-left">Username</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Acciones</th>
+
                     </tr>
                 </thead>
                 <tbody>
@@ -56,16 +56,7 @@
                                 </button>
                             </template>
                             <template v-else>
-                                <Link v-if="permissions.includes('lecturadores.show')"
-                                    :href="`/sistema/usuarios_lecturadores/${usuario.id}`"
-                                    class="btn btn-info btn-sm px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">
-                                Ver
-                                </Link>
-                                <Link v-if="permissions.includes('lecturadores.edit')"
-                                    :href="`/sistema/usuarios_lecturadores/${usuario.id}/edit`"
-                                    class="btn btn-warning btn-sm px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600">
-                                Editar
-                                </Link>
+
                                 <button v-if="permissions.includes('lecturadores.delete')" @click="eliminar(usuario.id)"
                                     class="btn btn-danger btn-sm px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">
                                     Eliminar
