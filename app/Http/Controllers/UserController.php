@@ -157,6 +157,7 @@ class UserController extends Controller
 
     public function edit(User $usuario)
     {
+
         $rolesDisponibles = Role::all();
         $permisosDisponibles = Permission::all();
         $rolesUsuario = $usuario->roles->pluck('name')->toArray();
@@ -177,6 +178,7 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
+
         // Validación del usuario y sus permisos
         $request->validate([
             'name' => 'required|string|max:255',
@@ -190,6 +192,8 @@ class UserController extends Controller
         ]);
 
         $usuario = User::findOrFail($id);
+
+        $user = \App\Models\User::find($usuario);
 
         $usuario->name = $request->name;
         $usuario->email = $request->email;

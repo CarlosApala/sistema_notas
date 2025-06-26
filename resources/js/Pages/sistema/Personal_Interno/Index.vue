@@ -105,7 +105,9 @@ import App from '@/Layouts/AppLayout.vue'
 import { ref, watch } from 'vue'
 import { usePage } from '@inertiajs/vue3'
 
-const permissions = usePage().props.auth?.user?.permissions ?? []
+const page = usePage()
+const permissions = page.props.auth?.user?.permissions ?? page.props.permissions ?? []
+
 defineOptions({ layout: App })
 
 const { personalInterno: initialPersonal, filters: initialFilters, flash } = defineProps({
