@@ -23,11 +23,11 @@ class RutasLecturador extends Model
         'updated_at',
     ];
 
-    // Relación con la tabla ruta_instalaciones
-    public function rutaInstalacion()
+    public function ruta()
     {
-        return $this->belongsTo(RutaInstalaciones::class, 'idRuta');
+        return $this->belongsTo(Rutas::class, 'idRuta'); // idRuta hace referencia a rutas.id
     }
+
 
     // Relación con el usuario
     public function usuario()

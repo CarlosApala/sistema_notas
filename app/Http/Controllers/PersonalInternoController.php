@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\PersonalInterno;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
+use Spatie\Permission\Models\Role;
 
 class PersonalInternoController extends Controller
 {
@@ -70,6 +72,13 @@ class PersonalInternoController extends Controller
             return redirect()->back()->with('error', 'No se pudo cargar el formulario de creación.');
         }
     }
+
+        public function getRoles()
+        {
+            $roles = Role::pluck('name');
+            return response()->json($roles);
+        }
+
 
 
     /**

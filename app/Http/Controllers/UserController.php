@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PersonalInterno;
 use App\Models\RutasLecturador;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Inertia\Inertia;
@@ -17,23 +20,43 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::all();
+        // Usuarios que tienen un personal interno asignado
+        $users = User::whereNotNull('personal_id')->with('personal')->get();
+
         return Inertia::render('sistema/Usuarios/Index', [
             'users' => $users,
             'flash' => ['success' => session('success')],
         ]);
     }
 
+
     /**
      * Show the form for creating a new resource.
      */
+
     public function create()
     {
+        $roles = Role::all(['id', 'name']);
+
+        $personasSinUsuario = PersonalInterno::whereDoesntHave('user')->orderBy('id', 'asc')->paginate(10);
+
         return Inertia::render('sistema/Usuarios/Create', [
-            'roles' => Role::all(),
-            'permisos' => Permission::all(),
+            'personas' => $personasSinUsuario,
+            'roles' => $roles
         ]);
     }
+
+
+    /*     public function create()
+    {
+        $roles = Role::all(['id', 'name']);
+        $personas = PersonalInterno::orderBy('id', 'asc')->paginate(10);
+
+        return Inertia::render('sistema/Usuarios/Create', [
+            'personas' => $personas,
+            'roles' => $roles
+        ]);
+    } */
 
     /**
      * Store a newly created resource in storage.
@@ -41,40 +64,73 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-
-        // Validar los datos recibidos
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'username' => 'required|string|unique:users,username',
-            'password' => 'required|confirmed|min:6',
-            'roles' => 'array',
-            'roles.*' => 'string|exists:roles,name',
-            'permisos' => 'array',
-            'permisos.*' => 'string|exists:permissions,name',
+            'nombres' => 'required|string|max:255',
+            'apellidos' => 'required|string|max:255',
+            'carnet_identidad' => 'required|string|max:50|exists:personal_interno,carnet_identidad',
+            'numero_celular' => 'nullable|string|max:20',
+            'rol' => 'nullable|string|exists:roles,name',
         ]);
 
-        // Crear el usuario
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'username' => $validated['username'],
-            'password' => Hash::make($validated['password']),
-        ]);
+        try {
+            DB::beginTransaction();
 
-        // Asignar roles si vienen
-        if (!empty($validated['roles'])) {
-            $user->syncRoles($validated['roles']);
+            $personal = PersonalInterno::where('carnet_identidad', $validated['carnet_identidad'])->firstOrFail();
+
+            $fullName = $validated['nombres'] . ' ' . $validated['apellidos'];
+
+            // Username único con base en los 3 primeros caracteres
+            $usernameBase = substr($validated['carnet_identidad'], 0, 3);
+            $username = $usernameBase;
+            $counter = 1;
+
+            while (User::where('username', $username)->exists()) {
+                $username = $usernameBase . $counter;
+                $counter++;
+            }
+
+            $email = $username . '@example.com';
+            $password = bcrypt('password');
+
+            // Crear el usuario primero (sin asignar personal_id aún)
+            $user = User::create([
+                'name' => $fullName,
+                'email' => $email,
+                'username' => $username,
+                'password' => $password,
+            ]);
+
+            // Actualizar el personal con posibles cambios en datos (opcional)
+            $personal->update([
+                'nombres' => $validated['nombres'],
+                'apellidos' => $validated['apellidos'],
+                'numero_celular' => $validated['numero_celular'],
+            ]);
+
+            // Actualizar el usuario con la relación a personal
+            $user->update(['personal_id' => $personal->id]);
+
+            // Asignar rol si viene
+            if (!empty($validated['rol'])) {
+                $user->assignRole($validated['rol']);
+            }
+
+            DB::commit();
+
+            return redirect()->route('usuarios.index')->with('success', 'Usuario y personal registrados correctamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error creando usuario/personal: ' . $e->getMessage());
+
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['error' => 'Ocurrió un error al registrar. Intenta nuevamente.']);
         }
-
-        // Asignar permisos directos si vienen
-        if (!empty($validated['permisos'])) {
-            $user->syncPermissions($validated['permisos']);
-        }
-
-        // Redirigir con mensaje de éxito
-        return redirect()->route('usuarios.index')->with('success', 'Usuario creado correctamente.');
     }
+
+
+
+
 
 
     /**
@@ -148,5 +204,26 @@ class UserController extends Controller
         $user = User::withTrashed()->findOrFail($id); // <-- ahora sí se encuentra
         $user->delete(); // este ya está eliminado, pero puedes hacer forceDelete() si deseas
         return redirect()->route('usuarios.index')->with('success', 'Usuario eliminado correctamente');
+    }
+
+    public function assignRole(Request $request, $id)
+    {
+
+
+        $request->validate([
+            'role' => 'required|string|exists:roles,name',
+        ]);
+
+        $user = User::findOrFail($id);
+
+        // Si quieres que solo tenga un rol, primero quitamos todos
+        $user->syncRoles([$request->role]);
+
+        // O si quieres permitir múltiples roles, usa esto:
+        // $user->assignRole($request->role);
+
+        return response()->json([
+            'message' => 'Rol asignado correctamente',
+        ]);
     }
 }

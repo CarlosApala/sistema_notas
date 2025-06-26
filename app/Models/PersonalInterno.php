@@ -23,4 +23,9 @@ class PersonalInterno extends Model
         'numero_celular',
         'estado_civil',
     ];
+
+    public function user()
+    {
+        return $this->hasOne(User::class, 'personal_id');
+    }
 }

@@ -4,6 +4,16 @@
 
         <form @submit.prevent="submit"
             class="bg-white p-6 rounded shadow max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <!-- Botones arriba -->
+            <div class="md:col-span-2 flex justify-end space-x-2 mb-4">
+
+                <Link href="/sistema/predios"
+                    class="btn btn-secondary bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
+                Cancelar
+                </Link>
+            </div>
+
             <!-- Dirección ocupa 2 columnas -->
             <div class="md:col-span-2">
                 <label for="direccion" class="block font-medium mb-1">Dirección</label>
@@ -158,10 +168,7 @@
                     </span>
                     Guardar
                 </button>
-                <Link href="/sistema/predios"
-                    class="btn btn-secondary bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
-                Cancelar
-                </Link>
+
             </div>
         </form>
     </div>
@@ -190,7 +197,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { router,Link } from '@inertiajs/vue3'
+import { router, Link } from '@inertiajs/vue3'
 import App from '@/Layouts/AppLayout.vue'
 
 defineOptions({ layout: App })

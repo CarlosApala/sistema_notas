@@ -21,7 +21,7 @@ class User extends Authenticatable
     use TwoFactorAuthenticatable;
     use HasRoles;
 
-     use SoftDeletes;
+    use SoftDeletes;
 
     protected $dates = ['deleted_at'];
     /**
@@ -35,6 +35,7 @@ class User extends Authenticatable
         'username',
         'password',
         'avatar',
+        'personal_id',
     ];
 
     /**
@@ -56,7 +57,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function setPasswordAttribute($value){
+    public function setPasswordAttribute($value)
+    {
         $this->attributes['password'] = bcrypt($value);
     }
 
@@ -68,4 +70,10 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+    // App\Models\User.php
+    // App\Models\User.php
+    public function personal()
+    {
+        return $this->belongsTo(PersonalInterno::class, 'personal_id');
+    }
 }

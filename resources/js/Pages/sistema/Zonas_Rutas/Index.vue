@@ -1,389 +1,152 @@
 <template>
-  <div class="zonas-rutas-wrapper">
-    <div class="row h-100">
-      <!-- Columna Izquierda: botones para elegir vista -->
-      <div class="col-md-4 h-100">
-        <div class="card shadow-sm h-50 d-flex flex-column">
-          <div class="card-header">
-            <h5 class="mb-0">Opciones</h5>
-          </div>
-          <div class="card-body d-grid gap-2">
-            <button class="btn btn-outline-dark" @click="vista = 'zonas'">Zonas</button>
-            <button class="btn btn-outline-dark" @click="vista = 'rutas'">Rutas</button>
-            <button class="btn btn-outline-dark" @click="vista = 'asignaciones'">Asignaciones</button>
-          </div>
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="mb-0">Zonas y Rutas</h4>
+            <button class="btn btn-success" @click="abrirModalRegistroZona">Registrar Zona</button>
         </div>
-      </div>
 
-      <!-- Columna Derecha: tabla y paginación -->
-      <div class="col-md-8 h-100">
-        <div class="card shadow-sm h-100 d-flex flex-column">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">{{ tituloVista }}</h5>
-            <button class="btn btn-success btn-sm" @click="abrirModalRegistro(vista)">Registrar</button>
-          </div>
-          <div class="card-body overflow-auto">
-            <table class="table table-bordered table-hover">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th v-if="vista === 'zonas' || vista === 'asignaciones'">Zona</th>
-                  <th v-if="vista === 'rutas' || vista === 'asignaciones'">Ruta</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-if="vista === 'zonas'" v-for="(zona, index) in listaActiva" :key="zona.id">
-                  <td>{{ zona.id }}</td>
-                  <td>{{ zona.NombreZona }}</td>
-                  <td class="text-nowrap">
-                    <button class="btn btn-warning btn-sm me-1" @click="editar(zona)">Editar</button>
-
-                    <button class="btn btn-danger btn-sm" @click="eliminar(zona.id)">Eliminar</button>
-                  </td>
-                </tr>
-
-                <tr v-if="vista === 'rutas'" v-for="(ruta, index) in listaActiva" :key="ruta.id">
-                  <td>{{ ruta.id }}</td>
-                  <td>{{ ruta.NombreRuta }}</td>
-                  <td class="text-nowrap">
-                    <button class="btn btn-warning btn-sm me-1" @click="editar(ruta)">Editar</button>
-
-                    <button class="btn btn-danger btn-sm" @click="eliminar(ruta.id)">Eliminar</button>
-                  </td>
-                </tr>
-
-                <tr v-if="vista === 'asignaciones'" v-for="(item, index) in asignaciones" :key="item.id">
-                  <td>{{ index + 1 }}</td>
-                  <td>{{ item.zona?.NombreZona || '—' }}</td>
-                  <td>{{ item.ruta?.NombreRuta || '—' }}</td>
-                  <td class="text-nowrap">
-                    <button class="btn btn-danger btn-sm" @click="eliminar(item.id)">Eliminar</button>
-                  </td>
-                </tr>
-
-                <tr v-if="listaActiva.length === 0">
-                  <td :colspan="vista === 'asignaciones' ? 4 : 3" class="text-center">No hay registros para mostrar</td>
-                </tr>
-              </tbody>
-            </table>
-
-            <!-- PAGINACIÓN para Zonas y Rutas -->
-            <div class="mt-3" v-if="vista === 'zonas' || vista === 'rutas'">
-              <nav>
-                <ul class="pagination justify-content-center">
-                  <li
-                    v-for="(link, index) in (vista === 'zonas' ? zonas.links : rutas.links)"
-                    :key="index"
-                    :class="['page-item', { active: link.active, disabled: !link.url }]"
-                  >
-                    <a
-                      href="#"
-                      class="page-link"
-                      v-if="link.url"
-                      @click.prevent="cambiarPagina(link)"
-                      v-html="link.label"
-                    ></a>
-                    <span class="page-link" v-else v-html="link.label"></span>
-                  </li>
-                </ul>
-              </nav>
-            </div>
-          </div>
+        <!-- Filtro de búsqueda -->
+        <div class="mb-3 d-flex gap-2">
+            <input v-model="filters.search" type="text" class="form-control" placeholder="Buscar por nombre de zona" />
         </div>
-      </div>
+
+        <table class="table-auto w-full border-collapse border border-gray-300">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="border border-gray-300 px-4 py-2 text-left">#</th>
+                    <th class="border border-gray-300 px-4 py-2 text-left">Zona</th>
+                    <th class="border border-gray-300 px-4 py-2 text-left">Rutas</th>
+                    <th class="border border-gray-300 px-4 py-2 text-left text-center">Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="zona in zonas.data" :key="zona.id" class="hover:bg-gray-100">
+                    <td class="border border-gray-300 px-4 py-2">{{ zona.id }}</td>
+                    <td class="border border-gray-300 px-4 py-2">{{ zona.NombreZona }}</td>
+                    <td class="border border-gray-300 px-4 py-2 text-truncate max-w-xs" style="max-width: 200px;">
+                        <span v-if="zona.rutas?.length">
+                            {{zona.rutas.map(r => r.NombreRuta).join(' - ')}}
+                        </span>
+                        <span class="text-gray-500 italic" v-else>Sin rutas registradas</span>
+                    </td>
+                    <td class="border border-gray-300 px-4 py-2 text-center space-x-2">
+                        <Link
+                            class="btn btn-info btn-sm px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+                            :href="`/sistema/zonas_rutas/${zona.id}`">
+                        Ver más
+                        </Link>
+                        <button
+                            class="btn btn-danger btn-sm px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+                            @click="confirmarEliminacion(zona.id)">
+                            Eliminar
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+
+        <!-- Paginación -->
+        <nav class="mt-3" v-if="zonas.links?.length">
+            <ul class="pagination justify-content-center">
+                <li v-for="(link, index) in zonas.links" :key="index"
+                    :class="['page-item', { active: link.active, disabled: !link.url }]">
+                    <Link v-if="link.url" class="page-link" :href="link.url" preserve-scroll :data="filters"
+                        v-html="link.label" />
+                    <span v-else class="page-link" v-html="link.label"></span>
+                </li>
+            </ul>
+        </nav>
     </div>
-  </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted,watch } from 'vue'
-import { useForm } from '@inertiajs/vue3'
+import { reactive, watch } from 'vue'
+import { useForm, router, Link } from '@inertiajs/vue3'
 import Swal from 'sweetalert2'
-import App from '@/Layouts/AppLayout.vue'
+import AppLayout from '@/Layouts/AppLayout.vue'
 
-defineOptions({ layout: App })
+defineOptions({ layout: AppLayout })
 
-const zonas = ref({ data: [], links: [] })
-const rutas = ref({ data: [], links: [] })
-const asignaciones = ref([
-    { id: 1, zona: { NombreZona: 'Zona A' }, ruta: { NombreRuta: 'Ruta 1' } },
-    { id: 2, zona: { NombreZona: 'Zona B' }, ruta: { NombreRuta: 'Ruta 2' } },
-])
-const vista = ref('zonas')
-
-
-watch(vista, () => {
-  cargarDatosVistaActiva()
+const props = defineProps({
+    zonas: Object,
+    filters: Object,
 })
 
-const tituloVista = computed(() => {
-    if (vista.value === 'zonas') return 'Lista de Zonas'
-    if (vista.value === 'rutas') return 'Lista de Rutas'
-    return 'Asignaciones Zonas – Rutas'
+const filters = reactive({
+    search: props.filters?.search || '',
 })
 
-const listaActiva = computed(() => {
-    if (vista.value === 'zonas') return zonas.value.data ?? []
-    if (vista.value === 'rutas') return rutas.value.data ?? []
-    return asignaciones.value
+// Watch con debounce para búsqueda automática
+let timeout = null
+watch(() => filters.search, () => {
+    clearTimeout(timeout)
+    timeout = setTimeout(() => {
+        router.get('/sistema/zonas_rutas', { ...filters }, {
+            preserveState: true,
+            replace: true,
+            preserveScroll: true,
+        })
+    }, 250)
 })
 
-// 🔁 CARGA DE DATOS ASÍNCRONOS
-async function loadZonas(url = '/sistema/zonas') {
-  try {
-    const res = await fetch(url, {
-      credentials: 'include' // ¡IMPORTANTE! envía cookies para mantener sesión
-    })
-    if (!res.ok) throw new Error('Error al cargar zonas')
-    zonas.value = await res.json()
-  } catch (err) {
-    console.error('Error cargando zonas:', err)
-  }
-}
+function abrirModalRegistroZona() {
+    Swal.fire({
+        title: 'Registrar Zona',
+        input: 'text',
+        inputLabel: 'Nombre de la Zona',
+        inputPlaceholder: 'Ingrese el nombre',
+        showCancelButton: true,
+        confirmButtonText: 'Registrar',
+        cancelButtonText: 'Cancelar',
+        inputValidator: value => !value && 'El nombre es obligatorio'
+    }).then(result => {
+        if (result.isConfirmed && result.value) {
+            const form = useForm({ NombreZona: result.value })
 
-async function loadRutas(url = '/sistema/rutas') {
-  try {
-    const res = await fetch(url, {
-      credentials: 'include' // ¡IMPORTANTE!
-    })
-    if (!res.ok) throw new Error('Error al cargar rutas')
-    rutas.value = await res.json()
-  } catch (err) {
-    console.error('Error cargando rutas:', err)
-  }
-}
-
-function cargarDatosVistaActiva() {
-    if (vista.value === 'zonas') loadZonas()
-    if (vista.value === 'rutas') loadRutas()
-}
-
-// 🔄 Al cambiar de vista
-watch(vista, () => {
-    cargarDatosVistaActiva()
-})
-
-// 🚀 Primera carga
-onMounted(() => {
-    cargarDatosVistaActiva()
-})
-
-function cambiarPagina(link) {
-  if (!link.url) return
-
-  const relativeUrl = new URL(link.url, window.location.origin).pathname + new URL(link.url).search
-
-  if (vista.value === 'zonas') loadZonas(relativeUrl)
-  if (vista.value === 'rutas') loadRutas(relativeUrl)
-}
-
-
-
-async function abrirModalRegistro(tipo) {
-    let inputLabel = '', inputPlaceholder = '', url = '', fieldName = ''
-
-    switch (tipo) {
-        case 'rutas':
-            inputLabel = 'Nombre de la Ruta'
-            inputPlaceholder = 'Ingrese el nombre de la ruta'
-            url = '/sistema/rutas'
-            fieldName = 'NombreRuta'
-            break
-        case 'zonas':
-            inputLabel = 'Nombre de la Zona'
-            inputPlaceholder = 'Ingrese el nombre de la zona'
-            url = '/sistema/zonas'
-            fieldName = 'NombreZona'
-            break
-        case 'asignacion':
-            const { value: formValues } = await Swal.fire({
-                title: 'Registrar Asignación',
-                html:
-                    `<select id="swal-zona" class="swal2-select" style="width: 100%; padding: .5rem; margin-bottom: 1rem;">
-                        <option value="" disabled selected>Seleccione Zona</option>
-                        ${zonas.value.data.map(z => `<option value="${z.id}">${z.NombreZona}</option>`).join('')}
-                    </select>` +
-                    `<select id="swal-ruta" class="swal2-select" style="width: 100%; padding: .5rem;">
-                        <option value="" disabled selected>Seleccione Ruta</option>
-                        ${rutas.value.data.map(r => `<option value="${r.id}">${r.NombreRuta}</option>`).join('')}
-                    </select>`,
-                focusConfirm: false,
-                preConfirm: () => {
-                    const zonaId = document.getElementById('swal-zona').value
-                    const rutaId = document.getElementById('swal-ruta').value
-                    if (!zonaId || !rutaId) {
-                        Swal.showValidationMessage('Por favor seleccione Zona y Ruta')
-                        return null
-                    }
-                    return { zona_id: zonaId, ruta_id: rutaId }
+            form.post('/sistema/zonas', {
+                onSuccess: () => {
+                    Swal.fire('¡Registrado!', 'Zona registrada correctamente.', 'success')
+                },
+                onError: () => {
+                    Swal.fire('Error', 'No se pudo registrar la zona.', 'error')
                 }
             })
+        }
+    })
+}
 
-            if (formValues) {
-                const asignacionForm = useForm(formValues)
-                asignacionForm.post('/sistema/asignaciones', {
-                    onSuccess: () => {
-                        Swal.fire('¡Registrado!', 'Asignación registrada.', 'success')
-                        asignacionForm.reset()
-                    },
-                    onError: () => {
-                        Swal.fire('Error', 'No se pudo registrar.', 'error')
-                    }
-                })
-            }
-            return
-    }
-
-    const { value: nombre } = await Swal.fire({
-        title: `Registrar ${tipo}`,
-        input: 'text',
-        inputLabel: inputLabel,
-        inputPlaceholder: inputPlaceholder,
+function confirmarEliminacion(id) {
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Esta acción eliminará la zona y sus rutas relacionadas.',
+        icon: 'warning',
         showCancelButton: true,
-        inputValidator: (value) => {
-            if (!value) return `${inputLabel} es obligatorio`
-        },
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const form = useForm({})
+            form.delete(`/sistema/zonas/${id}`, {
+                onSuccess: () => {
+                    Swal.fire('Eliminado', 'La zona ha sido eliminada.', 'success')
+                },
+                onError: () => {
+                    Swal.fire('Error', 'No se pudo eliminar la zona.', 'error')
+                }
+            })
+        }
     })
-
-    if (nombre) {
-        const data = {}
-        data[fieldName] = nombre
-
-        const form = useForm(data)
-        form.post(url, {
-            onSuccess: () => {
-                Swal.fire('¡Registrado!', `${tipo} registrado.`, 'success')
-                form.reset()
-                cargarDatosVistaActiva()
-            },
-            onError: () => {
-                Swal.fire('Error', `No se pudo registrar ${tipo}.`, 'error')
-            }
-        })
-    }
 }
-
-async function editar(item) {
-  const esZona = vista.value === 'zonas'
-  const esRuta = vista.value === 'rutas'
-
-  const label = esZona ? 'Nombre de la Zona' : 'Nombre de la Ruta'
-  const fieldName = esZona ? 'NombreZona' : 'NombreRuta'
-  const url = esZona ? `/sistema/zonas/${item.id}` : `/sistema/rutas/${item.id}`
-  const valorActual = item[fieldName]
-
-  const { value: nuevoValor } = await Swal.fire({
-    title: 'Editar registro',
-    input: 'text',
-    inputLabel: label,
-    inputValue: valorActual,
-    showCancelButton: true,
-    confirmButtonText: 'Actualizar',
-    cancelButtonText: 'Cancelar',
-    inputValidator: (value) => {
-      if (!value) {
-        return `${label} es obligatorio`
-      }
-    }
-  })
-
-  if (!nuevoValor) return
-
-  try {
-    const res = await fetch(url, {
-      method: 'PUT', // o PATCH según tu controlador
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify({ [fieldName]: nuevoValor })
-    })
-
-    if (!res.ok) throw new Error('Error al actualizar')
-
-    await Swal.fire('¡Actualizado!', 'El registro fue actualizado.', 'success')
-    cargarDatosVistaActiva()
-
-  } catch (error) {
-    console.error(error)
-    Swal.fire('Error', 'No se pudo actualizar el registro.', 'error')
-  }
-}
-
-
-async function eliminar(id) {
-  const result = await Swal.fire({
-    title: '¿Estás seguro?',
-    text: 'Esta acción no se puede deshacer.',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#d33',
-    cancelButtonColor: '#3085d6',
-    confirmButtonText: 'Sí, eliminar',
-    cancelButtonText: 'Cancelar'
-  });
-  console.log("holsadf asdfasljdfl")
-  if (!result.isConfirmed) return;
-  console.log("asd sadlfasdf adsf,asdflasdlfjlasdjfasn")
-
-  try {
-    const urlBase = vista.value === 'zonas' ? '/sistema/zonas' : '/sistema/rutas';
-
-    const res = await fetch(`${urlBase}/${id}`, {
-      method: 'DELETE',
-      credentials: 'include',
-      headers: {
-        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-        'Accept': 'application/json'
-      }
-    });
-    var dod=document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-    console.log(dod)
-    console.log("cual es el valor")
-    console.log(res)
-    if (!res.ok) throw new Error('Error al eliminar');
-
-    await Swal.fire('¡Eliminado!', 'El registro fue eliminado correctamente.', 'success');
-
-    cargarDatosVistaActiva(); // Recargar la lista
-
-  } catch (error) {
-    console.error(error);
-    Swal.fire('Error', 'No se pudo eliminar el registro.', 'error');
-  }
-}
-
 </script>
+
 <style scoped>
-.zonas-rutas-wrapper {
-  height: 90vh; /* altura total de la ventana */
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.row.h-100 {
-  height: 100%; /* que ocupe todo el contenedor padre */
-  display: flex;
-}
-
-.col-md-4.h-100,
-.col-md-8.h-100 {
-  height: 100%; /* que ocupe toda la altura disponible */
-}
-
-.card.h-100 {
-  height: 100%; /* para que el card ocupe toda la altura de la columna */
-  display: flex;
-  flex-direction: column;
-}
-
-.card-body.overflow-auto {
-  flex-grow: 1; /* que ocupe el espacio restante */
-  overflow-y: auto; /* scroll solo vertical */
+.text-truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 </style>

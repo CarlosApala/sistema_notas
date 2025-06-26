@@ -58,6 +58,11 @@
                                 </Link>
                             </li>
                             <li class="nav-item">
+                                <Link href="/sistema/usuarios_lecturadores" class="nav-link">
+                                <i class="fa fa-circle-o"></i> Personal Lecturador
+                                </Link>
+                            </li>
+                            <li class="nav-item">
                                 <Link href="/sistema/usuarios" class="nav-link">
                                 <i class="fa fa-circle-o"></i> Usuarios del Sistema
                                 </Link>
@@ -88,7 +93,7 @@
                     </li>
                     <li class="nav-item">
                         <Link href="/sistema/lecturadores" class="nav-link">
-                        <i class="fa fa-address-card"></i> Lecturadores
+                        <i class="fa fa-address-card"></i> Asignaciones
                         </Link>
                     </li>
                     <li class="nav-item">

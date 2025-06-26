@@ -31,8 +31,6 @@
                     <th class="border px-4 py-2 text-left">ID</th>
                     <th class="border px-4 py-2 text-left">Predio</th>
                     <th class="border px-4 py-2 text-left">Medidor</th>
-                    <th class="border px-4 py-2 text-left">Fecha</th>
-                    <th class="border px-4 py-2 text-left">Estado</th>
                     <th class="border px-4 py-2 text-center">Acciones</th>
                 </tr>
             </thead>
@@ -41,9 +39,7 @@
                     <td class="border px-4 py-2">{{ instalacion.id }}</td>
                     <!-- Aquí muestro algo representativo del predio, como su dirección -->
                     <td class="border px-4 py-2">{{ instalacion.predio?.direccion || 'Sin dirección' }}</td>
-                    <td class="border px-4 py-2">{{ instalacion.numero_medidor || '-' }}</td>
-                    <td class="border px-4 py-2">{{ instalacion.fecha_instalacion || '-' }}</td>
-                    <td class="border px-4 py-2">{{ instalacion.estado_instalacion || '-' }}</td>
+                    <td class="border px-4 py-2">{{ instalacion.NumeroMedidor || '-' }}</td>
                     <td class="border px-4 py-2 text-center space-x-2">
                         <template v-if="filters.deleted">
                             <button @click="restaurar(instalacion.id)"

@@ -24,7 +24,10 @@ class RutasLecturadorController extends Controller
             $search = $request->input('search');
             $onlyDeleted = $request->boolean('deleted');
 
-            $query = RutasLecturador::with(['rutaInstalacion', 'usuario']);
+            $query = RutasLecturador::with([
+                'ruta',     // ahora directamente a la tabla rutas
+                'usuario'   // relación con usuario
+            ]);
 
             if ($onlyDeleted) {
                 $query->onlyTrashed();
@@ -33,27 +36,17 @@ class RutasLecturadorController extends Controller
             if ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('id', $search)
-                        ->orWhereHas('rutaInstalacion', function ($q2) use ($search) {
-                            $q2->where('nInstalacion', 'ilike', "%{$search}%")
-                                ->orWhereHas('zona', fn($q3) => $q3->where('NombreZona', 'ilike', "%{$search}%"))
-                                ->orWhereHas('ruta', fn($q4) => $q4->where('NombreRuta', 'ilike', "%{$search}%"))
-                                ->orWhereHas('predio', function ($q5) use ($search) {
-                                    $q5->where('direccion', 'ilike', "%{$search}%")
-                                        ->orWhere('zonaBarrio', 'ilike', "%{$search}%")
-                                        ->orWhere('distrito', 'ilike', "%{$search}%");
-                                });
+                        ->orWhere('periodo', 'ilike', "%{$search}%")
+                        ->orWhereHas('ruta', function ($q2) use ($search) {
+                            $q2->where('NombreRuta', 'ilike', "%{$search}%");
+                        })
+                        ->orWhereHas('usuario', function ($q3) use ($search) {
+                            $q3->where('name', 'ilike', "%{$search}%");
                         });
                 });
             }
 
-            $asignaciones = $query->select([
-                'id',
-                'idRuta',
-                'idUser',
-                'periodo',
-                'created_at',
-                'updated_at'
-            ])
+            $asignaciones = $query
                 ->orderByDesc('id')
                 ->paginate(10)
                 ->appends($request->query());
@@ -77,6 +70,8 @@ class RutasLecturadorController extends Controller
     }
 
 
+
+
     /**
      * Show the form for creating a new resource.
      *
@@ -96,8 +91,9 @@ class RutasLecturadorController extends Controller
      */
     public function store(Request $request)
     {
+
         $validated = $request->validate([
-            'idRuta' => 'required|exists:ruta_instalaciones,id',
+            'idRuta' => 'required|exists:rutas,id',
             'idUser' => 'required|exists:users,id',
             'periodo' => 'nullable|string|max:191',
         ]);

@@ -8,15 +8,20 @@ use App\Http\Controllers\PredioController;
 use App\Http\Controllers\RutasController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RutasLecturadorController;
+use App\Http\Controllers\UsuariosLecturadores;
+use App\Http\Controllers\UsuariosLecturadoresController;
 use App\Http\Controllers\ZonasController;
 use App\Http\Controllers\ZonasRutaController;
 use App\Models\PersonalInterno;
 use App\Models\RutaInstalaciones;
+use App\Models\Rutas;
 use App\Models\RutasLecturador;
 use App\Models\User;
 use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Spatie\Permission\Models\Role;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,11 +59,20 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
+
+
+
     Route::resource('/sistema/usuarios', UserController::class);
+    Route::post('/usuarios/{id}/assign-role', [UserController::class, 'assignRole'])
+        ->name('usuarios.assignRole');
+
     Route::resource('/sistema/lecturadores', RutasLecturadorController::class);
     Route::post('/sistema/lecturadores/{id}/restore', [RutasLecturadorController::class, 'restore'])
         ->name('lecturadores.restore');
     Route::resource('/sistema/zonas_rutas', ZonasRutaController::class);
+    Route::put('/sistema/zonas_rutas/actualizar-ruta/{ruta}', [ZonasRutaController::class, 'actualizarRuta'])->name('zonas_rutas.actualizarRuta');
+    Route::delete('/sistema/zonas_rutas/delete-ruta/{ruta}', [ZonasRutaController::class, 'eliminarRuta'])->name('zonas_rutas.eliminarRuta');
+
     Route::resource('/sistema/rutas', RutasController::class);
     Route::resource('/sistema/zonas', ZonasController::class);
 
@@ -68,24 +82,43 @@ Route::middleware([
     Route::resource('/sistema/predios', PredioController::class);
     Route::post('/sistema/predios/{id}/restore', [PredioController::class, 'restore'])->name('predios.restore');
 
-    Route::resource('/sistema/organigrama',OrganigramaController::class);
+    Route::resource('/sistema/organigrama', OrganigramaController::class);
 
-    Route::resource('/sistema/personal_interno',PersonalInternoController::class);
-    Route::post('/sistema/personal_interno/{id}/restore',[PersonalInternoController::class,'restore'])->name('personal_interno.restore');
+    Route::resource('/sistema/usuarios_lecturadores', UsuariosLecturadoresController::class);
+    Route::post('/sistema/usuarios_lecturadores/{id}/assign-lecturador', [UsuariosLecturadoresController::class, 'assignLecturador']);
+
+
+    Route::resource('/sistema/personal_interno', PersonalInternoController::class);
+    Route::post('/sistema/personal_interno/{id}/restore', [PersonalInternoController::class, 'restore'])->name('personal_interno.restore');
+
+
+
     // Ruta adicional para restaurar predios eliminados (soft delete)
     Route::post('/sistema/predios/{id}/restore', [PredioController::class, 'restore'])->name('predios.restore');
 
-
-
-
     //rutas para carga asincrona
-    Route::get('/api/rutas', function () {
-        return response()->json(RutaInstalaciones::with('ruta')->limit(50)->get());
+    Route::get('/api/rutas', function (Request $request) {
+        $perPage = $request->input('per_page', 10); // número de registros por página, 10 por defecto
+        $rutas = Rutas::with('zona')->paginate($perPage);
+        return response()->json($rutas);
     })->name('api.rutas');
-    Route::get('/api/predios', [PredioController::class, 'listJson']);
 
+    Route::get('/api/predios', function () {
+        $predios = \App\Models\Predio::select('id', 'direccion', 'zonaBarrio', 'distrito')->paginate(10);
+        return response()->json($predios);
+    });
+
+
+    Route::get('/api/getRoles', function () {
+        return response()->json(\Spatie\Permission\Models\Role::pluck('name'));
+    });
 
     Route::get('/api/usuarios', function () {
         return response()->json(User::limit(50)->get());
     })->name('api.usuarios');
+
+    Route::get('/api/lecturadores', function () {
+        $lecturadores = User::role('lecturador')->get(); // Spatie: busca usuarios con ese rol
+        return response()->json($lecturadores);
+    });
 });

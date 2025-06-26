@@ -10,7 +10,7 @@ class Zonas extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    protected $fillable=[
+    protected $fillable = [
         'NombreZona'
     ];
     protected $dates = ['deleted_at'];
@@ -20,4 +20,8 @@ class Zonas extends Model
         return $this->NombreZona;
     }
 
+    public function rutas()
+    {
+        return $this->hasMany(Rutas::class,'zona_id');
+    }
 }

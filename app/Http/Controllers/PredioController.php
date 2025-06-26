@@ -7,6 +7,7 @@ use Dotenv\Exception\ValidationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
+use Spatie\Permission\Models\Role;
 
 class PredioController extends Controller
 {

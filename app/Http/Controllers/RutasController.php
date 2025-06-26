@@ -4,14 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Rutas;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Inertia\Inertia;
 
 class RutasController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         $rutas = Rutas::select('id', 'NombreRuta')->orderByDesc('id')->paginate(10);
@@ -20,22 +17,19 @@ class RutasController extends Controller
     }
 
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        //
+        try {
+            // Si necesitas enviar datos adicionales (por ejemplo, listas para selects), aquí puedes hacerlo.
+            // En este caso, simplemente retornamos la vista sin datos adicionales.
+
+            return Inertia::render('sistema/Rutas/Create');
+        } catch (\Exception $e) {
+            Log::error("Error al cargar formulario de creación de personal interno: {$e->getMessage()}");
+            return redirect()->back()->with('error', 'No se pudo cargar el formulario de creación.');
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
 
@@ -56,54 +50,38 @@ class RutasController extends Controller
         ]);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Rutas  $rutas
-     * @return \Illuminate\Http\Response
-     */
     public function show(Rutas $rutas)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Rutas  $rutas
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Rutas $rutas)
     {
         //
     }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Rutas  $rutas
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         $modelo = Rutas::findOrFail($id); // o Rutas::findOrFail($id)
         $modelo->update($request->only(['NombreZona'])); // o NombreRuta
-        return response()->json(['message' => 'Actualizado correctamente']);
+        return redirect()->back(); // o redirect('/sistema/rutas') según convenga
+
+        //return response()->json(['message' => 'Actualizado correctamente']);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Rutas  $rutas
-     * @return \Illuminate\Http\Response
-     */
 
     public function destroy($id)
     {
-        $modelo = Rutas::findOrFail($id); // o Zonas::findOrFail($id)
-        $modelo->delete();
+        try {
+            $ruta = Rutas::findOrFail($id);
+            $ruta->delete();
 
-        return response()->json(['message' => 'Eliminado correctamente']);
+            return redirect()->back(); // o redirect('/sistema/rutas') según convenga
+            // O solo
+            // return response()->noContent();
+        } catch (\Exception $e) {
+            Log::error("Error al eliminar registro: {$e->getMessage()}");
+
+            return response()->json(['error' => 'No se pudo eliminar el registro.'], 500);
+        }
     }
 }

@@ -28,10 +28,10 @@ class RolePermissionUserSeeder extends Seeder
                 'delete posts',
                 'view posts',
             ],
-            'viewer' => [
+            /* 'viewer' => [
                 'view users',
                 'view posts',
-            ],
+            ], */
         ];
 
         foreach ($rolePermissions as $roleName => $permissions) {
@@ -56,13 +56,6 @@ class RolePermissionUserSeeder extends Seeder
                 'username' => 'editor',
                 'password' => 'password',
                 'role' => 'editor',
-            ],
-            [
-                'name' => 'Viewer User',
-                'email' => 'viewer@example.com',
-                'username' => 'viewer',
-                'password' => 'password',
-                'role' => 'viewer',
             ],
         ];
 

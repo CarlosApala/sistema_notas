@@ -42,8 +42,7 @@ class DatabaseSeeder extends Seeder
             InstalacionSeeder::class,
             RutasSeeder::class,
             ZonasSeeder::class,
-            RutaInstalacionesSeeder::class,
-            RutasLecturadorSeeder::class,
+
             PersonalInternoSeeder::class
         ]);
     }

@@ -11,7 +11,8 @@ class Rutas extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'NombreRuta'
+        'NombreRuta',
+        'zona_id'
     ];
     protected $dates = ['deleted_at'];
     protected $table = 'rutas';
@@ -22,6 +23,6 @@ class Rutas extends Model
     }
     public function zona()
     {
-        return $this->belongsTo(Zonas::class); // asegúrate del nombre correcto del FK
+        return $this->belongsTo(Zonas::class,'zona_id'); // asegúrate del nombre correcto del FK
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Zonas;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ZonasController extends Controller
 {
@@ -85,7 +86,9 @@ class ZonasController extends Controller
     {
         $modelo = Zonas::findOrFail($id); // o Rutas::findOrFail($id)
         $modelo->update($request->only(['NombreZona'])); // o NombreRuta
-        return response()->json(['message' => 'Actualizado correctamente']);
+        return redirect()->back(); // o redirect('/sistema/rutas') según convenga
+
+        //return response()->json(['message' => 'Actualizado correctamente']);
     }
 
 
@@ -98,9 +101,17 @@ class ZonasController extends Controller
 
     public function destroy($id)
     {
-        $modelo = Zonas::findOrFail($id); // o Zonas::findOrFail($id)
-        $modelo->delete();
+        try {
+            $ruta = Zonas::findOrFail($id);
+            $ruta->delete();
 
-        return response()->json(['message' => 'Eliminado correctamente']);
+            return redirect()->back(); // o redirect('/sistema/rutas') según convenga
+            // O solo
+            // return response()->noContent();
+        } catch (\Exception $e) {
+            Log::error("Error al eliminar registro: {$e->getMessage()}");
+
+            return response()->json(['error' => 'No se pudo eliminar el registro.'], 500);
+        }
     }
 }

@@ -1,7 +1,7 @@
 <template>
     <div class="container mx-auto p-4">
         <h1 class="text-2xl font-bold mb-4">
-            Lecturadores
+            Asignaciones para Lecturador
             <span v-if="filters.deleted">(eliminados)</span>
         </h1>
 
@@ -32,22 +32,19 @@
             <thead>
                 <tr class="bg-gray-200">
                     <th class="border border-gray-300 px-4 py-2 text-left">ID</th>
-                    <th class="border border-gray-300 px-4 py-2 text-left">ID Ruta</th>
-                    <th class="border border-gray-300 px-4 py-2 text-left">ID Usuario</th>
+                    <th class="border border-gray-300 px-4 py-2 text-left">Nombre Ruta</th>
+                    <th class="border border-gray-300 px-4 py-2 text-left">Usuario</th>
                     <th class="border border-gray-300 px-4 py-2 text-left">Periodo</th>
-                    <th class="border border-gray-300 px-4 py-2 text-left">Creado</th>
-                    <th class="border border-gray-300 px-4 py-2 text-left">Actualizado</th>
                     <th class="border border-gray-300 px-4 py-2 text-center">Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="asignacion in asignaciones.data" :key="asignacion.id" class="hover:bg-gray-100">
                     <td class="border border-gray-300 px-4 py-2">{{ asignacion.id }}</td>
-                    <td class="border border-gray-300 px-4 py-2">{{ asignacion.idRuta }}</td>
-                    <td class="border border-gray-300 px-4 py-2">{{ asignacion.idUser }}</td>
+                    <td class="border border-gray-300 px-4 py-2">{{ asignacion.ruta?.NombreRuta || '-'
+                    }}</td>
+                    <td class="border border-gray-300 px-4 py-2">{{ asignacion.usuario?.name || '-' }}</td>
                     <td class="border border-gray-300 px-4 py-2">{{ asignacion.periodo || '-' }}</td>
-                    <td class="border border-gray-300 px-4 py-2">{{ asignacion.created_at }}</td>
-                    <td class="border border-gray-300 px-4 py-2">{{ asignacion.updated_at }}</td>
                     <td class="border border-gray-300 px-4 py-2 text-center space-x-2">
                         <template v-if="filters.deleted">
                             <button @click="restaurar(asignacion.id)"
@@ -73,12 +70,13 @@
                 </tr>
 
                 <tr v-if="asignaciones.data.length === 0">
-                    <td colspan="7" class="text-center p-4 text-gray-500">
+                    <td colspan="5" class="text-center p-4 text-gray-500">
                         No se encontraron asignaciones.
                     </td>
                 </tr>
             </tbody>
         </table>
+
 
 
 
