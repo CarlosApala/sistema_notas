@@ -30,13 +30,11 @@
                         <span class="text-gray-500 italic" v-else>Sin rutas registradas</span>
                     </td>
                     <td class="border border-gray-300 px-4 py-2 text-center space-x-2">
-                        <Link
-                            class="btn btn-info btn-sm px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+                        <Link class="btn btn-info btn-sm px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
                             :href="`/sistema/zonas_rutas/${zona.id}`">
                         Ver más
                         </Link>
-                        <button
-                            class="btn btn-danger btn-sm px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+                        <button class="btn btn-danger btn-sm px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
                             @click="confirmarEliminacion(zona.id)">
                             Eliminar
                         </button>
@@ -52,12 +50,13 @@
             <ul class="pagination justify-content-center">
                 <li v-for="(link, index) in zonas.links" :key="index"
                     :class="['page-item', { active: link.active, disabled: !link.url }]">
-                    <Link v-if="link.url" class="page-link" :href="link.url" preserve-scroll :data="filters"
-                        v-html="link.label" />
+                    <a v-if="link.url" href="#" class="page-link" @click.prevent="paginar(link.url)"
+                        v-html="link.label"></a>
                     <span v-else class="page-link" v-html="link.label"></span>
                 </li>
             </ul>
         </nav>
+
     </div>
 </template>
 
@@ -77,6 +76,17 @@ const props = defineProps({
 const filters = reactive({
     search: props.filters?.search || '',
 })
+
+
+function paginar(url) {
+    try {
+        const u = new URL(url, window.location.origin)
+        const relative = u.pathname + u.search
+        router.get(relative, {}, { preserveState: true, replace: true })
+    } catch (e) {
+        console.error("Error al parsear URL de paginación:", url)
+    }
+}
 
 // Watch con debounce para búsqueda automática
 let timeout = null
