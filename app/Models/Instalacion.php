@@ -40,4 +40,15 @@ class Instalacion extends Model
         // La clave foránea es 'idPredio' (con mayúscula P)
         return $this->belongsTo(Predio::class, 'idPredio');
     }
+
+    public function getCreatedAtAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->format('Y-m-d');
+    }
+
+    // Accessor para updated_at con formato YYYY-MM-DD
+    public function getUpdatedAtAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->format('Y-m-d');
+    }
 }

@@ -18,6 +18,13 @@ class PersonalInternoController extends Controller
     public function index(Request $request)
     {
         try {
+
+            $user = auth()->user();
+
+            if (!$user || !$user->can('personal_interno.view')) {
+                abort(403, 'No tienes permiso para ver este módulo');
+            }
+
             $search = $request->input('search');
             $onlyDeleted = $request->boolean('deleted');
 
@@ -73,11 +80,11 @@ class PersonalInternoController extends Controller
         }
     }
 
-        public function getRoles()
-        {
-            $roles = Role::pluck('name');
-            return response()->json($roles);
-        }
+    public function getRoles()
+    {
+        $roles = Role::pluck('name');
+        return response()->json($roles);
+    }
 
 
 
@@ -89,11 +96,18 @@ class PersonalInternoController extends Controller
         $validated = $request->validate([
             'nombres' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
-            'carnet_identidad' => 'nullable|string|max:50',
+            'carnet_identidad' => 'nullable|string|max:50|unique:personal_interno,carnet_identidad',
             'fecha_nacimiento' => 'nullable|date',
             'nacionalidad' => 'nullable|string|max:100',
             'numero_celular' => 'nullable|string|max:20',
+
+            // Nuevos campos
+            'direccion' => 'nullable|string|max:255',
+            'genero' => 'nullable|in:Masculino,Femenino,Otro',
+            'lugar_nacimiento' => 'nullable|string|max:100',
+            'email' => 'nullable|email|max:255|unique:personal_interno,email',
         ]);
+
 
         try {
             \App\Models\PersonalInterno::create($validated);
@@ -165,11 +179,14 @@ class PersonalInternoController extends Controller
             'fecha_nacimiento' => 'nullable|date',
             'nacionalidad'     => 'nullable|string|max:100',
             'numero_celular'   => 'nullable|string|max:20',
+            'direccion'        => 'nullable|string|max:255',
+            'genero'           => 'nullable|in:Masculino,Femenino,Otro',
+            'lugar_nacimiento' => 'nullable|string|max:255',
+            'email'            => 'nullable|email|max:255|unique:personal_interno,email,' . $id,
         ]);
 
         try {
             $personal = PersonalInterno::findOrFail($id);
-
             $personal->update($request->only([
                 'nombres',
                 'apellidos',
@@ -177,6 +194,10 @@ class PersonalInternoController extends Controller
                 'fecha_nacimiento',
                 'nacionalidad',
                 'numero_celular',
+                'direccion',
+                'genero',
+                'lugar_nacimiento',
+                'email',
             ]));
 
             return redirect()->route('personal_interno.index')->with('success', 'Personal interno actualizado correctamente.');

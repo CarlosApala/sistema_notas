@@ -33,6 +33,7 @@ class AppServiceProvider extends ServiceProvider
                         'username' => $user->username,
                         'email' => $user->email,
                         // agrega más campos que necesites
+                        'permissions' => $user ? $user->getAllPermissions()->pluck('name') : [],
                     ] : null,
                 ];
             },

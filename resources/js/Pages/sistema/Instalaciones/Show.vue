@@ -7,32 +7,43 @@
     </Link>
 
     <div class="card border border-gray-300 rounded p-4 shadow">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Columna Izquierda: Datos Instalación -->
-        <div>
-          <h2 class="text-lg font-semibold mb-3">Información General</h2>
-          <p><strong>ID:</strong> {{ instalacion.id }}</p>
-          <p><strong>Fecha Instalación:</strong> {{ instalacion.FechaInstalacion || '-' }}</p>
-          <p><strong>Número Medidor:</strong> {{ instalacion.NumeroMedidor || '-' }}</p>
-          <p><strong>Estado Instalación:</strong> {{ instalacion.EstadoInstalacion || '-' }}</p>
-          <p><strong>Estado Alcantarillado:</strong> {{ instalacion.EstadoAlcantarillado || '-' }}</p>
-          <p><strong>Estado Corte:</strong> {{ instalacion.EstadoCorte || '-' }}</p>
-          <p><strong>Observaciones:</strong> {{ instalacion.Observaciones || '-' }}</p>
-          <p><strong>Nro Grifos:</strong> {{ instalacion.NroGrifos ?? '-' }}</p>
-          <p><strong>Nro Baños:</strong> {{ instalacion.NroBaños ?? '-' }}</p>
-          <p><strong>Promedio Consumo:</strong> {{ instalacion.PromedioConsumo ?? '-' }}</p>
-          <p><strong>Código Ubicación:</strong> {{ instalacion.CodigoUbicacion || '-' }}</p>
-          <p><strong>Creado en:</strong> {{ instalacion.created_at }}</p>
-          <p><strong>Actualizado en:</strong> {{ instalacion.updated_at }}</p>
+      <div class="flex gap-8">
+        <!-- Columna izquierda -->
+        <div class="w-1/2 space-y-6">
+          <div>
+            <h2 class="text-lg font-semibold mb-2">Información de Instalación</h2>
+            <p><strong>ID:</strong> {{ instalacion.id }}</p>
+            <p><strong>Fecha Instalación:</strong> {{ instalacion.FechaInstalacion || '-' }}</p>
+            <p><strong>Número de Medidor:</strong> {{ instalacion.NumeroMedidor || '-' }}</p>
+            <p><strong>Estado Instalación:</strong> {{ instalacion.EstadoInstalacion || '-' }}</p>
+            <p><strong>Estado Alcantarillado:</strong> {{ instalacion.EstadoAlcantarillado || '-' }}</p>
+            <p><strong>Estado Corte:</strong> {{ instalacion.EstadoCorte || '-' }}</p>
+            <p><strong>Promedio Consumo:</strong> {{ instalacion.PromedioConsumo ?? '-' }} m³</p>
+            <p><strong>Observaciones:</strong> {{ instalacion.Observaciones || '-' }}</p>
+          </div>
+
+          <div>
+            <h2 class="text-lg font-semibold mb-2">Grifos y Baños</h2>
+            <p><strong>Nro. Grifos:</strong> {{ instalacion.NroGrifos ?? '-' }}</p>
+            <p><strong>Nro. Baños:</strong> {{ instalacion.NroBaños ?? '-' }}</p>
+          </div>
         </div>
 
-        <!-- Columna Derecha: Datos Predio -->
-        <div>
-          <h2 class="text-lg font-semibold mb-3">Datos del Predio</h2>
-          <p><strong>ID Predio:</strong> {{ instalacion.predio.id }}</p>
-          <p><strong>Dirección:</strong> {{ instalacion.predio.direccion || '-' }}</p>
-          <p><strong>Barrio/Zona:</strong> {{ instalacion.predio.zonaBarrio || '-' }}</p>
-          <p><strong>Distrito:</strong> {{ instalacion.predio.distrito || '-' }}</p>
+        <!-- Columna derecha -->
+        <div class="w-1/2 space-y-6">
+          <div>
+            <h2 class="text-lg font-semibold mb-2">Ubicación y Referencias</h2>
+            <p><strong>Código Ubicación:</strong> {{ instalacion.CodigoUbicacion || '-' }}</p>
+            <p><strong>Predio ID:</strong> {{ instalacion.idPredio }}</p>
+            <p><strong>Dirección Predio:</strong> {{ instalacion.predio?.direccion || '-' }}</p>
+            <p><strong>Zona/Barrio:</strong> {{ instalacion.predio?.zonaBarrio || '-' }}</p>
+            <p><strong>Distrito:</strong> {{ instalacion.predio?.distrito || '-' }}</p>
+          </div>
+
+          <div>
+            <p><strong>Creado en:</strong> {{ instalacion.created_at?.substring(0, 10) || '-' }}</p>
+            <p><strong>Actualizado en:</strong> {{ instalacion.updated_at?.substring(0, 10) || '-' }}</p>
+          </div>
         </div>
       </div>
     </div>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Predio;
+use App\Models\Zonas;
 use Dotenv\Exception\ValidationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -49,6 +50,7 @@ class PredioController extends Controller
         try {
             // Buscar el predio, incluyendo relaciones si las tienes (aquí sin relaciones)
             $predio = \App\Models\Predio::withTrashed()->findOrFail($id);
+
 
             return Inertia::render('sistema/Predios/Show', [
                 'predio' => $predio,
@@ -134,11 +136,12 @@ class PredioController extends Controller
     public function create()
     {
         try {
-            // Si necesitas enviar datos previos (como listas para selects), aquí los obtienes.
-            // Por ejemplo, si predios tienen relación con otras tablas, las puedes enviar.
-            // En este ejemplo no enviamos nada extra, solo la vista.
+            // Obtener solo el campo NombreZona y paginar (10 por página como ejemplo)
+            $zonas = Zonas::select('id', 'NombreZona')->get();
 
-            return Inertia::render('sistema/Predios/Create');
+            return Inertia::render('sistema/Predios/Create', [
+                'zonas' => $zonas,
+            ]);
         } catch (\Exception $e) {
             Log::error("Error al cargar formulario de creación de predio: {$e->getMessage()}");
             return redirect()->back()->with('error', 'No se pudo cargar el formulario de creación.');

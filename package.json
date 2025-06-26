@@ -23,6 +23,7 @@
         "@inertiajs/inertia": "^0.11.1",
         "@popperjs/core": "^2.11.8",
         "bootstrap": "^5.3.7",
+        "floating-vue": "^5.2.2",
         "lodash": "^4.17.21",
         "sweetalert2": "^11.22.0",
         "ziggy-js": "^2.5.3"

@@ -16,12 +16,16 @@
                     <p><strong>Apellidos:</strong> {{ persona.apellidos || '-' }}</p>
                     <p><strong>Carnet de Identidad:</strong> {{ persona.carnet_identidad || '-' }}</p>
                     <p><strong>Fecha de Nacimiento:</strong> {{ persona.fecha_nacimiento || '-' }}</p>
+                    <p><strong>Género:</strong> {{ persona.genero || '-' }}</p>
+                    <p><strong>Lugar de Nacimiento:</strong> {{ persona.lugar_nacimiento || '-' }}</p>
                     <p><strong>Nacionalidad:</strong> {{ persona.nacionalidad || '-' }}</p>
                 </div>
 
-                <!-- Columna: Otra información -->
+                <!-- Columna: Información de Contacto y Registro -->
                 <div class="w-full md:w-1/2 space-y-4">
                     <h2 class="text-lg font-semibold mb-2">Información de Contacto y Registro</h2>
+                    <p><strong>Dirección:</strong> {{ persona.direccion || '-' }}</p>
+                    <p><strong>Email:</strong> {{ persona.email || '-' }}</p>
                     <p><strong>Número de Celular:</strong> {{ persona.numero_celular || '-' }}</p>
                     <p><strong>Creado en:</strong> {{ persona.created_at || '-' }}</p>
                     <p><strong>Actualizado en:</strong> {{ persona.updated_at || '-' }}</p>

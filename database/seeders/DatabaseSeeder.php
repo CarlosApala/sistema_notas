@@ -34,16 +34,16 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RolePermissionSeeder::class
         ]);
-        $this->call([
-            UserRoleSeeder::class
-        ]);
+
         $this->call([
             PredioSeeder::class,
             InstalacionSeeder::class,
             RutasSeeder::class,
             ZonasSeeder::class,
-
-            PersonalInternoSeeder::class
+            PersonalInternoSeeder::class,
+            UserRoleSeeder::class,
+            PersonalInternoPermissionsSeeder::class,
+            LecturadoresPermissionsSeeder::class
         ]);
     }
 }

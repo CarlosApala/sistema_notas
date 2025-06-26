@@ -9,6 +9,9 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'; // incluye Popper
 
+import FloatingVue from 'floating-vue'
+import 'floating-vue/dist/style.css'
+
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({
@@ -17,6 +20,7 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         return createApp({ render: () => h(App, props) })
             .use(plugin)
+            .use(FloatingVue)
             .use(ZiggyVue)
             .mount(el);
     },

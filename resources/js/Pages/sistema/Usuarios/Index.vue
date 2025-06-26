@@ -1,6 +1,6 @@
 <template>
     <div class="container mx-auto p-4">
-        <h1 class="text-2xl font-bold mb-4">Lista de Usuarios</h1>
+        <h1 class="text-2xl font-bold mb-4">Usuarios del Sistema</h1>
 
         <!-- Mensaje de éxito -->
         <div v-if="flash.success" class="alert alert-success mb-4">
@@ -45,6 +45,9 @@
                 </tr>
             </tbody>
         </table>
+        <p class="mt-4 text-base text-gray-700 font-semibold border-t pt-3">
+            <strong>Nota:</strong> Si actualizas los permisos, recarga la página para que se apliquen los cambios.
+        </p>
     </div>
 </template>
 
@@ -73,23 +76,23 @@ watch(() => props.flash?.success, (msg) => {
 // Función para eliminar usuario
 function deleteUser(id) {
     Swal.fire({
-    title: '¿Estás seguro?',
-    text: 'Esta acción eliminará el usuario.',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#d33',
-    cancelButtonColor: '#3085d6',
-    confirmButtonText: 'Sí, eliminar',
-    cancelButtonText: 'Cancelar',
-  }).then((result) => {
-    if (result.isConfirmed) {
-      router.delete(`/sistema/usuarios/${id}`, {
-        onSuccess: () => {
-          Swal.fire('¡Eliminado!', 'El usuario ha sido eliminado.', 'success')
+        title: '¿Estás seguro?',
+        text: 'Esta acción eliminará el usuario.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            router.delete(`/sistema/usuarios/${id}`, {
+                onSuccess: () => {
+                    Swal.fire('¡Eliminado!', 'El usuario ha sido eliminado.', 'success')
+                }
+            })
         }
-      })
-    }
-  })
+    })
 }
 </script>
 

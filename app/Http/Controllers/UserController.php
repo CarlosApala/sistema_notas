@@ -80,7 +80,7 @@ class UserController extends Controller
             $fullName = $validated['nombres'] . ' ' . $validated['apellidos'];
 
             // Username único con base en los 3 primeros caracteres
-            $usernameBase = substr($validated['carnet_identidad'], 0, 3);
+            $usernameBase = $validated['nombres'] .  substr($validated['carnet_identidad'], 0, 3);
             $username = $usernameBase;
             $counter = 1;
 
@@ -90,7 +90,7 @@ class UserController extends Controller
             }
 
             $email = $username . '@example.com';
-            $password = bcrypt('password');
+            $password = "password";
 
             // Crear el usuario primero (sin asignar personal_id aún)
             $user = User::create([
@@ -177,24 +177,40 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
+        // Validación del usuario y sus permisos
         $request->validate([
-            'idRuta' => 'required|exists:ruta_instalaciones,id',
-            'idUser' => 'required|exists:users,id',
-            'periodo' => 'nullable|string|max:191',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'username' => 'required|string|max:255',
+            'password' => 'nullable|string|confirmed|min:6',
+            'roles' => 'array',
+            'roles.*' => 'string|exists:roles,name',
+            'permisos' => 'array',
+            'permisos.*' => 'string|exists:permissions,name',
         ]);
 
-        $rutasLecturador = RutasLecturador::findOrFail($id);
+        $usuario = User::findOrFail($id);
 
-        $rutasLecturador->idRuta = $request->idRuta;
-        $rutasLecturador->idUser = $request->idUser;
-        $rutasLecturador->periodo = $request->periodo;
+        $usuario->name = $request->name;
+        $usuario->email = $request->email;
+        $usuario->username = $request->username;
 
-        $rutasLecturador->save();
+        if (!empty($request->password)) {
+            $usuario->password = bcrypt($request->password);
+        }
 
-        // Redirigir usando Inertia a la lista con mensaje de éxito
-        return redirect()->route('lecturadores.index')
-            ->with('success', 'Asignación actualizada exitosamente.');
+        $usuario->save();
+
+        // Sincronizar roles
+        $usuario->syncRoles($request->roles ?? []);
+
+        // Sincronizar permisos directos
+        $usuario->syncPermissions($request->permisos ?? []);
+
+        return redirect()->route('usuarios.index')
+            ->with('success', 'Usuario actualizado correctamente.');
     }
+
 
     /**
      * Remove the specified resource from storage.

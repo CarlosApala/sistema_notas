@@ -17,11 +17,11 @@
       </form>
 
       <div class="flex gap-2 flex-wrap">
-        <Link href="/sistema/personal_interno/create" class="btn btn-success">
+        <Link v-if="permissions.includes('personal_interno.create')" href="/sistema/personal_interno/create" class="btn btn-success">
           Nuevo Personal
         </Link>
 
-        <Link :href="filters.deleted ? '/sistema/personal_interno' : '/sistema/personal_interno?deleted=true'"
+        <Link v-if="permissions.includes('personal_interno.view_deleted')" :href="filters.deleted ? '/sistema/personal_interno' : '/sistema/personal_interno?deleted=true'"
           class="btn btn-secondary">
           {{ filters.deleted ? 'Ver Activos' : 'Ver Eliminados' }}
         </Link>
@@ -60,15 +60,15 @@
                 </button>
               </template>
               <template v-else>
-                <Link :href="`/sistema/personal_interno/${persona.id}`"
-                  class="btn btn-info btn-sm px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">
+                <Link v-if="permissions.includes('personal_interno.show')"  :href="`/sistema/personal_interno/${persona.id}`"
+                  class="btn btn-info btn-sm px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700" >
                   Ver
                 </Link>
-                <Link :href="`/sistema/personal_interno/${persona.id}/edit`"
+                <Link v-if="permissions.includes('personal_interno.edit')" :href="`/sistema/personal_interno/${persona.id}/edit`"
                   class="btn btn-warning btn-sm px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600">
                   Editar
                 </Link>
-                <button @click="eliminar(persona.id)"
+                <button v-if="permissions.includes('personal_interno.delete')" @click="eliminar(persona.id)"
                   class="btn btn-danger btn-sm px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">
                   Eliminar
                 </button>
@@ -103,7 +103,9 @@ import { Link, router } from '@inertiajs/vue3'
 import Swal from 'sweetalert2'
 import App from '@/Layouts/AppLayout.vue'
 import { ref, watch } from 'vue'
+import { usePage } from '@inertiajs/vue3'
 
+const permissions = usePage().props.auth?.user?.permissions ?? []
 defineOptions({ layout: App })
 
 const { personalInterno: initialPersonal, filters: initialFilters, flash } = defineProps({

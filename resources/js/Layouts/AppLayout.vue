@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
         <!-- Header -->
-         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <header class="main-header">
             <a href="/" class="logo">
@@ -52,12 +52,14 @@
                             <i class="fa fa-angle-left rotate-icon" :class="{ 'rotate-icon-open': open }"></i>
                         </a>
                         <ul v-show="open" class="nav flex-column ms-3">
-                            <li class="nav-item">
+                            <li v-if="permissions.includes('personal_interno.view')" class="nav-item">
                                 <Link href="/sistema/personal_interno" class="nav-link">
                                 <i class="fa fa-circle-o"></i> Personal Interno
                                 </Link>
                             </li>
-                            <li class="nav-item">
+
+
+                            <li v-if="permissions.includes('lecturadores.view')" class="nav-item">
                                 <Link href="/sistema/usuarios_lecturadores" class="nav-link">
                                 <i class="fa fa-circle-o"></i> Personal Lecturador
                                 </Link>
@@ -141,7 +143,7 @@ import { ref } from 'vue'
 
 const page = usePage()
 const user = page.props.auth.user
-
+const permissions = user ? user.permissions : []
 const open = ref(false)
 
 function logout() {

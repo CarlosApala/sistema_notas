@@ -18,6 +18,7 @@ class UserRoleSeeder extends Seeder
                 'username' => 'admin1',
                 'password' => 'password',  // Se cifrará más abajo
                 'role' => 'admin',
+
             ]
         ];
 
@@ -28,13 +29,14 @@ class UserRoleSeeder extends Seeder
                     'name' => $data['name'],
                     'username' => $data['username'],
                     'password' => $data['password'],
+                    'personal_id' => 1
                 ]
             );
 
             $role = Role::findByName($data['role']);
             $permisos = $role->permissions;
-            $user->givePermissionTo($permisos);
-            $user->assignRole($role);
+            $user->givePermissionTo(\Spatie\Permission\Models\Permission::all());
+            $user->assignRole($role); // si quieres también asignar el rol
 
             $this->command->info("Usuario creado y asignado al rol: {$data['role']} - {$data['email']}");
         }

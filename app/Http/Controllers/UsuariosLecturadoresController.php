@@ -17,6 +17,12 @@ class UsuariosLecturadoresController extends Controller
     public function index(Request $request)
     {
         try {
+            $user = auth()->user();
+
+            if (!$user || !$user->can('personal_interno.view')) {
+                abort(403, 'No tienes permiso para ver este módulo');
+            }
+
             $search = $request->input('search');
             $onlyDeleted = $request->boolean('deleted');
 

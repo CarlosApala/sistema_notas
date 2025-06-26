@@ -22,10 +22,24 @@ class PersonalInterno extends Model
         'nacionalidad',
         'numero_celular',
         'estado_civil',
+        'direccion',
+        'genero',
+        'lugar_nacimiento',
+        'email',
     ];
 
     public function user()
     {
         return $this->hasOne(User::class, 'personal_id');
+    }
+    public function getCreatedAtAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->format('Y-m-d');
+    }
+
+    // Accessor para updated_at con formato YYYY-MM-DD
+    public function getUpdatedAtAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->format('Y-m-d');
     }
 }

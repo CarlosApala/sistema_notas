@@ -62,6 +62,7 @@
             <div class="bg-white p-6 rounded shadow max-h-[400px] overflow-auto">
                 <template v-if="visibleTable === 'rutas'">
                     <h2 class="text-xl font-semibold mb-4">Selecciona una Ruta</h2>
+
                     <table class="w-full table-auto border-collapse border border-gray-300">
                         <thead>
                             <tr>
@@ -84,7 +85,14 @@
 
                 <template v-if="visibleTable === 'usuarios'">
                     <h2 class="text-xl font-semibold mb-4">Selecciona un Usuario</h2>
-                    <table class="w-full table-auto border-collapse border border-gray-300">
+                    <div v-if="usuarios.length === 0" class="text-center text-gray-600">
+                        No hay usuarios disponibles.
+                        <Link href="/sistema/usuarios_lecturadores" class="text-blue-600 hover:underline ml-1">
+                        Ver Usuarios Lecturadores
+                        </Link>
+                    </div>
+
+                    <table v-else class="w-full table-auto border-collapse border border-gray-300">
                         <thead>
                             <tr>
                                 <th class="border border-gray-300 px-3 py-2 text-left">ID</th>
@@ -111,8 +119,8 @@
     </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
-import { router } from '@inertiajs/vue3'
+import { ref, watch, onMounted} from 'vue'
+import { router,Link} from '@inertiajs/vue3'
 import App from '@/Layouts/AppLayout.vue'
 
 defineOptions({ layout: App })
@@ -123,9 +131,9 @@ const loading = ref(true)
 const visibleTable = ref(null) // 'rutas' o 'usuarios'
 
 const form = ref({
-  idRuta: '',     // 👈 exactamente como espera Laravel
-  idUser: '',
-  periodo: '',
+    idRuta: '',     // 👈 exactamente como espera Laravel
+    idUser: '',
+    periodo: '',
 })
 
 
@@ -189,15 +197,15 @@ function showTable(tabla) {
 }
 
 function selectRuta(ruta) {
-  selectedRuta.value = ruta
-  form.value.idRuta = ruta.id
-  visibleTable.value = null
+    selectedRuta.value = ruta
+    form.value.idRuta = ruta.id
+    visibleTable.value = null
 }
 
 function selectUsuario(user) {
-  selectedUsuario.value = user
-  form.value.idUser = user.id
-  visibleTable.value = null
+    selectedUsuario.value = user
+    form.value.idUser = user.id
+    visibleTable.value = null
 }
 
 
