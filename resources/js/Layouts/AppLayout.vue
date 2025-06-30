@@ -14,21 +14,28 @@
                 </a>
                 <div class="navbar-custom-menu">
                     <ul class="nav navbar-nav">
-                        <li v-if="user" class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                                aria-expanded="false">
+                        <li v-if="user" class="nav-item dropdown" style="position: relative;">
+                            <a href="#" class="nav-link" role="button" @click.prevent.stop="toggleDropdown"
+                                :aria-expanded="dropdownOpen.toString()">
                                 <small class="bg-red">Online</small>
-                                <span class="hidden-xs">{{ user.username }}</span>
+                                <span class="hidden-xs">{{ user.name }}</span>
                             </a>
-                            <ul class="dropdown-menu">
+
+                            <ul v-show="dropdownOpen" class="dropdown-menu"
+                                style="position: absolute; top: 100%; right: 0; background: white; border: 1px solid #ccc; min-width: 150px; padding: 0.5rem 0; box-shadow: 0 2px 5px rgba(0,0,0,0.15); z-index: 1000;"
+                                @click.stop>
                                 <li><a class="dropdown-item" href="#">Perfil</a></li>
                                 <li>
-                                    <Link :href="route('logout')" method="post" as="button" class="btn btn-danger">
+                                    <Link :href="route('logout')" method="post" as="button"
+                                        class="btn btn-danger dropdown-item" style="width: 100%; text-align: left;">
                                     Cerrar Sesión
                                     </Link>
                                 </li>
                             </ul>
                         </li>
+
+
+
                     </ul>
                 </div>
             </nav>
@@ -114,7 +121,7 @@
                         </Link>
                     </li>
                     <li class="nav-item">
-                        <Link href="/logout" class="nav-link">
+                        <Link :href="route('logout')" class="nav-link" method="post">
                         <i class="fa fa-sign-out"></i> Cerrar Sesión
                         </Link>
                     </li>
@@ -138,21 +145,37 @@
 </template>
 
 <script setup>
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
-import { ref } from 'vue'
 
 const page = usePage()
 const user = page.props.auth.user
 const permissions = page.props.auth?.user?.permissions ?? page.props.permissions ?? []
-const open = ref(false)
 
-function logout() {
-    router.post(route('logout'))
+const dropdownOpen = ref(true)
+
+function toggleDropdown() {
+
+    dropdownOpen.value = !dropdownOpen.value
 }
-function toggleSidebar() {
-    document.body.classList.toggle('sidebar-collapse')
+function closeDropdown(event) {
+    const dropdown = document.querySelector('.nav-item.dropdown')
+    if (dropdown && !dropdown.contains(event.target)) {
+        dropdownOpen.value = false
+    }
 }
+
+onMounted(() => {
+    console.log(user)
+    document.addEventListener('click', closeDropdown)
+})
+
+onBeforeUnmount(() => {
+    document.removeEventListener('click', closeDropdown)
+})
+
 </script>
+
 
 <style scoped>
 html,
