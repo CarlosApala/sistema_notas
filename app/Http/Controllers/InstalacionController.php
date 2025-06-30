@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Instalacion;
+use App\Models\Predio;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -116,23 +117,23 @@ class InstalacionController extends Controller
                 ->with('error', 'No se pudo cargar la instalación solicitada.');
         }
     }
+
     public function edit($id)
     {
         try {
-            $instalacion = Instalacion::findOrFail($id);
-
-            // Opcional: si quieres enviar la lista de predios aquí, puedes hacerlo,
-            // pero lo ideal es que el componente lo pida por separado vía API.
-            // Aquí solo se envía la instalación.
+            $instalacion = Instalacion::with('predio')->findOrFail($id);
+            $predios = Predio::all(); // para el <select>
 
             return Inertia::render('sistema/Instalaciones/Edit', [
                 'instalacion' => $instalacion,
+                'predios' => $predios,
             ]);
         } catch (\Exception $e) {
             Log::error("Error al cargar instalación para editar: {$e->getMessage()}");
             return redirect()->back()->with('error', 'No se pudo cargar la instalación.');
         }
     }
+
 
 
     public function update(Request $request, $id)

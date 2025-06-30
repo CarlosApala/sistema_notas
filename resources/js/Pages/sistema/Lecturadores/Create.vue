@@ -1,7 +1,7 @@
     <template>
         <div class="container mx-auto p-4 grid grid-cols-2 gap-6">
             <!-- Columna izquierda: Formulario -->
-            <div class="bg-white p-6 rounded shadow max-w-md">
+            <div class="bg-white p-6 rounded shadow max-h-[500px]">
                 <h1 class="text-2xl font-bold mb-6">Asignar Ruta</h1>
 
                 <form @submit.prevent="submit" class="space-y-6">
@@ -59,74 +59,47 @@
             </div>
 
             <!-- Columna derecha: Tabla dinámica -->
-            <div class="bg-white p-6 rounded shadow max-h-[400px] overflow-auto">
+            <div class="bg-white p-6 rounded shadow max-h-[500px] overflow-auto">
                 <template v-if="visibleTable === 'rutas'">
-                    <h2 class="text-xl font-semibold mb-4">Selecciona una Ruta</h2>
-
-                    <table class="w-full table-auto border-collapse border border-gray-300">
-                        <thead>
-                            <tr>
-                                <th class="border border-gray-300 px-3 py-2 text-left">ID</th>
-                                <th class="border border-gray-300 px-3 py-2 text-left">Nombre Ruta</th>
-                                <th class="border border-gray-300 px-3 py-2 text-left">N Instalacion</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="ruta in rutas" :key="ruta.id" class="cursor-pointer hover:bg-blue-100"
-                                @click="selectRuta(ruta)">
-                                <td class="border border-gray-300 px-3 py-2">{{ ruta.id }}</td>
-                                <td class="border border-gray-300 px-3 py-2">{{ ruta.NombreRuta || ruta.ruta?.NombreRuta
-                                    }}</td>
-                                <td class="border border-gray-300 px-3 py-2">{{ ruta.nInstalacion || '-' }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <TablaBusqueda titulo="Selecciona una Ruta" fetchUrl="/api/rutas" :columnas="[
+                        { key: 'id', label: 'ID' },
+                        { key: 'NombreRuta', label: 'Nombre Ruta' }
+                    ]" :onRowClick="selectRuta" :perPage="10" />
                 </template>
 
                 <template v-if="visibleTable === 'usuarios'">
-                    <h2 class="text-xl font-semibold mb-4">Selecciona un Usuario</h2>
-                    <div v-if="usuarios.length === 0" class="text-center text-gray-600">
-                        No hay usuarios disponibles.
-                        <Link href="/sistema/usuarios_lecturadores" class="text-blue-600 hover:underline ml-1">
+                    <TablaBusqueda titulo="Selecciona un Usuario" fetchUrl="/api/lecturadores" :columnas="[
+                        { key: 'id', label: 'ID' },
+                        { key: 'name', label: 'Nombre' },
+                        { key: 'email', label: 'Email' }
+                    ]" :onRowClick="selectUsuario" :perPage="10" />
+                    <div class="text-center mt-2">
+                        <Link href="/sistema/usuarios_lecturadores" class="text-blue-600 hover:underline text-sm">
                         Ver Usuarios Lecturadores
                         </Link>
                     </div>
-
-                    <table v-else class="w-full table-auto border-collapse border border-gray-300">
-                        <thead>
-                            <tr>
-                                <th class="border border-gray-300 px-3 py-2 text-left">ID</th>
-                                <th class="border border-gray-300 px-3 py-2 text-left">Nombre</th>
-                                <th class="border border-gray-300 px-3 py-2 text-left">Email</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="user in usuarios" :key="user.id" class="cursor-pointer hover:bg-blue-100"
-                                @click="selectUsuario(user)">
-                                <td class="border border-gray-300 px-3 py-2">{{ user.id }}</td>
-                                <td class="border border-gray-300 px-3 py-2">{{ user.name }}</td>
-                                <td class="border border-gray-300 px-3 py-2">{{ user.email }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </template>
 
-                <div v-if="!visibleTable" class="text-gray-500">
-                    Haz click en un input para mostrar la tabla correspondiente
+                <div v-if="!visibleTable" class="text-gray-500 text-center py-4">
+                    Haz clic en un input para mostrar la tabla correspondiente
                 </div>
             </div>
+
         </div>
     </template>
 
 <script setup>
-import { ref, watch, onMounted} from 'vue'
-import { router,Link} from '@inertiajs/vue3'
+import { ref, watch, onMounted } from 'vue'
+import { router, Link } from '@inertiajs/vue3'
 import App from '@/Layouts/AppLayout.vue'
+import TablaBusqueda from '@/Components/TablaBusqueda.vue'
+
 
 defineOptions({ layout: App })
 
 const rutas = ref([])
 const usuarios = ref([])
+const searchRuta = ref('')
 const loading = ref(true)
 const visibleTable = ref(null) // 'rutas' o 'usuarios'
 
@@ -161,6 +134,28 @@ watch([selectedYear, selectedMonth], ([newYear, newMonth]) => {
     }
 })
 
+
+const buscarRutas = async () => {
+    try {
+        const url = new URL('/api/rutas', window.location.origin)
+        url.searchParams.set('search', searchRuta.value)
+        url.searchParams.set('per_page', 50)
+
+        const response = await fetch(url)
+        if (!response.ok) throw new Error('Error en la solicitud')
+
+        const data = await response.json()
+        rutas.value = data.data // si usas paginate()
+    } catch (error) {
+        console.error('Error al buscar rutas:', error)
+    }
+}
+
+watch(searchRuta, () => {
+    buscarRutas()
+})
+
+
 async function loadData() {
     loading.value = true
     try {
@@ -174,6 +169,8 @@ async function loadData() {
         const rutasJson = await rutasRes.json()
         rutas.value = rutasJson.data // Ajusta si usas paginación
 
+        console.log(rutasJson)
+
         const usuariosJson = await usuariosRes.json()
         usuarios.value = usuariosJson.data || usuariosJson // Ajusta si usas paginación
     } catch (error) {
@@ -185,6 +182,7 @@ async function loadData() {
 
 onMounted(() => {
     // Llenar años desde 2020 a 2030 (puedes ajustar rango)
+    buscarRutas()
     const currentYear = new Date().getFullYear()
     for (let y = 2020; y <= 2030; y++) {
         years.value.push(y)

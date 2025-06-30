@@ -17,11 +17,11 @@
             </form>
 
             <div class="flex gap-2 flex-wrap">
-                <Link href="/sistema/lecturadores/create" class="btn btn-success">
+                <Link v-if="permissions.includes('asignaciones.create')"  href="/sistema/lecturadores/create" class="btn btn-success">
                 Asignar Ruta
                 </Link>
 
-                <Link :href="filters.deleted ? '/sistema/lecturadores' : '/sistema/lecturadores?deleted=true'"
+                <Link v-if="permissions.includes('asignaciones.view_deleted')" :href="filters.deleted ? '/sistema/lecturadores' : '/sistema/lecturadores?deleted=true'"
                     class="btn btn-secondary">
                 {{ filters.deleted ? 'Ver Activos' : 'Ver Eliminados' }}
                 </Link>
@@ -46,22 +46,22 @@
                     <td class="border border-gray-300 px-4 py-2">{{ asignacion.usuario?.name || '-' }}</td>
                     <td class="border border-gray-300 px-4 py-2">{{ asignacion.periodo || '-' }}</td>
                     <td class="border border-gray-300 px-4 py-2 text-center space-x-2">
-                        <template v-if="filters.deleted">
+                        <template v-if="permissions.includes('asignaciones.restore')">
                             <button @click="restaurar(asignacion.id)"
                                 class="btn btn-success btn-sm px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700">
                                 Restaurar
                             </button>
                         </template>
-                        <template v-else>
-                            <Link :href="`/sistema/lecturadores/${asignacion.id}`"
+                        <template v-else >
+                            <Link v-if="permissions.includes('asignaciones.view')" :href="`/sistema/lecturadores/${asignacion.id}`"
                                 class="btn btn-info btn-sm px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">
                             Ver
                             </Link>
-                            <Link :href="`/sistema/lecturadores/${asignacion.id}/edit`"
+                            <Link v-if="permissions.includes('asignaciones.edit')" :href="`/sistema/lecturadores/${asignacion.id}/edit`"
                                 class="btn btn-warning btn-sm px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600">
                             Editar
                             </Link>
-                            <button @click="eliminar(asignacion.id)"
+                            <button v-if="permissions.includes('asignaciones.delete')" @click="eliminar(asignacion.id)"
                                 class="btn btn-danger btn-sm px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">
                                 Eliminar
                             </button>
@@ -100,20 +100,21 @@ import { Link, router } from '@inertiajs/vue3'
 import Swal from 'sweetalert2'
 import App from '@/Layouts/AppLayout.vue'
 import { ref, watch } from 'vue'
+import { usePage } from '@inertiajs/vue3'
 
+const page = usePage()
+const permissions = page.props.auth?.user?.permissions ?? page.props.permissions ?? []
 defineOptions({ layout: App })
 
-// ✅ Única llamada a defineProps
 const { asignaciones, filters: initialFilters, flash } = defineProps({
     asignaciones: Object,
     filters: Object,
     flash: Object,
 })
 
-// ✅ Reactividad del filtro
+
 const filters = ref({ ...initialFilters })
 
-// ✅ Debounce para búsqueda automática
 let timeout = null
 watch(() => filters.value.search, () => {
     clearTimeout(timeout)
@@ -125,7 +126,7 @@ watch(() => filters.value.search, () => {
     }, 500)
 })
 
-// ✅ Búsqueda por botón
+
 function buscar() {
     router.get('/sistema/lecturadores', filters.value, {
         preserveState: true,

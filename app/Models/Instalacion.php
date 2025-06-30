@@ -29,7 +29,7 @@ class Instalacion extends Model
     ];
 
     protected $casts = [
-        'FechaInstalacion' => 'date',
+
         'NroGrifos' => 'integer',
         'NroBaños' => 'integer',
         'PromedioConsumo' => 'float',
@@ -40,6 +40,11 @@ class Instalacion extends Model
         // La clave foránea es 'idPredio' (con mayúscula P)
         return $this->belongsTo(Predio::class, 'idPredio');
     }
+    public function getFechaInstalacionAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->format('Y-m-d');
+    }
+
 
     public function getCreatedAtAttribute($value)
     {

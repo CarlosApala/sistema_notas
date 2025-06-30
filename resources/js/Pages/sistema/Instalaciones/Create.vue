@@ -1,200 +1,144 @@
 <template>
-    <div class="container mx-auto p-4">
+    <div class="container mx-auto p-4 max-w-4xl">
         <h1 class="text-2xl font-bold mb-6">Registrar Nueva Instalación</h1>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Formulario -->
-            <form @submit.prevent="submit" class="bg-white p-6 rounded shadow max-w-full">
-                <!-- Botones arriba -->
-                <div class="flex justify-end mb-4 space-x-2">
-                    <button type="submit"
-                        class="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white rounded px-4 py-2 flex items-center"
-                        :disabled="processing || !form.idPredio" title="Seleccione un predio para habilitar">
-                        <span v-if="processing" class="mr-2">
-                            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z">
-                                </path>
-                            </svg>
-                        </span>
-                        Guardar
-                    </button>
-                    <Link href="/sistema/instalaciones"
-                        class="btn btn-secondary bg-gray-500 hover:bg-gray-600 text-white rounded px-4 py-2">
-                    Cancelar
-                    </Link>
-                </div>
-
-                <!-- Predio Select -->
-                <div class="mb-4">
-                    <label for="predio" class="block font-medium mb-1">Predio</label>
-                    <select v-model="form.idPredio" id="predio" class="form-select w-full border rounded px-3 py-2">
-                        <option value="" disabled>Selecciona un predio</option>
-                        <option v-for="predio in predios.data" :key="predio.id" :value="predio.id">
-                            {{ predio.direccion }} - {{ predio.zonaBarrio }} ({{ predio.distrito }})
-                        </option>
-                    </select>
-                    <p v-if="errors.idPredio" class="text-red-600 text-sm mt-1">
-                        {{ errors.idPredio }}
-                    </p>
-                </div>
-
-                <!-- Campos simples -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div>
-                        <label class="block font-medium mb-1">Fecha de Instalación</label>
-                        <input type="date" v-model="form.FechaInstalacion"
-                            class="form-input w-full border rounded px-3 py-2" />
-                        <p v-if="errors.FechaInstalacion" class="text-red-600 text-sm mt-1">
-                            {{ errors.FechaInstalacion }}
-                        </p>
-                    </div>
-
-                    <div>
-                        <label class="block font-medium mb-1">Número de Medidor</label>
-                        <input type="text" v-model="form.NumeroMedidor"
-                            class="form-input w-full border rounded px-3 py-2" />
-                        <p v-if="errors.NumeroMedidor" class="text-red-600 text-sm mt-1">
-                            {{ errors.NumeroMedidor }}
-                        </p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div>
-                        <label class="block font-medium mb-1">Estado de Instalación</label>
-                        <input type="text" v-model="form.EstadoInstalacion"
-                            class="form-input w-full border rounded px-3 py-2" />
-                        <p v-if="errors.EstadoInstalacion" class="text-red-600 text-sm mt-1">
-                            {{ errors.EstadoInstalacion }}
-                        </p>
-                    </div>
-                    <div>
-                        <label class="block font-medium mb-1">Estado de Alcantarillado</label>
-                        <input type="text" v-model="form.EstadoAlcantarillado"
-                            class="form-input w-full border rounded px-3 py-2" />
-                        <p v-if="errors.EstadoAlcantarillado" class="text-red-600 text-sm mt-1">
-                            {{ errors.EstadoAlcantarillado }}
-                        </p>
-                    </div>
-                </div>
-
-                <div class="mb-4">
-                    <label class="block font-medium mb-1">Observaciones</label>
-                    <textarea v-model="form.Observaciones"
-                        class="form-input w-full border rounded px-3 py-2"></textarea>
-                    <p v-if="errors.Observaciones" class="text-red-600 text-sm mt-1">
-                        {{ errors.Observaciones }}
-                    </p>
-                </div>
-
-                <!-- Grifos y Baños -->
-                <div class="grid grid-cols-2 gap-4 mb-4">
-                    <div>
-                        <label class="block font-medium mb-1">Nro Grifos</label>
-                        <input type="number" v-model="form.NroGrifos"
-                            class="form-input w-full border rounded px-3 py-2" />
-                        <p v-if="errors.NroGrifos" class="text-red-600 text-sm mt-1">
-                            {{ errors.NroGrifos }}
-                        </p>
-                    </div>
-                    <div>
-                        <label class="block font-medium mb-1">Nro Baños</label>
-                        <input type="number" v-model="form.NroBaños"
-                            class="form-input w-full border rounded px-3 py-2" />
-                        <p v-if="errors.NroBaños" class="text-red-600 text-sm mt-1">
-                            {{ errors.NroBaños }}
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Corte, Promedio y Ubicación -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <div>
-                        <label class="block font-medium mb-1">Estado Corte</label>
-                        <input type="text" v-model="form.EstadoCorte"
-                            class="form-input w-full border rounded px-3 py-2" />
-                        <p v-if="errors.EstadoCorte" class="text-red-600 text-sm mt-1">
-                            {{ errors.EstadoCorte }}
-                        </p>
-                    </div>
-                    <div>
-                        <label class="block font-medium mb-1">Promedio Consumo</label>
-                        <input type="number" step="0.01" v-model="form.PromedioConsumo"
-                            class="form-input w-full border rounded px-3 py-2" />
-                        <p v-if="errors.PromedioConsumo" class="text-red-600 text-sm mt-1">
-                            {{ errors.PromedioConsumo }}
-                        </p>
-                    </div>
-                    <div>
-                        <label class="block font-medium mb-1">Código Ubicación</label>
-                        <input type="text" v-model="form.CodigoUbicacion"
-                            class="form-input w-full border rounded px-3 py-2" />
-                        <p v-if="errors.CodigoUbicacion" class="text-red-600 text-sm mt-1">
-                            {{ errors.CodigoUbicacion }}
-                        </p>
-                    </div>
-                </div>
-            </form>
-
-            <div class="bg-white p-6 rounded shadow" aria-label="Lista de predios">
-                <h2 class="text-xl font-semibold mb-4 sticky top-0 bg-white z-10 border-b border-gray-300">
-                    Lista de Predios
-                </h2>
-
-                <div class="overflow-auto" style="max-height: 600px;">
-                    <table class="min-w-full border-collapse border border-gray-300">
-                        <thead>
-                            <tr>
-                                <th class="border border-gray-300 px-4 py-2 text-left">Dirección</th>
-                                <th class="border border-gray-300 px-4 py-2 text-left">Zona/Barrio</th>
-                                <th class="border border-gray-300 px-4 py-2 text-left">Distrito</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="predio in predios.data" :key="predio.id" @click="selectPredio(predio.id)" :class="[
-                                'cursor-pointer hover:bg-blue-100',
-                                form.idPredio === predio.id ? 'bg-blue-200' : '',
-                            ]" tabindex="0" @keydown.enter.prevent="selectPredio(predio.id)">
-                                <td class="border border-gray-300 px-4 py-2">{{ predio.direccion }}</td>
-                                <td class="border border-gray-300 px-4 py-2">{{ predio.zonaBarrio }}</td>
-                                <td class="border border-gray-300 px-4 py-2">{{ predio.distrito }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="mt-4 flex justify-center space-x-2">
-                    <button class="px-3 py-1 border rounded disabled:opacity-50"
-                        :disabled="predios.current_page <= 1 || loadingPredios"
-                        @click="goToPage(predios.current_page - 1)">
-                        Anterior
-                    </button>
-
-                    <span class="px-3 py-1 border rounded bg-gray-200">
-                        Página {{ predios.current_page }} de {{ predios.last_page }}
+        <form @submit.prevent="submit" class="bg-white p-6 rounded shadow max-w-full space-y-6">
+            <!-- Botones arriba -->
+            <div class="flex justify-end space-x-2">
+                <button type="submit"
+                    class="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white rounded px-4 py-2 flex items-center"
+                    :disabled="processing || !form.idPredio" title="Seleccione un predio para habilitar">
+                    <span v-if="processing" class="mr-2">
+                        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                            </circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                        </svg>
                     </span>
+                    Guardar
+                </button>
+                <Link href="/sistema/instalaciones"
+                    class="btn btn-secondary bg-gray-500 hover:bg-gray-600 text-white rounded px-4 py-2">
+                Cancelar
+                </Link>
+            </div>
 
-                    <button class="px-3 py-1 border rounded disabled:opacity-50"
-                        :disabled="predios.current_page >= predios.last_page || loadingPredios"
-                        @click="goToPage(predios.current_page + 1)">
-                        Siguiente
-                    </button>
+            <!-- Selector de Predio con Modal (ahora en grid de 2 columnas junto a Fecha de Instalación) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block font-medium mb-1">Predio</label>
+                    <div class="flex gap-2 items-center">
+                        <input type="text" class="form-input w-full border rounded px-3 py-2 bg-gray-100"
+                            :value="selectedPredioDisplay" readonly placeholder="Ningún predio seleccionado" />
+                        <button type="button" class="btn btn-secondary"
+                            @click="showPredioModal = true">
+                            Seleccionar
+                        </button>
+                    </div>
+                    <p v-if="errors.idPredio" class="text-red-600 text-sm mt-1">{{ errors.idPredio }}</p>
+                </div>
+
+                <div>
+                    <label class="block font-medium mb-1">Fecha de Instalación</label>
+                    <input type="date" v-model="form.FechaInstalacion"
+                        class="form-input w-full border rounded px-3 py-2" />
+                    <p v-if="errors.FechaInstalacion" class="text-red-600 text-sm mt-1">{{ errors.FechaInstalacion }}
+                    </p>
                 </div>
             </div>
 
-        </div>
+            <!-- Número de Medidor y Estado de Instalación en 2 columnas -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block font-medium mb-1">Número de Medidor</label>
+                    <input type="text" v-model="form.NumeroMedidor"
+                        class="form-input w-full border rounded px-3 py-2" />
+                    <p v-if="errors.NumeroMedidor" class="text-red-600 text-sm mt-1">{{ errors.NumeroMedidor }}</p>
+                </div>
+
+                <div>
+                    <label class="block font-medium mb-1">Estado de Instalación</label>
+                    <input type="text" v-model="form.EstadoInstalacion"
+                        class="form-input w-full border rounded px-3 py-2" />
+                    <p v-if="errors.EstadoInstalacion" class="text-red-600 text-sm mt-1">{{ errors.EstadoInstalacion }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Estado de Alcantarillado ocupa toda la fila -->
+            <div>
+                <label class="block font-medium mb-1">Estado de Alcantarillado</label>
+                <input type="text" v-model="form.EstadoAlcantarillado"
+                    class="form-input w-full border rounded px-3 py-2" />
+                <p v-if="errors.EstadoAlcantarillado" class="text-red-600 text-sm mt-1">{{ errors.EstadoAlcantarillado
+                    }}</p>
+            </div>
+
+            <!-- Observaciones ocupa toda la fila -->
+            <div>
+                <label class="block font-medium mb-1">Observaciones</label>
+                <textarea v-model="form.Observaciones" class="form-input w-full border rounded px-3 py-2"
+                    rows="3"></textarea>
+                <p v-if="errors.Observaciones" class="text-red-600 text-sm mt-1">{{ errors.Observaciones }}</p>
+            </div>
+
+            <!-- Grifos y Baños en dos columnas -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block font-medium mb-1">Nro Grifos</label>
+                    <input type="number" v-model="form.NroGrifos" class="form-input w-full border rounded px-3 py-2" />
+                    <p v-if="errors.NroGrifos" class="text-red-600 text-sm mt-1">{{ errors.NroGrifos }}</p>
+                </div>
+                <div>
+                    <label class="block font-medium mb-1">Nro Baños</label>
+                    <input type="number" v-model="form.NroBaños" class="form-input w-full border rounded px-3 py-2" />
+                    <p v-if="errors.NroBaños" class="text-red-600 text-sm mt-1">{{ errors.NroBaños }}</p>
+                </div>
+            </div>
+
+            <!-- Corte, Promedio y Ubicación en 3 columnas responsivas -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                    <label class="block font-medium mb-1">Estado Corte</label>
+                    <input type="text" v-model="form.EstadoCorte" class="form-input w-full border rounded px-3 py-2" />
+                    <p v-if="errors.EstadoCorte" class="text-red-600 text-sm mt-1">{{ errors.EstadoCorte }}</p>
+                </div>
+                <div>
+                    <label class="block font-medium mb-1">Promedio Consumo</label>
+                    <input type="number" step="0.01" v-model="form.PromedioConsumo"
+                        class="form-input w-full border rounded px-3 py-2" />
+                    <p v-if="errors.PromedioConsumo" class="text-red-600 text-sm mt-1">{{ errors.PromedioConsumo }}</p>
+                </div>
+                <div>
+                    <label class="block font-medium mb-1">Código Ubicación</label>
+                    <input type="text" v-model="form.CodigoUbicacion"
+                        class="form-input w-full border rounded px-3 py-2" />
+                    <p v-if="errors.CodigoUbicacion" class="text-red-600 text-sm mt-1">{{ errors.CodigoUbicacion }}</p>
+                </div>
+            </div>
+        </form>
+
+        <!-- Modal para seleccionar predio -->
+        <TablaModal :visible="showPredioModal" titulo="Seleccionar Predio" :columnas="[
+            { key: 'direccion', label: 'Dirección' },
+            { key: 'zonaBarrio', label: 'Zona/Barrio' },
+            { key: 'distrito', label: 'Distrito' }
+        ]" fetch-url="/api/predios" @close="showPredioModal = false" @select="onSelectPredio" />
     </div>
 </template>
 
+
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { router, Link } from '@inertiajs/vue3'
+import TablaModal from '@/Components/TablaModal.vue'
 import App from '@/Layouts/AppLayout.vue'
 
 defineOptions({ layout: App })
+
+const showPredioModal = ref(false)
+const predioSeleccionado = ref(null)
 
 const predios = ref({
     data: [],
@@ -217,6 +161,15 @@ const form = ref({
     CodigoUbicacion: '',
 })
 
+
+const selectedPredioDisplay = computed(() => {
+    if (!predioSeleccionado.value) return ''
+    const p = predioSeleccionado.value
+    return `${p.direccion} - ${p.zonaBarrio} (${p.distrito})`
+})
+
+
+
 const errors = ref({})
 const processing = ref(false)
 const loadingPredios = ref(false)
@@ -232,6 +185,13 @@ async function loadPredios(page = 1) {
     } finally {
         loadingPredios.value = false
     }
+}
+
+// Función para manejar selección del predio
+function onSelectPredio(predio) {
+    form.value.idPredio = predio.id
+    predioSeleccionado.value = predio
+    showPredioModal.value = false // opcional: cierra el modal al seleccionar
 }
 
 onMounted(() => {

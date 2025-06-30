@@ -78,22 +78,22 @@
                     </li>
 
 
-                    <li class="nav-item">
+                    <li v-if="permissions.includes('zona.index')" class="nav-item">
                         <Link href="/sistema/zonas_rutas" class="nav-link">
                         <i class="fa fa-map"></i> Zonas y Rutas
                         </Link>
                     </li>
-                    <li class="nav-item">
+                    <li v-if="permissions.includes('predios.index')" class="nav-item">
                         <Link href="/sistema/predios" class="nav-link">
                         <i class="fa fa-home"></i> Predios
                         </Link>
                     </li>
-                    <li class="nav-item">
+                    <li v-if="permissions.includes('instalaciones.index')" class="nav-item">
                         <Link href="/sistema/instalaciones" class="nav-link">
                         <i class="fa fa-cogs"></i> Instalaciones
                         </Link>
                     </li>
-                    <li class="nav-item">
+                    <li v-if="permissions.includes('asignaciones.view')" class="nav-item">
                         <Link href="/sistema/lecturadores" class="nav-link">
                         <i class="fa fa-address-card"></i> Asignaciones
                         </Link>
@@ -143,7 +143,7 @@ import { ref } from 'vue'
 
 const page = usePage()
 const user = page.props.auth.user
-const permissions = user ? user.permissions : []
+const permissions = page.props.auth?.user?.permissions ?? page.props.permissions ?? []
 const open = ref(false)
 
 function logout() {

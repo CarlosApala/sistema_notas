@@ -17,12 +17,12 @@
             </form>
 
             <div class="flex gap-2 flex-wrap">
-                <Link v-if="permissions.includes('lecturadores.create')" href="/sistema/usuarios_lecturadores/create"
+                <Link v-if="tienePermiso('lecturadores.create')" href="/sistema/usuarios_lecturadores/create"
                     class="btn btn-success">
                 Nuevo Lecturador
                 </Link>
 
-                <Link v-if="permissions.includes('lecturadores.view_deleted')"
+                <Link v-if="tienePermiso('lecturadores.view_deleted')"
                     :href="filters.deleted ? '/sistema/usuarios_lecturadores' : '/sistema/usuarios_lecturadores?deleted=true'"
                     class="btn btn-secondary">
                 {{ filters.deleted ? 'Ver Activos' : 'Ver Eliminados' }}
@@ -48,16 +48,17 @@
                         <td class="border border-gray-300 px-4 py-2">{{ usuario.email }}</td>
                         <td class="border border-gray-300 px-4 py-2">{{ usuario.username }}</td>
                         <td class="border border-gray-300 px-4 py-2 text-center space-x-2 whitespace-nowrap">
+
                             <template v-if="filters.deleted">
-                                <button v-if="permissions.includes('lecturadores.restore')"
-                                    @click="restaurar(usuario.id)"
+
+                                <button v-if="tienePermiso('lecturadores.restore')" @click="restaurar(usuario.id)"
                                     class="btn btn-success btn-sm px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700">
                                     Restaurar
                                 </button>
                             </template>
                             <template v-else>
 
-                                <button v-if="permissions.includes('lecturadores.delete')" @click="eliminar(usuario.id)"
+                                <button v-if="tienePermiso('lecturadores.delete')" @click="eliminar(usuario.id)"
                                     class="btn btn-danger btn-sm px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">
                                     Eliminar
                                 </button>
@@ -92,12 +93,15 @@
 import { Link, router } from '@inertiajs/vue3'
 import Swal from 'sweetalert2'
 import App from '@/Layouts/AppLayout.vue'
-import { ref, watch } from 'vue'
+import { ref, watch, onUnmounted } from 'vue'
 import { usePage } from '@inertiajs/vue3'
 
-const page = usePage()
-const permissions = page.props.auth?.user?.permissions ?? page.props.permissions ?? []
 defineOptions({ layout: App })
+
+const page = usePage()
+const permissions = ref(
+    page.props.auth?.user?.permissions ?? page.props.permissions ?? []
+)
 
 const { usuarios: initialUsuarios, filters: initialFilters, flash } = defineProps({
     usuarios: Object,
@@ -105,6 +109,14 @@ const { usuarios: initialUsuarios, filters: initialFilters, flash } = defineProp
     flash: Object,
 })
 
+// Función para verificar permisos
+function tienePermiso(permiso) {
+    console.log(permiso)
+    return Array.isArray(permissions.value) && permissions.value.includes(permiso)
+}
+
+
+// Filtros
 const filters = ref({ ...initialFilters })
 
 let timeout = null
@@ -187,6 +199,10 @@ function paginar(url) {
         console.error("Error al parsear URL de paginación:", url)
     }
 }
+
+onUnmounted(() => {
+    console.log("Permisos:", permissions.value)
+})
 </script>
 
 <style scoped>

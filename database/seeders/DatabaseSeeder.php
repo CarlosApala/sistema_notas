@@ -43,7 +43,12 @@ class DatabaseSeeder extends Seeder
             PersonalInternoSeeder::class,
             UserRoleSeeder::class,
             PersonalInternoPermissionsSeeder::class,
-            LecturadoresPermissionsSeeder::class
+            LecturadoresPermissionsSeeder::class,
+            PermissionSeederZonas::class,
+            PrediosPermissionsSeeder::class,
+            InstalacionesPermissionsSeeder::class,
+            AsignacionesPermissionsSeeder::class,
+            UsuariosPermissionsSeeder::class
         ]);
     }
 }

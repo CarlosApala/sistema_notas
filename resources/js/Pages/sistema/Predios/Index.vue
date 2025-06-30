@@ -1,130 +1,111 @@
 <template>
-    <div class="container mx-auto p-4">
-        <h1 class="text-2xl font-bold mb-4">
-            Predios <span v-if="filters.deleted">(eliminados)</span>
-        </h1>
+    <div class="container mx-auto p-4 max-w-5xl">
+
 
         <div v-if="flash.success" class="alert alert-success mb-4">{{ flash.success }}</div>
 
-        <!-- Filtros -->
-        <div class="d-flex justify-between align-items-center mb-4 flex-wrap gap-2">
-            <form @submit.prevent="buscar" class="d-flex gap-2 flex-wrap">
-                <input v-model="filters.search" type="text" placeholder="Buscar por dirección, barrio o distrito" class="form-control" />
-                <button type="submit" class="btn btn-primary">Buscar</button>
-            </form>
-
-            <div class="flex gap-2 flex-wrap">
-                <Link href="/sistema/predios/create" class="btn btn-success">Registrar Predio</Link>
-                <Link
-                    :href="filters.deleted ? '/sistema/predios' : '/sistema/predios?deleted=true'"
-                    class="btn btn-secondary"
-                >
+        <div class="mb-4 flex flex-wrap gap-2 justify-between items-center">
+            <h1 class="text-2xl font-bold mb-4">
+                Lista de los Predios <span v-if="filters.deleted">(eliminados)</span>
+            </h1>
+            <div class="flex gap-2 flex-wrap" >
+                <Link v-if="permissions.includes('predios.crear')" href="/sistema/predios/create" class="btn btn-success">Registrar Predio</Link>
+                <button v-if="permissions.includes('predios.eliminar')" @click="toggleDeleted" class="btn btn-secondary">
                     {{ filters.deleted ? 'Ver Activos' : 'Ver Eliminados' }}
-                </Link>
+                </button>
             </div>
         </div>
 
-        <!-- Tabla -->
-        <table class="table-auto w-full border-collapse border border-gray-300">
-            <thead>
-                <tr class="bg-gray-200">
-                    <th class="border px-4 py-2 text-left">ID</th>
-                    <th class="border px-4 py-2 text-left">Dirección</th>
-                    <th class="border px-4 py-2 text-left">Zona/Barrio</th>
-                    <th class="border px-4 py-2 text-left">Distrito</th>
-                    <th class="border px-4 py-2 text-left">Creado</th>
-                    <th class="border px-4 py-2 text-center">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="predio in predios.data" :key="predio.id" class="hover:bg-gray-100">
-                    <td class="border px-4 py-2">{{ predio.id }}</td>
-                    <td class="border px-4 py-2">{{ predio.direccion || '-' }}</td>
-                    <td class="border px-4 py-2">{{ predio.zonaBarrio || '-' }}</td>
-                    <td class="border px-4 py-2">{{ predio.distrito || '-' }}</td>
-                    <td class="border px-4 py-2">{{ predio.created_at }}</td>
-                    <td class="border px-4 py-2 text-center space-x-2">
-                        <template v-if="filters.deleted">
-                            <button @click="restaurar(predio.id)" class="btn btn-success btn-sm">Restaurar</button>
-                        </template>
-                        <template v-else>
-                            <Link :href="`/sistema/predios/${predio.id}`" class="btn btn-info btn-sm">Ver</Link>
-                            <Link :href="`/sistema/predios/${predio.id}/edit`" class="btn btn-warning btn-sm">Editar</Link>
-                            <button @click="eliminar(predio.id)" class="btn btn-danger btn-sm">Eliminar</button>
-                        </template>
-                    </td>
-                </tr>
-                <tr v-if="predios.data.length === 0">
-                    <td colspan="6" class="text-center p-4 text-gray-500">No se encontraron predios.</td>
-                </tr>
-            </tbody>
-        </table>
+        <TablaBusqueda :titulo="'Lista de Predios'" :fetch-url="fetchUrl" :columnas="columnas" :per-page="10"
+            @onRowClick="handleRowClick">
+            <template #row="{ item }">
+                <td class="p-2 border">{{ item.id }}</td>
+                <td class="p-2 border">{{ item.direccion }}</td>
+                <td class="p-2 border">{{ item.zonaBarrio }}</td>
+                <td class="p-2 border">{{ item.distrito }}</td>
 
-        <!-- Paginación -->
-        <nav class="mt-4 flex justify-center" v-if="predios.links?.length">
-            <ul class="pagination">
-                <li
-                    v-for="(link, index) in predios.links"
-                    :key="index"
-                    :class="['page-item', { disabled: !link.url, active: link.active }]"
-                >
-                    <a
-                        v-if="link.url"
-                        href="#"
-                        class="page-link"
-                        @click.prevent="paginar(link.url)"
-                        v-html="link.label"
-                    ></a>
-                    <span v-else class="page-link" v-html="link.label"></span>
-                </li>
-            </ul>
-        </nav>
+                <td class="p-2 border text-center space-x-2">
+                    <button v-if="permissions.includes('predios.restaurar')" @click.stop="restaurar(item.id)" class="btn btn-success btn-sm">
+                        Restaurar
+                    </button>
+                    <template v-else>
+                        <Link v-if="permissions.includes('predios.ver')" :href="`/sistema/predios/${item.id}`" class="btn btn-info btn-sm">Ver</Link>
+                        <Link v-if="permissions.includes('predios.editar')" :href="`/sistema/predios/${item.id}/edit`" class="btn btn-warning btn-sm">Editar</Link>
+                        <button v-if="permissions.includes('predios.eliminar')" @click.stop="eliminar(item.id)" class="btn btn-danger btn-sm">Eliminar</button>
+                    </template>
+                </td>
+            </template>
+        </TablaBusqueda>
     </div>
 </template>
-
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { Link, router } from '@inertiajs/vue3'
 import Swal from 'sweetalert2'
-    import App from '@/Layouts/AppLayout.vue'
+import App from '@/Layouts/AppLayout.vue'
+import TablaBusqueda from '@/Components/TablaBusqueda.vue'
+import { usePage } from '@inertiajs/vue3'
 
-    defineOptions({ layout: App })
+const page = usePage()
+const permissions = page.props.auth?.user?.permissions ?? page.props.permissions ?? []
+defineOptions({ layout: App })
 
-const { predios, filters: initialFilters, flash } = defineProps({
-    predios: Object,
+const props = defineProps({
     filters: Object,
     flash: Object,
 })
 
-const filters = ref({ ...initialFilters })
+const filters = ref({ ...props.filters })
+const busqueda = ref(filters.value.search || '')
 
-// Búsqueda con debounce
+// Generar la URL para la API con filtros
+const fetchUrl = computed(() => {
+    const url = new URL('/api/predios', window.location.origin)
+    if (filters.value.deleted) url.searchParams.append('deleted', 'true')
+    if (busqueda.value) url.searchParams.append('search', busqueda.value)
+    url.searchParams.append('per_page', '10')
+
+
+    return url.toString()
+})
+
+const columnas = [
+    { key: 'id', label: 'ID' },
+    { key: 'direccion', label: 'Dirección' },
+    { key: 'zonaBarrio', label: 'Zona/Barrio' },
+    { key: 'distrito', label: 'Distrito' },
+
+
+]
+
+// Busqueda con debounce
 let timeout = null
-watch(() => filters.value.search, () => {
+watch(busqueda, () => {
     clearTimeout(timeout)
     timeout = setTimeout(() => {
-        router.get('/sistema/predios', filters.value, {
-            preserveState: true,
-            replace: true,
-        })
+        filters.value.search = busqueda.value
     }, 500)
 })
 
-function buscar() {
-    router.get('/sistema/predios', filters.value, {
+watch(filters, (newFilters) => {
+    router.replace({
+        url: '/sistema/predios',
+        data: { ...newFilters },
         preserveState: true,
-        replace: true,
     })
+})
+
+function buscar() {
+    filters.value.search = busqueda.value
 }
 
-function paginar(url) {
-    try {
-        const u = new URL(url, window.location.origin)
-        const relative = u.pathname + u.search
-        router.get(relative, {}, { preserveState: true, replace: true })
-    } catch (e) {
-        console.error('Error al parsear URL de paginación:', url)
-    }
+function toggleDeleted() {
+    filters.value.deleted = !filters.value.deleted
+    busqueda.value = ''
+}
+
+function handleRowClick(item) {
+    router.visit(`/sistema/predios/${item.id}`)
 }
 
 function eliminar(id) {

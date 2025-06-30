@@ -55,6 +55,18 @@
                     </div>
                 </div>
             </div>
+            <div>
+                <h4 class="font-bold mb-2">Permisos de Usuarios</h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                    <div v-for="permiso in usuariosPermisos" :key="permiso.id" class="flex items-center space-x-2">
+                        <input type="checkbox" :id="'permiso_' + permiso.id" :value="permiso.name"
+                            v-model="form.permisos" class="form-check-input" />
+                        <label :for="'permiso_' + permiso.id" class="form-check-label">
+                            {{ permissionLabels[permiso.name] || permiso.name }}
+                        </label>
+                    </div>
+                </div>
+            </div>
 
             <div>
                 <h4 class="font-bold mb-2">Permisos de Personal Interno</h4>
@@ -79,9 +91,63 @@
                         <label :for="'permiso_' + permiso.id" class="form-check-label">
                             {{ permissionLabels[permiso.name] || permiso.name }}
                         </label>
+
                     </div>
                 </div>
             </div>
+            <div>
+                <h4 class="font-bold mb-2">Permisos de Zonas</h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                    <div v-for="permiso in zonaPermisos" :key="permiso.id" class="flex items-center space-x-2">
+                        <input type="checkbox" :id="'permiso_' + permiso.id" :value="permiso.name"
+                            v-model="form.permisos" class="form-check-input" />
+                        <label :for="'permiso_' + permiso.id" class="form-check-label">
+                            {{ permissionLabels[permiso.name] || permiso.name }}
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h4 class="font-bold mb-2">Permisos de Predios</h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                    <div v-for="permiso in prediosPermisos" :key="permiso.id" class="flex items-center space-x-2">
+                        <input type="checkbox" :id="'permiso_' + permiso.id" :value="permiso.name"
+                            v-model="form.permisos" class="form-check-input" />
+                        <label :for="'permiso_' + permiso.id" class="form-check-label">
+                            {{ permissionLabels[permiso.name] || permiso.name }}
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h4 class="font-bold mb-2">Permisos de Instalaciones</h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                    <div v-for="permiso in instalacionesPermisos" :key="permiso.id" class="flex items-center space-x-2">
+                        <input type="checkbox" :id="'permiso_' + permiso.id" :value="permiso.name"
+                            v-model="form.permisos" class="form-check-input" />
+                        <label :for="'permiso_' + permiso.id" class="form-check-label">
+                            {{ permissionLabels[permiso.name] || permiso.name }}
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div>
+                <h4 class="font-bold mb-2">Permisos de Asignaciones</h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                    <div v-for="permiso in asignacionesPermisos" :key="permiso.id" class="flex items-center space-x-2">
+                        <input type="checkbox" :id="'permiso_' + permiso.id" :value="permiso.name"
+                            v-model="form.permisos" class="form-check-input" />
+                        <label :for="'permiso_' + permiso.id" class="form-check-label">
+                            {{ permissionLabels[permiso.name] || permiso.name }}
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+
 
 
             <div class="flex justify-end space-x-2">
@@ -138,8 +204,63 @@ const lecturadoresPermisos = permisosDisponibles.filter(p =>
         'lecturadores.restore',
     ].includes(p.name)
 )
+const zonaPermisos = permisosDisponibles.filter(p =>
+    [
+        'zona.index',
+        'zona.ver',
+        'zona.crear',
+        'zona.editar',
+        'zona.eliminar',
+        'zona.restaurar',
+    ].includes(p.name)
+)
+const usuariosPermisos = permisosDisponibles.filter(p =>
+    [
+        'usuarios.view',
+        'usuarios.show',
+        'usuarios.create',
+        'usuarios.edit',
+        'usuarios.delete',
+        'usuarios.view_deleted',
+        'usuarios.restore',
+    ].includes(p.name)
+)
 
 
+const instalacionesPermisos = permisosDisponibles.filter(p =>
+    [
+        'instalaciones.index',
+        'instalaciones.ver',
+        'instalaciones.crear',
+        'instalaciones.editar',
+        'instalaciones.eliminar',
+        'instalaciones.restaurar',
+    ].includes(p.name)
+)
+const asignacionesPermisos = permisosDisponibles.filter(p =>
+    [
+        'asignaciones.view',
+        'asignaciones.show',
+        'asignaciones.create',
+        'asignaciones.edit',
+        'asignaciones.delete',
+        'asignaciones.view_deleted',
+        'asignaciones.restore',
+    ].includes(p.name)
+)
+
+
+
+const prediosPermisos = permisosDisponibles.filter(p =>
+    [
+        'predios.index',
+        'predios.ver',
+        'predios.crear',
+        'predios.editar',
+        'predios.eliminar',
+        'predios.restaurar',
+    ].includes(p.name)
+)
 
 
 // Aquí va la variable filtrada con los permisos específicos:

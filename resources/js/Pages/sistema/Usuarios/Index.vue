@@ -1,79 +1,65 @@
 <template>
-    <div class="container mx-auto p-4">
+    <div class="container mx-auto p-4 max-w-5xl">
         <h1 class="text-2xl font-bold mb-4">Usuarios del Sistema</h1>
 
-        <!-- Mensaje de éxito -->
-        <div v-if="flash.success" class="alert alert-success mb-4">
-            {{ flash.success }}
-        </div>
-
-        <!-- Botón Crear Nuevo Usuario -->
-        <Link href="/sistema/usuarios/create"
+        <Link v-if="permissions.includes('usuarios.create')" href="/sistema/usuarios/create"
             class="btn btn-success mb-3 inline-block px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
         Crear Nuevo Usuario
         </Link>
 
-        <!-- Tabla de usuarios -->
-        <table class="table-auto w-full border-collapse border border-gray-300">
-            <thead>
-                <tr class="bg-gray-200">
-                    <th class="border border-gray-300 px-4 py-2 text-left">Nombre</th>
-                    <th class="border border-gray-300 px-4 py-2 text-left">Email</th>
-                    <th class="border border-gray-300 px-4 py-2 text-left">Usuario</th>
-                    <th class="border border-gray-300 px-4 py-2 text-left">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="user in users" :key="user.id" class="hover:bg-gray-100">
-                    <td class="border border-gray-300 px-4 py-2">{{ user.name }}</td>
-                    <td class="border border-gray-300 px-4 py-2">{{ user.email }}</td>
-                    <td class="border border-gray-300 px-4 py-2">{{ user.username }}</td>
-                    <td class="border border-gray-300 px-4 py-2 space-x-2">
-                        <Link :href="`/sistema/usuarios/${user.id}`"
-                            class="btn btn-info btn-sm px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Ver
-                        </Link>
-                        <Link :href="`/sistema/usuarios/${user.id}/edit`"
-                            class="btn btn-warning btn-sm px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600">
-                        Editar
-                        </Link>
-                        <button @click="deleteUser(user.id)"
-                            class="btn btn-danger btn-sm px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">
-                            Eliminar
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <p class="mt-4 text-base text-gray-700 font-semibold border-t pt-3">
-            <strong>Nota:</strong> Si actualizas los permisos, recarga la página para que se apliquen los cambios.
-        </p>
+        <tabla-busqueda titulo="Lista de Usuarios" fetch-url="/api/usuarios" :columnas="columnas" :per-page="10"
+            @onRowClick="handleRowClick">
+            <template #row="{ item }">
+                <td class="p-2 border">{{ item.name }}</td>
+                <td class="p-2 border">{{ item.email }}</td>
+                <td class="p-2 border">{{ item.username }}</td>
+                <td class="p-2 border space-x-2">
+                    <Link v-if="permissions.includes('usuarios.view')" :href="`/sistema/usuarios/${item.id}`"
+                        class="btn btn-info btn-sm px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+                        @click.stop>
+                    Ver
+                    </Link>
+                    <Link v-if="permissions.includes('usuarios.edit')" :href="`/sistema/usuarios/${item.id}/edit`"
+                        class="btn btn-warning btn-sm px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                        @click.stop>
+                    Editar
+                    </Link>
+                    <button v-if="permissions.includes('usuarios.delete')" @click.stop="deleteUser(item.id)"
+                        class="btn btn-danger btn-sm px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">
+                        Eliminar
+                    </button>
+                </td>
+            </template>
+        </tabla-busqueda>
     </div>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
-import Swal from 'sweetalert2'
-
+import { ref } from 'vue'
 import { Link, router } from '@inertiajs/vue3'
+import TablaBusqueda from '@/Components/TablaBusqueda.vue'
+import Swal from 'sweetalert2'
 import App from '@/Layouts/AppLayout.vue'
+import { usePage } from '@inertiajs/vue3'
+
+const page = usePage()
+const permissions = page.props.auth?.user?.permissions ?? page.props.permissions ?? []
 
 defineOptions({ layout: App })
+const columnas = [
+    { key: 'name', label: 'Nombre' },
+    { key: 'email', label: 'Email' },
+    { key: 'username', label: 'Usuario' },
+    // La columna acciones la vamos a manejar manualmente, no aquí
+]
 
-// Props que envía Laravel (desde el controlador)
-const props = defineProps({
-    users: Array,
-    flash: Object,
-})
+// Manejo del clic en fila, si quieres navegar o mostrar detalles
+function handleRowClick(user) {
+    // Por ejemplo, ir a la vista detalle del usuario:
+    router.visit(`/sistema/usuarios/${user.id}`)
+}
 
-// Mostrar toast o alerta cuando flash.success cambie
-watch(() => props.flash?.success, (msg) => {
-    if (msg) {
-        alert(msg) // Puedes reemplazar con una notificación mejor
-    }
-})
-
-// Función para eliminar usuario
+// Función para eliminar usuario (podrías hacer un botón externo o un slot en tablaBusqueda si soporta)
 function deleteUser(id) {
     Swal.fire({
         title: '¿Estás seguro?',
@@ -95,13 +81,3 @@ function deleteUser(id) {
     })
 }
 </script>
-
-<style scoped>
-/* Puedes ajustar los estilos o usar Tailwind / Bootstrap según prefieras */
-
-/* Opcional: estilos para los botones */
-.btn {
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-</style>

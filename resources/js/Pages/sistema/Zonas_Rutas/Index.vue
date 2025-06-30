@@ -1,106 +1,57 @@
 <template>
-    <div class="container py-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0">Zonas y Rutas</h4>
-            <button class="btn btn-success" @click="abrirModalRegistroZona">Registrar Zona</button>
+    <div class="container py-4 max-w-5xl mx-auto">
+        <div class="d-flex justify-content-between items-center mb-3">
+            <h4 class="mb-0 text-xl font-semibold">Zonas y Rutas</h4>
+            <button v-if="permissions.includes('zona.crear')" class="btn btn-success" @click="abrirModalRegistroZona">Registrar Zona</button>
         </div>
 
-        <!-- Filtro de búsqueda -->
-        <div class="mb-3 d-flex gap-2">
-            <input v-model="filters.search" type="text" class="form-control" placeholder="Buscar por nombre de zona" />
-        </div>
-
-        <table class="table-auto w-full border-collapse border border-gray-300">
-            <thead>
-                <tr class="bg-gray-200">
-                    <th class="border border-gray-300 px-4 py-2 text-left">#</th>
-                    <th class="border border-gray-300 px-4 py-2 text-left">Zona</th>
-                    <th class="border border-gray-300 px-4 py-2 text-left">Rutas</th>
-                    <th class="border border-gray-300 px-4 py-2 text-left text-center">Acción</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="zona in zonas.data" :key="zona.id" class="hover:bg-gray-100">
-                    <td class="border border-gray-300 px-4 py-2">{{ zona.id }}</td>
-                    <td class="border border-gray-300 px-4 py-2">{{ zona.NombreZona }}</td>
-                    <td class="border border-gray-300 px-4 py-2 text-truncate max-w-xs" style="max-width: 200px;">
-                        <span v-if="zona.rutas?.length">
-                            {{zona.rutas.map(r => r.NombreRuta).join(' - ')}}
-                        </span>
-                        <span class="text-gray-500 italic" v-else>Sin rutas registradas</span>
-                    </td>
-                    <td class="border border-gray-300 px-4 py-2 text-center space-x-2">
-                        <Link class="btn btn-info btn-sm px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
-                            :href="`/sistema/zonas_rutas/${zona.id}`">
-                        Ver más
-                        </Link>
-                        <button class="btn btn-danger btn-sm px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
-                            @click="confirmarEliminacion(zona.id)">
-                            Eliminar
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
-
-
-        <!-- Paginación -->
-        <nav class="mt-3" v-if="zonas.links?.length">
-            <ul class="pagination justify-content-center">
-                <li v-for="(link, index) in zonas.links" :key="index"
-                    :class="['page-item', { active: link.active, disabled: !link.url }]">
-                    <a v-if="link.url" href="#" class="page-link" @click.prevent="paginar(link.url)"
-                        v-html="link.label"></a>
-                    <span v-else class="page-link" v-html="link.label"></span>
-                </li>
-            </ul>
-        </nav>
-
+        <TablaBusqueda titulo="Lista de Zonas" fetch-url="/api/zonas_rutas" :columnas="columnas" :per-page="10"
+            @onRowClick="() => { }">
+            <template #row="{ item }">
+                <td class="p-2 border">{{ item.id }}</td>
+                <td class="p-2 border">{{ item.NombreZona }}</td>
+                <td class="p-2 border max-w-xs text-truncate" style="max-width: 200px;">
+                    <span v-if="item.rutas?.length">
+                        {{item.rutas.map(r => r.NombreRuta).join(' - ')}}
+                    </span>
+                    <span v-else class="text-gray-500 italic">Sin rutas registradas</span>
+                </td>
+                <td class="p-2 border text-center space-x-2">
+                    <Link v-if="permissions.includes('zona.ver')" class="btn btn-info btn-sm px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+                        :href="`/sistema/zonas_rutas/${item.id}`" @click.stop>
+                    Ver más
+                    </Link>
+                    <button v-if="permissions.includes('zona.eliminar')" class="btn btn-danger btn-sm px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+                        @click.stop="confirmarEliminacion(item.id)">
+                        Eliminar
+                    </button>
+                </td>
+            </template>
+        </TablaBusqueda>
     </div>
 </template>
 
 <script setup>
-import { reactive, watch } from 'vue'
+import { ref } from 'vue'
 import { useForm, router, Link } from '@inertiajs/vue3'
 import Swal from 'sweetalert2'
 import AppLayout from '@/Layouts/AppLayout.vue'
+import TablaBusqueda from '@/Components/TablaBusqueda.vue'
+import { usePage } from '@inertiajs/vue3'
 
+
+const page = usePage()
+const permissions = page.props.auth?.user?.permissions ?? page.props.permissions ?? []
 defineOptions({ layout: AppLayout })
 
-const props = defineProps({
-    zonas: Object,
-    filters: Object,
-})
+const columnas = [
+    { key: 'id', label: '#' },
+    { key: 'NombreZona', label: 'Zona' },
+    { key: 'rutas', label: 'Rutas' },
+    // La columna acciones no va en columnas porque la ponemos en slot
+]
 
-const filters = reactive({
-    search: props.filters?.search || '',
-})
-
-
-function paginar(url) {
-    try {
-        const u = new URL(url, window.location.origin)
-        const relative = u.pathname + u.search
-        router.get(relative, {}, { preserveState: true, replace: true })
-    } catch (e) {
-        console.error("Error al parsear URL de paginación:", url)
-    }
-}
-
-// Watch con debounce para búsqueda automática
-let timeout = null
-watch(() => filters.search, () => {
-    clearTimeout(timeout)
-    timeout = setTimeout(() => {
-        router.get('/sistema/zonas_rutas', { ...filters }, {
-            preserveState: true,
-            replace: true,
-            preserveScroll: true,
-        })
-    }, 250)
-})
-
+// Función para registrar nueva zona con modal
 function abrirModalRegistroZona() {
     Swal.fire({
         title: 'Registrar Zona',
@@ -110,8 +61,8 @@ function abrirModalRegistroZona() {
         showCancelButton: true,
         confirmButtonText: 'Registrar',
         cancelButtonText: 'Cancelar',
-        inputValidator: value => !value && 'El nombre es obligatorio'
-    }).then(result => {
+        inputValidator: (value) => !value && 'El nombre es obligatorio',
+    }).then((result) => {
         if (result.isConfirmed && result.value) {
             const form = useForm({ NombreZona: result.value })
 
@@ -121,12 +72,13 @@ function abrirModalRegistroZona() {
                 },
                 onError: () => {
                     Swal.fire('Error', 'No se pudo registrar la zona.', 'error')
-                }
+                },
             })
         }
     })
 }
 
+// Confirmación para eliminar zona
 function confirmarEliminacion(id) {
     Swal.fire({
         title: '¿Estás seguro?',
@@ -136,7 +88,7 @@ function confirmarEliminacion(id) {
         confirmButtonColor: '#d33',
         cancelButtonColor: '#6c757d',
         confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar'
+        cancelButtonText: 'Cancelar',
     }).then((result) => {
         if (result.isConfirmed) {
             const form = useForm({})
@@ -146,7 +98,7 @@ function confirmarEliminacion(id) {
                 },
                 onError: () => {
                     Swal.fire('Error', 'No se pudo eliminar la zona.', 'error')
-                }
+                },
             })
         }
     })

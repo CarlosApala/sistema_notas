@@ -1,113 +1,129 @@
 <template>
-    <div class="container mx-auto p-4">
-        <h1 class="text-2xl font-bold mb-4">
-            Instalaciones
-            <span v-if="filters.deleted">(eliminadas)</span>
-        </h1>
+    <div class="container mx-auto p-4 max-w-5xl">
+
 
         <div v-if="flash.success" class="alert alert-success mb-4">
             {{ flash.success }}
         </div>
 
-        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-            <form @submit.prevent="buscar" class="d-flex gap-2 flex-wrap">
-                <input v-model="filters.search" type="text" placeholder="Buscar por medidor o predio..."
-                    class="form-control" />
-                <button type="submit" class="btn btn-primary">Buscar</button>
-            </form>
-
+        <div class="mb-4 flex flex-wrap gap-2 justify-between items-center">
+            <h1 class="text-2xl font-bold mb-4">
+                Instalaciones
+                <span v-if="filters.deleted">(eliminadas)</span>
+            </h1>
             <div class="flex gap-2 flex-wrap">
-                <Link href="/sistema/instalaciones/create" class="btn btn-success">Nueva Instalación</Link>
-                <Link :href="filters.deleted ? '/sistema/instalaciones' : '/sistema/instalaciones?deleted=true'"
-                    class="btn btn-secondary">
+                <Link v-if="permissions.includes('instalaciones.crear')" href="/sistema/instalaciones/create" class="btn btn-success">Nueva Instalación</Link>
+                <button v-if="permissions.includes('instalaciones.eliminar')" @click="toggleDeleted" class="btn btn-secondary">
                     {{ filters.deleted ? 'Ver Activas' : 'Ver Eliminadas' }}
-                </Link>
+                </button>
             </div>
         </div>
 
-        <table class="table-auto w-full border-collapse border border-gray-300">
-            <thead>
-                <tr class="bg-gray-200">
-                    <th class="border px-4 py-2 text-left">ID</th>
-                    <th class="border px-4 py-2 text-left">Predio</th>
-                    <th class="border px-4 py-2 text-left">Medidor</th>
-                    <th class="border px-4 py-2 text-center">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="instalacion in instalaciones.data" :key="instalacion.id" class="hover:bg-gray-100">
-                    <td class="border px-4 py-2">{{ instalacion.id }}</td>
-                    <!-- Aquí muestro algo representativo del predio, como su dirección -->
-                    <td class="border px-4 py-2">{{ instalacion.predio?.direccion || 'Sin dirección' }}</td>
-                    <td class="border px-4 py-2">{{ instalacion.NumeroMedidor || '-' }}</td>
-                    <td class="border px-4 py-2 text-center space-x-2">
-                        <template v-if="filters.deleted">
-                            <button @click="restaurar(instalacion.id)"
-                                class="btn btn-success btn-sm px-3 py-1">Restaurar</button>
-                        </template>
-                        <template v-else>
-                            <Link :href="`/sistema/instalaciones/${instalacion.id}`"
-                                class="btn btn-info btn-sm px-3 py-1">Ver</Link>
-                            <Link :href="`/sistema/instalaciones/${instalacion.id}/edit`"
-                                class="btn btn-warning btn-sm px-3 py-1">Editar</Link>
-                            <button @click="eliminar(instalacion.id)" class="btn btn-danger btn-sm px-3 py-1">
-                                Eliminar
-                            </button>
-                        </template>
-                    </td>
-                </tr>
-
-                <tr v-if="instalaciones.data.length === 0">
-                    <td colspan="6" class="text-center p-4 text-gray-500">No se encontraron instalaciones.</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <nav class="mt-4 flex justify-center">
-            <ul class="pagination">
-                <li v-for="(link, index) in instalaciones.links" :key="index"
-                    :class="['page-item', { disabled: !link.url, active: link.active }]">
-                    <a v-if="link.url" href="#" class="page-link" @click.prevent="paginar(link.url)"
-                        v-html="link.label"></a>
-                    <span v-else class="page-link" v-html="link.label"></span>
-                </li>
-            </ul>
-        </nav>
+        <TablaBusqueda :titulo="'Lista de Instalaciones'" :fetch-url="fetchUrl" :columnas="columnas" :per-page="10"
+            @onRowClick="handleRowClick">
+            <template #row="{ item }">
+                <td class="p-2 border">{{ item.id }}</td>
+                <td class="p-2 border">{{ item.NumeroMedidor }}</td>
+                <td class="p-2 border">{{ item.CodigoUbicacion }}</td>
+                <td class="p-2 border">{{ item.EstadoInstalacion }}</td>
+                <td class="p-2 border">{{ item.EstadoAlcantarillado }}</td>
+                <td class="p-2 border text-center space-x-2">
+                    <button v-if="permissions.includes('instalaciones.restaurar')" @click.stop="restaurar(item.id)"
+                        class="btn btn-success btn-sm px-3 py-1">
+                        Restaurar
+                    </button>
+                    <template v-else>
+                        <Link v-if="permissions.includes('instalaciones.ver')" :href="`/sistema/instalaciones/${item.id}`" class="btn btn-info btn-sm px-3 py-1">
+                        Ver
+                        </Link>
+                        <Link v-if="permissions.includes('instalaciones.editar')" :href="`/sistema/instalaciones/${item.id}/edit`" class="btn btn-warning btn-sm px-3 py-1">
+                        Editar
+                        </Link>
+                        <button v-if="permissions.includes('instalaciones.eliminar')" @click.stop="eliminar(item.id)" class="btn btn-danger btn-sm px-3 py-1">
+                            Eliminar
+                        </button>
+                    </template>
+                </td>
+            </template>
+        </TablaBusqueda>
     </div>
 </template>
-
 <script setup>
+import { ref, computed, watch } from 'vue'
 import { Link, router } from '@inertiajs/vue3'
 import Swal from 'sweetalert2'
 import App from '@/Layouts/AppLayout.vue'
-import { ref, watch } from 'vue'
+import TablaBusqueda from '@/Components/TablaBusqueda.vue'
+import { usePage } from '@inertiajs/vue3'
+
+const page = usePage()
+const permissions = page.props.auth?.user?.permissions ?? page.props.permissions ?? []
 
 defineOptions({ layout: App })
 
-const { instalaciones, filters: initialFilters, flash } = defineProps({
-    instalaciones: Object,
+const props = defineProps({
     filters: Object,
     flash: Object,
 })
 
-const filters = ref({ ...initialFilters })
+const filters = ref({ ...props.filters })
+const busqueda = ref(filters.value.search || '')
 
+// Computed para armar URL de fetch según filtros
+const fetchUrl = computed(() => {
+    const url = new URL('/api/instalaciones', window.location.origin)
+    if (filters.value.deleted) url.searchParams.append('deleted', 'true')
+    if (busqueda.value) url.searchParams.append('search', busqueda.value)
+    url.searchParams.append('per_page', '10')
+    return url.toString()
+})
+
+const columnas = [
+    { key: 'id', label: 'ID' },
+    { key: 'NumeroMedidor', label: 'Medidor' },
+    { key: 'CodigoUbicacion', label: 'Código Ubicación' },
+    { key: 'EstadoInstalacion', label: 'Estado Instalación' },
+    { key: 'EstadoAlcantarillado', label: 'Alcantarillado' },
+
+]
+
+// Como Vue no soporta keys con punto directo, usaremos un helper para mostrar predio.direccion:
+function getValueByPath(obj, path) {
+    return path.split('.').reduce((o, i) => (o ? o[i] : ''), obj)
+}
+
+// Para mostrar en tabla-busqueda, modificamos el slot para que muestre predio.direccion:
+// En TablaBusqueda.vue dentro del <template v-for="col in columnas"> en el td:
+//   - si la key incluye punto: usar getValueByPath(item, col.key)
+
+// Búsqueda con debounce
 let timeout = null
-watch(() => filters.value.search, () => {
+watch(busqueda, () => {
     clearTimeout(timeout)
     timeout = setTimeout(() => {
-        router.get('/sistema/instalaciones', filters.value, {
-            preserveState: true,
-            replace: true,
-        })
+        filters.value.search = busqueda.value
     }, 500)
 })
 
-function buscar() {
-    router.get('/sistema/instalaciones', filters.value, {
+watch(filters, (newFilters) => {
+    router.replace({
+        url: '/sistema/instalaciones',
+        data: { ...newFilters },
         preserveState: true,
-        replace: true,
     })
+})
+
+function buscar() {
+    filters.value.search = busqueda.value
+}
+
+function toggleDeleted() {
+    filters.value.deleted = !filters.value.deleted
+    busqueda.value = ''
+}
+
+function handleRowClick(item) {
+    router.visit(`/sistema/instalaciones/${item.id}`)
 }
 
 function eliminar(id) {
@@ -120,9 +136,7 @@ function eliminar(id) {
         cancelButtonText: 'Cancelar',
     }).then((result) => {
         if (result.isConfirmed) {
-            router.delete(`/sistema/instalaciones/${id}`, {
-                preserveState: true,
-            })
+            router.delete(`/sistema/instalaciones/${id}`, { preserveState: true })
         }
     })
 }
@@ -149,12 +163,4 @@ function restaurar(id) {
         }
     })
 }
-
-function paginar(url) {
-    router.get(url, {}, { preserveState: true, replace: true })
-}
 </script>
-
-<style scoped>
-/* Puedes añadir tus estilos personalizados aquí */
-</style>
