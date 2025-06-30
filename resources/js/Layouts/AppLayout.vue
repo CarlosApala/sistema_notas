@@ -16,7 +16,7 @@
                     <ul class="nav navbar-nav">
                         <li v-if="user" class="nav-item dropdown" style="position: relative;">
                             <a href="#" class="nav-link" role="button" @click.prevent.stop="toggleDropdown"
-                                :aria-expanded="dropdownOpen.toString()">
+                               :aria-expanded="dropdownOpen.toString()">
                                 <small class="bg-red">Online</small>
                                 <span class="hidden-xs">{{ user.name }}</span>
                             </a>
@@ -27,15 +27,12 @@
                                 <li><a class="dropdown-item" href="#">Perfil</a></li>
                                 <li>
                                     <Link :href="route('logout')" method="post" as="button"
-                                        class="btn btn-danger dropdown-item" style="width: 100%; text-align: left;">
-                                    Cerrar Sesión
+                                          class="btn btn-danger dropdown-item" style="width: 100%; text-align: left;">
+                                        Cerrar Sesión
                                     </Link>
                                 </li>
                             </ul>
                         </li>
-
-
-
                     </ul>
                 </div>
             </nav>
@@ -47,82 +44,81 @@
                 <ul class="nav flex-column">
                     <li class="nav-item">
                         <Link href="/dashboard" class="nav-link">
-                        <i class="fa fa-home"></i> Inicio
+                            <i class="fa fa-home"></i> Inicio
                         </Link>
                     </li>
 
                     <!-- Collapse / Accordion para Gestión de Personal -->
                     <li class="nav-item">
                         <a href="#" class="nav-link d-flex justify-content-between align-items-center"
-                            @click.prevent="open = !open">
+                           @click.prevent.stop="open = !open">
                             <span><i class="fa fa-users"></i> Gestión de Personal</span>
                             <i class="fa fa-angle-left rotate-icon" :class="{ 'rotate-icon-open': open }"></i>
                         </a>
                         <ul v-show="open" class="nav flex-column ms-3">
                             <li v-if="permissions.includes('personal_interno.view')" class="nav-item">
                                 <Link href="/sistema/personal_interno" class="nav-link">
-                                <i class="fa fa-circle-o"></i> Personal Interno
+                                    <i class="fa fa-circle-o"></i> Personal Interno
                                 </Link>
                             </li>
-
-
                             <li v-if="permissions.includes('lecturadores.view')" class="nav-item">
                                 <Link href="/sistema/usuarios_lecturadores" class="nav-link">
-                                <i class="fa fa-circle-o"></i> Personal Lecturador
+                                    <i class="fa fa-circle-o"></i> Personal Lecturador
                                 </Link>
                             </li>
                             <li class="nav-item">
                                 <Link href="/sistema/usuarios" class="nav-link">
-                                <i class="fa fa-circle-o"></i> Usuarios del Sistema
+                                    <i class="fa fa-circle-o"></i> Usuarios del Sistema
                                 </Link>
                             </li>
                         </ul>
                     </li>
+
                     <li class="nav-item">
                         <Link href="/sistema/organigrama" class="nav-link">
-                        <i class="fa fa-sitemap"></i> Organigrama
+                            <i class="fa fa-sitemap"></i> Organigrama
                         </Link>
                     </li>
 
-
                     <li v-if="permissions.includes('zona.index')" class="nav-item">
                         <Link href="/sistema/zonas_rutas" class="nav-link">
-                        <i class="fa fa-map"></i> Zonas y Rutas
+                            <i class="fa fa-map"></i> Zonas y Rutas
                         </Link>
                     </li>
                     <li v-if="permissions.includes('predios.index')" class="nav-item">
                         <Link href="/sistema/predios" class="nav-link">
-                        <i class="fa fa-home"></i> Predios
+                            <i class="fa fa-home"></i> Predios
                         </Link>
                     </li>
                     <li v-if="permissions.includes('instalaciones.index')" class="nav-item">
                         <Link href="/sistema/instalaciones" class="nav-link">
-                        <i class="fa fa-cogs"></i> Instalaciones
+                            <i class="fa fa-cogs"></i> Instalaciones
                         </Link>
                     </li>
                     <li v-if="permissions.includes('asignaciones.view')" class="nav-item">
                         <Link href="/sistema/lecturadores" class="nav-link">
-                        <i class="fa fa-address-card"></i> Asignaciones
+                            <i class="fa fa-address-card"></i> Asignaciones
                         </Link>
                     </li>
+
                     <li class="nav-item">
                         <Link href="/contabilidad" class="nav-link">
-                        <i class="fa fa-calculator"></i> Contabilidad
+                            <i class="fa fa-calculator"></i> Contabilidad
                         </Link>
                     </li>
                     <li class="nav-item">
                         <Link href="/comercial" class="nav-link">
-                        <i class="fa fa-shopping-cart"></i> Comercial
+                            <i class="fa fa-shopping-cart"></i> Comercial
                         </Link>
                     </li>
                     <li class="nav-item">
                         <Link href="/tecnico" class="nav-link">
-                        <i class="fa fa-wrench"></i> Técnico
+                            <i class="fa fa-wrench"></i> Técnico
                         </Link>
                     </li>
                     <li class="nav-item">
                         <Link :href="route('logout')" class="nav-link" method="post">
-                        <i class="fa fa-sign-out"></i> Cerrar Sesión
+                            <i class="fa fa-sign-out"></i> Cerrar Sesión
                         </Link>
                     </li>
                 </ul>
@@ -132,7 +128,7 @@
         <!-- Main Content -->
         <div class="content-wrapper">
             <section class="content">
-                <slot /> <!-- Renderiza la página Inertia aquí -->
+                <slot />
             </section>
         </div>
 
@@ -152,12 +148,13 @@ const page = usePage()
 const user = page.props.auth.user
 const permissions = page.props.auth?.user?.permissions ?? page.props.permissions ?? []
 
-const dropdownOpen = ref(true)
+const dropdownOpen = ref(false)
+const open = ref(false)
 
 function toggleDropdown() {
-
     dropdownOpen.value = !dropdownOpen.value
 }
+
 function closeDropdown(event) {
     const dropdown = document.querySelector('.nav-item.dropdown')
     if (dropdown && !dropdown.contains(event.target)) {
@@ -166,16 +163,13 @@ function closeDropdown(event) {
 }
 
 onMounted(() => {
-    console.log(user)
     document.addEventListener('click', closeDropdown)
 })
 
 onBeforeUnmount(() => {
     document.removeEventListener('click', closeDropdown)
 })
-
 </script>
-
 
 <style scoped>
 html,
@@ -189,7 +183,6 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    /* altura mínima 100% del viewport */
 }
 
 .content-wrapper {
@@ -206,8 +199,6 @@ body {
     padding: 0 1rem;
 }
 
-
-/* Para que rote el ícono cuando el collapse está abierto */
 .rotate-icon {
     transition: transform 0.3s ease;
     display: inline-block;
@@ -217,12 +208,10 @@ body {
     transform: rotate(-90deg);
 }
 
-/* Opcional: elimina subrayado de links */
 .nav-link {
     text-decoration: none !important;
 }
 
-/* Ajuste para sidebar si quieres */
 .wrapper .main-sidebar {
     border: none !important;
 }
