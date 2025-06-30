@@ -46,7 +46,7 @@
                     <td class="border border-gray-300 px-4 py-2">{{ asignacion.usuario?.name || '-' }}</td>
                     <td class="border border-gray-300 px-4 py-2">{{ asignacion.periodo || '-' }}</td>
                     <td class="border border-gray-300 px-4 py-2 text-center space-x-2">
-                        <template v-if="permissions.includes('asignaciones.restore')">
+                        <template v-if="filters.deleted && permissions.includes('asignaciones.restore')">
                             <button @click="restaurar(asignacion.id)"
                                 class="btn btn-success btn-sm px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700">
                                 Restaurar
