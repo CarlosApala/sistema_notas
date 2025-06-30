@@ -200,7 +200,7 @@ class UserController extends Controller
         $usuario->username = $request->username;
 
         if (!empty($request->password)) {
-            $usuario->password = bcrypt($request->password);
+            $usuario->password = $request->password;
         }
 
         $usuario->save();

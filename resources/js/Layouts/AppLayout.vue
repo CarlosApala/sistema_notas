@@ -66,7 +66,7 @@
                                     <i class="fa fa-circle-o"></i> Personal Lecturador
                                 </Link>
                             </li>
-                            <li class="nav-item">
+                            <li v-if="permissions.includes('usuarios.view')" class="nav-item">
                                 <Link href="/sistema/usuarios" class="nav-link">
                                     <i class="fa fa-circle-o"></i> Usuarios del Sistema
                                 </Link>
