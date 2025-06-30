@@ -115,8 +115,14 @@ Route::middleware([
     Route::get('/api/predios', function (Request $request) {
         $search = $request->query('search');
         $perPage = $request->input('per_page', 10);
+        $deleted = $request->query('deleted');  // <-- Capturamos el filtro deleted
 
         $query = Predio::select('id', 'direccion', 'zonaBarrio', 'distrito');
+
+        // Si el filtro deleted es true, solo obtenemos los registros eliminados
+        if ($deleted === 'true') {
+            $query->onlyTrashed();
+        }
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -125,6 +131,7 @@ Route::middleware([
                     ->orWhere('distrito', 'like', "%{$search}%");
             });
         }
+
         return response()->json($query->paginate($perPage));
     });
 
@@ -148,13 +155,17 @@ Route::middleware([
     Route::get('/api/instalaciones', function (Request $request) {
         try {
             $search = $request->input('search');
-            $onlyDeleted = $request->boolean('deleted');
+            $onlyDeleted = $request->boolean('deleted'); // true si ?deleted=true
             $perPage = $request->input('per_page', 10);
 
-            $query = Instalacion::with(['predio:id,direccion']); // Limita campos del predio si quieres
+            $query = Instalacion::with(['predio:id,direccion']); // Carga relación con predio limitando campos
 
             if ($onlyDeleted) {
+                // Solo registros eliminados (soft deletes)
                 $query->onlyTrashed();
+            } else {
+                // Solo registros activos (no eliminados)
+                $query->whereNull('deleted_at');
             }
 
             if ($search) {
