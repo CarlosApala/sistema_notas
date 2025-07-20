@@ -29,9 +29,9 @@ jobs:
           --exclude='.env' \
           ./ administrador@177.222.44.38:/var/www/laravel-app
 
-    - name: 🛠️ Comandos en el servidor
+    - name: 🛠️ Ejecutar comandos en el servidor
       run: |
-        ssh administrador@177.222.44.38 << 'EOF'
+        ssh -i ~/.ssh/id_rsa administrador@177.222.44.38 << 'EOF'
           cd /var/www/laravel-app
           composer install --no-dev --optimize-autoloader
           php artisan config:cache
