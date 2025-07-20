@@ -18,7 +18,7 @@ jobs:
         mkdir -p ~/.ssh
         echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan 10.129.1.22 >> ~/.ssh/known_hosts
+        ssh-keyscan 177.222.44.38 >> ~/.ssh/known_hosts
 
     - name: 🚚 Subir archivos al servidor
       run: |
@@ -27,17 +27,17 @@ jobs:
           --exclude='node_modules' \
           --exclude='vendor' \
           --exclude='.env' \
-          ./ administrador@10.129.1.22:/var/www/laravel-app
+          ./ administrador@177.222.44.38:/var/www/laravel-app
 
     - name: 🛠️ Comandos en el servidor
       run: |
-        ssh administrador@10.129.1.22 << 'EOF'
-        cd /var/www/laravel-app
-        composer install --no-dev --optimize-autoloader
-        php artisan config:cache
-        php artisan route:cache
-        php artisan view:cache
-        chmod -R 775 storage bootstrap/cache
-        chown -R www-data:www-data storage bootstrap/cache
-        echo "✅ Despliegue completado en el servidor."
+        ssh administrador@177.222.44.38 << 'EOF'
+          cd /var/www/laravel-app
+          composer install --no-dev --optimize-autoloader
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+          chmod -R 775 storage bootstrap/cache
+          chown -R www-data:www-data storage bootstrap/cache
+          echo "✅ Despliegue completado en el servidor."
         EOF
