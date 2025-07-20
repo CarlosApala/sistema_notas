@@ -101,7 +101,7 @@
                         </Link>
                     </li>
 
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <Link href="/contabilidad" class="nav-link">
                             <i class="fa fa-calculator"></i> Contabilidad
                         </Link>
@@ -115,7 +115,7 @@
                         <Link href="/tecnico" class="nav-link">
                             <i class="fa fa-wrench"></i> Técnico
                         </Link>
-                    </li>
+                    </li> -->
                     <li class="nav-item">
                         <Link :href="route('logout')" class="nav-link" method="post">
                             <i class="fa fa-sign-out"></i> Cerrar Sesión
