@@ -19,7 +19,7 @@ class UsuariosLecturadoresController extends Controller
         try {
             $user = auth()->user();
 
-            if (!$user || !$user->can('personal_interno.view')) {
+            if (!$user || !$user->can('personal_interno.ver')) {
                 abort(403, 'No tienes permiso para ver este módulo');
             }
 
@@ -86,4 +86,22 @@ class UsuariosLecturadoresController extends Controller
 
         return redirect()->back()->with('success', 'Rol Lecturador asignado correctamente.');
     }
+    public function destroy($id)
+{
+    try {
+        $usuario = User::findOrFail($id);
+
+        if (!$usuario->hasRole('lecturador')) {
+            return redirect()->back()->with('error', 'Este usuario no tiene el rol Lecturador.');
+        }
+
+        $usuario->delete(); // Soft delete si el modelo usa SoftDeletes
+
+        return redirect()->back()->with('success', 'Usuario lecturador eliminado correctamente.');
+    } catch (\Exception $e) {
+        Log::error('Error al eliminar usuario lecturador: ' . $e->getMessage());
+        return redirect()->back()->with('error', 'Error al eliminar usuario lecturador.');
+    }
+}
+
 }

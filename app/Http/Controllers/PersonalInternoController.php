@@ -21,7 +21,7 @@ class PersonalInternoController extends Controller
 
             $user = auth()->user();
 
-            if (!$user || !$user->can('personal_interno.view')) {
+            if (!$user || !$user->can('personal_interno.ver')) {
                 abort(403, 'No tienes permiso para ver este módulo');
             }
 

@@ -38,49 +38,50 @@ class UserController extends Controller
     {
         $roles = Role::all(['id', 'name']);
 
+        $estructuraModulos = [
+            'Gestión' => [
+                'Usuarios' => 'usuarios',
+                'Personal Interno' => 'personal_interno',
+                'Lecturadores' => 'lecturadores',
+                'Zona' => 'zona',
+                'Predios' => 'predios',
+                'Instalaciones' => 'instalaciones',
+                'Asignaciones' => 'asignaciones'
+            ]
+        ];
+
         $personasSinUsuario = PersonalInterno::whereDoesntHave('user')->orderBy('id', 'asc')->paginate(10);
 
         return Inertia::render('sistema/Usuarios/Create', [
             'personas' => $personasSinUsuario,
-            'roles' => $roles
+            'roles' => $roles,
+            'estructuraPermisos' => $estructuraModulos,
         ]);
     }
 
 
-    /*     public function create()
-    {
-        $roles = Role::all(['id', 'name']);
-        $personas = PersonalInterno::orderBy('id', 'asc')->paginate(10);
-
-        return Inertia::render('sistema/Usuarios/Create', [
-            'personas' => $personas,
-            'roles' => $roles
-        ]);
-    } */
-
-    /**
-     * Store a newly created resource in storage.
-     */
-
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'nombres' => 'required|string|max:255',
-            'apellidos' => 'required|string|max:255',
-            'carnet_identidad' => 'required|string|max:50|exists:personal_interno,carnet_identidad',
-            'numero_celular' => 'nullable|string|max:20',
-            'rol' => 'nullable|string|exists:roles,name',
-        ]);
-
         try {
+            $validated = $request->validate([
+                'nombres' => 'required|string|max:255',
+                'apellidos' => 'required|string|max:255',
+                'carnet_identidad' => 'required|string|max:50|exists:personal_interno,carnet_identidad',
+                'numero_celular' => 'nullable|string|max:20',
+                'rol' => 'nullable|string|exists:roles,name',
+                'permisos' => 'present|array',
+                'permisos.*' => 'string|exists:permissions,name'
+            ]);
+
+
+
             DB::beginTransaction();
 
             $personal = PersonalInterno::where('carnet_identidad', $validated['carnet_identidad'])->firstOrFail();
 
             $fullName = $validated['nombres'] . ' ' . $validated['apellidos'];
 
-            // Username único con base en los 3 primeros caracteres
-            $usernameBase = $validated['nombres'] .  substr($validated['carnet_identidad'], 0, 3);
+            $usernameBase = $validated['nombres'] . substr($validated['carnet_identidad'], 0, 3);
             $username = $usernameBase;
             $counter = 1;
 
@@ -90,9 +91,8 @@ class UserController extends Controller
             }
 
             $email = $username . '@example.com';
-            $password = "password";
+            $password = 'password';
 
-            // Crear el usuario primero (sin asignar personal_id aún)
             $user = User::create([
                 'name' => $fullName,
                 'email' => $email,
@@ -100,35 +100,35 @@ class UserController extends Controller
                 'password' => $password,
             ]);
 
-            // Actualizar el personal con posibles cambios en datos (opcional)
             $personal->update([
                 'nombres' => $validated['nombres'],
                 'apellidos' => $validated['apellidos'],
                 'numero_celular' => $validated['numero_celular'],
             ]);
 
-            // Actualizar el usuario con la relación a personal
             $user->update(['personal_id' => $personal->id]);
 
-            // Asignar rol si viene
             if (!empty($validated['rol'])) {
                 $user->assignRole($validated['rol']);
             }
 
+            $user->syncPermissions($validated['permisos']); // Siempre se recibe como array
+
             DB::commit();
 
-            return redirect()->route('usuarios.index')->with('success', 'Usuario y personal registrados correctamente.');
+            return redirect()
+                ->route('usuarios.index')
+                ->with('success', 'Usuario y personal registrados correctamente.');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error creando usuario/personal: ' . $e->getMessage());
 
-            return redirect()->back()
+            return redirect()
+                ->back()
                 ->withInput()
                 ->withErrors(['error' => 'Ocurrió un error al registrar. Intenta nuevamente.']);
         }
     }
-
-
 
 
 
@@ -138,6 +138,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
+
         $user = User::with('roles.permissions')->findOrFail($id);
 
 
@@ -148,6 +149,7 @@ class UserController extends Controller
             $permisosPorRol[$rol->name] = $rol->permissions->pluck('name')->toArray();
         }
 
+
         return Inertia::render('sistema/Usuarios/Show', [
             'user' => $user,
             'permisosUsuario' => $permisosUsuario,
@@ -157,12 +159,14 @@ class UserController extends Controller
 
     public function edit(User $usuario)
     {
-
         $rolesDisponibles = Role::all();
         $permisosDisponibles = Permission::all();
         $rolesUsuario = $usuario->roles->pluck('name')->toArray();
-        $permisosUsuarioDirectos = $usuario->getDirectPermissions()->pluck('name')->toArray();
 
+
+
+        // Limpiar espacios en permisos directos por seguridad
+        $permisosUsuarioDirectos = $usuario->permissions->pluck('name')->toArray();
         return Inertia::render('sistema/Usuarios/Edit', [
             'usuario' => $usuario,
             'rolesDisponibles' => $rolesDisponibles,

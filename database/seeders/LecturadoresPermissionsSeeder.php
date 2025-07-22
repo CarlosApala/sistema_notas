@@ -11,13 +11,14 @@ class LecturadoresPermissionsSeeder extends Seeder
     public function run()
     {
         $permissions = [
-            'lecturadores.view',
-            'lecturadores.show',
-            'lecturadores.create',
-            'lecturadores.edit',
-            'lecturadores.delete',
-            'lecturadores.view_deleted',
-            'lecturadores.restore',
+
+            'lecturadores.ver',
+            'lecturadores.crear',
+            'lecturadores.editar',
+            'lecturadores.eliminar',
+            'lecturadores.eliminados',
+            'lecturadores.restaurar',
+
         ];
 
         foreach ($permissions as $permission) {

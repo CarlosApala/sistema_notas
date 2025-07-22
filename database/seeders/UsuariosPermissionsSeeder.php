@@ -12,13 +12,13 @@ class UsuariosPermissionsSeeder extends Seeder
     {
 
         $permisos = [
-            'usuarios.view',
-            'usuarios.show',
-            'usuarios.create',
-            'usuarios.edit',
-            'usuarios.delete',
-            'usuarios.view_deleted',
-            'usuarios.restore',
+
+            'usuarios.ver',
+            'usuarios.crear',
+            'usuarios.editar',
+            'usuarios.eliminar',
+            'usuarios.eliminados',
+            'usuarios.restaurar',
         ];
 
         foreach ($permisos as $permiso) {

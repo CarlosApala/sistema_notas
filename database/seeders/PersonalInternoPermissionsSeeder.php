@@ -11,17 +11,17 @@ class PersonalInternoPermissionsSeeder extends Seeder
     public function run()
     {
         $permissions = [
-            'personal_interno.view',
-            'personal_interno.show',
-            'personal_interno.create',
-            'personal_interno.edit',
-            'personal_interno.delete',
-            'personal_interno.view_deleted',
-            'personal_interno.restore',
+            'personal_interno.ver',
+            'personal_interno.crear',
+            'personal_interno.editar',
+            'personal_interno.eliminar',
+            'personal_interno.eliminados',
+            'personal_interno.restaurar',
         ];
 
         foreach ($permissions as $permission) {
             Permission::firstOrCreate(['name' => $permission]);
+
         }
     }
 }

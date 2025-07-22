@@ -17,12 +17,12 @@
             </form>
 
             <div class="flex gap-2 flex-wrap">
-                <Link v-if="tienePermiso('lecturadores.create')" href="/sistema/usuarios_lecturadores/create"
+                <Link v-if="tienePermiso('lecturadores.crear')" href="/sistema/usuarios_lecturadores/create"
                     class="btn btn-success">
                 Nuevo Lecturador
                 </Link>
 
-                <Link v-if="tienePermiso('lecturadores.view_deleted')"
+                <Link v-if="tienePermiso('lecturadores.eliminados')"
                     :href="filters.deleted ? '/sistema/usuarios_lecturadores' : '/sistema/usuarios_lecturadores?deleted=true'"
                     class="btn btn-secondary">
                 {{ filters.deleted ? 'Ver Activos' : 'Ver Eliminados' }}
@@ -51,14 +51,14 @@
 
                             <template v-if="filters.deleted">
 
-                                <button v-if="tienePermiso('lecturadores.restore')" @click="restaurar(usuario.id)"
+                                <button v-if="tienePermiso('lecturadores.restaurar')" @click="restaurar(usuario.id)"
                                     class="btn btn-success btn-sm px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700">
                                     Restaurar
                                 </button>
                             </template>
                             <template v-else>
 
-                                <button v-if="tienePermiso('lecturadores.delete')" @click="eliminar(usuario.id)"
+                                <button v-if="tienePermiso('lecturadores.eliminar')" @click="eliminar(usuario.id)"
                                     class="btn btn-danger btn-sm px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">
                                     Eliminar
                                 </button>

@@ -11,13 +11,13 @@ class AsignacionesPermissionsSeeder extends Seeder
     public function run()
     {
         $permisos = [
-            'asignaciones.view',
-            'asignaciones.show',
-            'asignaciones.create',
-            'asignaciones.edit',
-            'asignaciones.delete',
-            'asignaciones.view_deleted',
-            'asignaciones.restore',
+
+            'asignaciones.ver',
+            'asignaciones.crear',
+            'asignaciones.editar',
+            'asignaciones.eliminar',
+            'asignaciones.eliminados',
+            'asignaciones.restaurar',
         ];
 
         foreach ($permisos as $permission) {

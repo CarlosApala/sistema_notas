@@ -17,11 +17,11 @@
             </form>
 
             <div class="flex gap-2 flex-wrap">
-                <Link v-if="permissions.includes('asignaciones.create')"  href="/sistema/lecturadores/create" class="btn btn-success">
+                <Link v-if="permissions.includes('asignaciones.crear')"  href="/sistema/lecturadores/create" class="btn btn-success">
                 Asignar Ruta
                 </Link>
 
-                <Link v-if="permissions.includes('asignaciones.view_deleted')" :href="filters.deleted ? '/sistema/lecturadores' : '/sistema/lecturadores?deleted=true'"
+                <Link v-if="permissions.includes('asignaciones.eliminados')" :href="filters.deleted ? '/sistema/lecturadores' : '/sistema/lecturadores?deleted=true'"
                     class="btn btn-secondary">
                 {{ filters.deleted ? 'Ver Activos' : 'Ver Eliminados' }}
                 </Link>
@@ -46,22 +46,22 @@
                     <td class="border border-gray-300 px-4 py-2">{{ asignacion.usuario?.name || '-' }}</td>
                     <td class="border border-gray-300 px-4 py-2">{{ asignacion.periodo || '-' }}</td>
                     <td class="border border-gray-300 px-4 py-2 text-center space-x-2">
-                        <template v-if="filters.deleted && permissions.includes('asignaciones.restore')">
+                        <template v-if="filters.deleted && permissions.includes('asignaciones.restaurar')">
                             <button @click="restaurar(asignacion.id)"
                                 class="btn btn-success btn-sm px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700">
                                 Restaurar
                             </button>
                         </template>
                         <template v-else >
-                            <Link v-if="permissions.includes('asignaciones.view')" :href="`/sistema/lecturadores/${asignacion.id}`"
+                            <Link v-if="permissions.includes('asignaciones.ver')" :href="`/sistema/lecturadores/${asignacion.id}`"
                                 class="btn btn-info btn-sm px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">
                             Ver
                             </Link>
-                            <Link v-if="permissions.includes('asignaciones.edit')" :href="`/sistema/lecturadores/${asignacion.id}/edit`"
+                            <Link v-if="permissions.includes('asignaciones.editar')" :href="`/sistema/lecturadores/${asignacion.id}/edit`"
                                 class="btn btn-warning btn-sm px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600">
                             Editar
                             </Link>
-                            <button v-if="permissions.includes('asignaciones.delete')" @click="eliminar(asignacion.id)"
+                            <button v-if="permissions.includes('asignaciones.eliminar')" @click="eliminar(asignacion.id)"
                                 class="btn btn-danger btn-sm px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">
                                 Eliminar
                             </button>

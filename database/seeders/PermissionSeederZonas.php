@@ -14,12 +14,14 @@ class PermissionSeederZonas extends Seeder
     public function run(): void
     {
         $permisosZona = [
-            'zona.index',     // Ver lista
-            'zona.ver',       // Ver detalles
-            'zona.crear',     // Crear nueva zona
-            'zona.editar',    // Editar zona
-            'zona.eliminar',  // Eliminar zona
-            'zona.restaurar', // Restaurar zona (si usas soft deletes)
+
+
+                'zona.ver' ,        // Ver detalles
+                'zona.crear',           // Crear nueva zona
+                'zona.editar',      // Editar zona
+                'zona.eliminar',       // Eliminar zona
+                'zona.eliminados', // Restaurar zona (si usas soft deletes)
+                'zona.restaurar'
         ];
 
         foreach ($permisosZona as $permiso) {

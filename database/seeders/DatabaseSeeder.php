@@ -9,6 +9,7 @@ use App\Models\RutasLecturador;
 use Illuminate\Database\Seeder;
 use Database\Seeders\AdminUserSeeder;
 
+use function Pest\Laravel\call;
 
 class DatabaseSeeder extends Seeder
 {
@@ -26,14 +27,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleSeeder::class
         ]);
-
-        $this->call([
-            PermissionSeeder::class,
-        ]);
-
-        $this->call([
-            RolePermissionSeeder::class
-        ]);
+        /* $this->call([
+            PermissionSeeder::class
+        ]); */
 
         $this->call([
             PredioSeeder::class,
@@ -48,7 +44,8 @@ class DatabaseSeeder extends Seeder
             PrediosPermissionsSeeder::class,
             InstalacionesPermissionsSeeder::class,
             AsignacionesPermissionsSeeder::class,
-            UsuariosPermissionsSeeder::class
+            UsuariosPermissionsSeeder::class,
+            RolePermissionSeeder::class
         ]);
     }
 }
