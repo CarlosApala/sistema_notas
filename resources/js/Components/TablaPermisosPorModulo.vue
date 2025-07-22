@@ -5,6 +5,7 @@
         <tr>
           <th class="border px-3 py-2">Módulo</th>
           <th class="border px-3 py-2">Funcionalidad</th>
+          <th class="border px-3 py-2 text-center">Todos</th>
           <th
             v-for="accion in acciones"
             :key="accion"
@@ -26,6 +27,31 @@
                 {{ modulo }}
               </td>
               <td class="border px-3 py-2 font-medium">{{ grupo }}</td>
+
+              <!-- ✅ Columna TODOS -->
+              <td
+                class="border px-3 py-2 text-center"
+                :class="bloqueado ? '' : 'cursor-pointer hover:bg-blue-50'"
+                @click="!bloqueado && toggleGrupo(prefix)"
+              >
+                <template v-if="bloqueado">
+                  {{
+                    acciones.every(a => modelValue.includes(`${prefix}.${a}`))
+                      ? '✔️'
+                      : '❌'
+                  }}
+                </template>
+                <template v-else>
+                  <input
+                    type="checkbox"
+                    :checked="acciones.every(a => modelValue.includes(`${prefix}.${a}`))"
+                      @change="toggleGrupo(prefix)"
+                    @click.stop
+                  />
+                </template>
+              </td>
+
+              <!-- ✅ Celdas por acción -->
               <td
                 v-for="accion in acciones"
                 :key="accion"
@@ -86,6 +112,25 @@ function togglePermiso(permiso) {
   }
 
   emit('update:modelValue', permisosActuales)
+}
+
+function toggleGrupo(prefix) {
+  const permisosActuales = [...props.modelValue]
+  const permisosGrupo = props.acciones.map(a => `${prefix}.${a}`)
+  const todosIncluidos = permisosGrupo.every(p => permisosActuales.includes(p))
+
+  if (todosIncluidos) {
+    // desmarcar todos
+    emit('update:modelValue', permisosActuales.filter(p => !permisosGrupo.includes(p)))
+  } else {
+    // agregar los que faltan
+    permisosGrupo.forEach(p => {
+      if (!permisosActuales.includes(p)) {
+        permisosActuales.push(p)
+      }
+    })
+    emit('update:modelValue', permisosActuales)
+  }
 }
 </script>
 
