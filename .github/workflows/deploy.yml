@@ -27,12 +27,12 @@ jobs:
           --exclude='node_modules' \
           --exclude='vendor' \
           --exclude='.env' \
-          ./ administrador@177.222.44.38:/var/www/laravel-app
+          ./ administrador@177.222.44.38:/var/www/laravel
 
     - name: 🛠️ Ejecutar comandos en el servidor
       run: |
         ssh -i ~/.ssh/id_rsa administrador@177.222.44.38 << 'EOF'
-          cd /var/www/laravel-app
+          cd /var/www/laravel
           composer install --no-dev --optimize-autoloader
           php artisan config:cache
           php artisan route:cache
