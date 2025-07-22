@@ -27,7 +27,6 @@ jobs:
           --exclude='node_modules' \
           --exclude='vendor' \
           --exclude='.env' \
-          --exclude='storage' \  # ⛔ no subir esta carpeta
           ./ administrador@177.222.44.38:/var/www/laravel
 
     - name: 🛠️ Ejecutar comandos en el servidor
