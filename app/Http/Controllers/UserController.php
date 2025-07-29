@@ -50,6 +50,7 @@ class UserController extends Controller
             ]
         ];
 
+
         $personasSinUsuario = PersonalInterno::whereDoesntHave('user')->orderBy('id', 'asc')->paginate(10);
 
         return Inertia::render('sistema/Usuarios/Create', [

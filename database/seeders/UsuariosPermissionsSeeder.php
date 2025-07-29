@@ -12,8 +12,6 @@ class UsuariosPermissionsSeeder extends Seeder
     {
 
         $permisos = [
-
-            'usuarios.ver',
             'usuarios.crear',
             'usuarios.editar',
             'usuarios.eliminar',

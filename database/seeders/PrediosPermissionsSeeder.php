@@ -11,9 +11,6 @@ class PrediosPermissionsSeeder extends Seeder
     public function run()
     {
         $permisos = [
-
-
-            'predios.ver',
             'predios.crear',
             'predios.editar',
             'predios.eliminar',

@@ -1,0 +1,107 @@
+{
+    "modulo": "contabilidad",
+    "programas": {
+        "instalaciones": [
+            "instalaciones.ver",
+            "instalaciones.crear"
+        ],
+        "asignaciones": [
+            "asignaciones.eliminar",
+            "asignaciones.editar"
+        ]
+    }
+}
+,
+{
+    [
+        {
+            "name" : "personal_interno.editar",
+            "programa" : "personal interno",
+            "modulo" : "adsf"
+        },
+        {
+            "name" : "lecturadores.crear",
+            "programa" : "lecturadores",
+            "modulo" : "adsf"
+        },
+        {
+            "name" : "personal_interno.ver",
+            "programa" : "personal interno",
+            "modulo" : "adsf"
+        },
+        {
+            "name" : "personal_interno.crear",
+            "programa" : "personal interno",
+            "modulo" : "adsf"
+        },
+        {
+            "name" : "personal_interno.eliminar",
+            "programa" : "personal interno",
+            "modulo" : "adsf"
+        },
+        {
+            "name" : "lecturadores.editar",
+            "programa" : "lecturadores",
+            "modulo" : "adsf"
+        },
+        {
+            "name" : "personal_interno.eliminados",
+            "programa" : "personal interno",
+            "modulo" : "adsf"
+        },
+        {
+            "name" : "zona.ver",
+            "programa" : "zona",
+            "modulo" : "adsf"
+        },
+        {
+            "name" : "lecturadores.eliminar",
+            "programa" : "lecturadores",
+            "modulo" : "adsf"
+        },
+        {
+            "name" : "zona.editar",
+            "programa" : "zona",
+            "modulo" : "adsf"
+        },
+        {
+            "name" : "lecturadores.restaurar",
+            "programa" : "lecturadores",
+            "modulo" : "adsf"
+        },
+        {
+            "name" : "predios.crear",
+            "programa" : "predios",
+            "modulo" : "adsf"
+        },
+        {
+            "name" : "lecturadores.ver",
+            "programa" : "lecturadores",
+            "modulo" : "adsf"
+        },
+        {
+            "name" : "zona.eliminar",
+            "programa" : "zona",
+            "modulo" : "adsf"
+        },
+        {
+            "name" : "zona.eliminados",
+            "programa" : "zona",
+            "modulo" : "adsf"
+        },
+        {
+            "name" : "predios.eliminados",
+            "programa" : "predios",
+            "modulo" : "adsf"
+        },
+        {
+            "name" : "zona.restaurar",
+            "programa" : "zona",
+            "modulo" : "adsf"
+        },
+        {
+            "name" : "predios.restaurar",
+            "programa" : "predios",
+            "modulo" : "adsf"
+        }
+    ]}

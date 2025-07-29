@@ -11,7 +11,6 @@ class PersonalInternoPermissionsSeeder extends Seeder
     public function run()
     {
         $permissions = [
-            'personal_interno.ver',
             'personal_interno.crear',
             'personal_interno.editar',
             'personal_interno.eliminar',

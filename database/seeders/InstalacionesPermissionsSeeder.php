@@ -12,8 +12,6 @@ class InstalacionesPermissionsSeeder extends Seeder
     public function run()
     {
         $permissions = [
-
-            'instalaciones.ver',
             'instalaciones.crear',
             'instalaciones.editar',
             'instalaciones.eliminar',

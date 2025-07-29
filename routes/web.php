@@ -1,8 +1,11 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\InstalacionController;
+use App\Http\Controllers\ModulosController;
 use App\Http\Controllers\OrganigramaController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PersonalInternoController;
 use App\Http\Controllers\PredioController;
 use App\Http\Controllers\RutasController;
@@ -12,7 +15,10 @@ use App\Http\Controllers\UsuariosLecturadores;
 use App\Http\Controllers\UsuariosLecturadoresController;
 use App\Http\Controllers\ZonasController;
 use App\Http\Controllers\ZonasRutaController;
+use App\Models\Configuracion;
 use App\Models\Instalacion;
+use App\Models\Modulo;
+use App\Models\Permission;
 use App\Models\PersonalInterno;
 use App\Models\Predio;
 use App\Models\RutaInstalaciones;
@@ -25,6 +31,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
 use Spatie\Permission\Models\Role;
 
 /*
@@ -95,12 +102,92 @@ Route::middleware([
     Route::resource('/sistema/personal_interno', PersonalInternoController::class);
     Route::post('/sistema/personal_interno/{id}/restore', [PersonalInternoController::class, 'restore'])->name('personal_interno.restore');
 
+    Route::resource('permisos', PermissionController::class)->except(['index']);
+
+
+
+    /* Route::resource('/sistema/Modulos', ConfiguracionController::class);
+    Route::post('/sistema/Modulos/{id}/restore', [ConfiguracionController::class, 'restore'])->name('configuracion.restore'); */
+
+    Route::get('/sistema/modulos/{id}/asignarPrograma', [ModulosController::class, 'asignar'])
+    ->name('modulos.asignar');
+    Route::get('/sistema/modulos/eliminar', [ModulosController::class, 'eliminar'])->name('modulos.eliminar');
+    Route::get('/sistema/modulos/modificar', [ModulosController::class, 'modificar'])->name('modulos.modificar');
+    Route::resource('/sistema/modulos', ModulosController::class);
 
 
     // Ruta adicional para restaurar predios eliminados (soft delete)
     Route::post('/sistema/predios/{id}/restore', [PredioController::class, 'restore'])->name('predios.restore');
 
     //rutas para carga asincrona
+
+
+    Route::get('/api/permissions', function (Request $request) {
+        $perPage = $request->input('per_page', 10);
+        $search = $request->input('search');
+        $moduloId = $request->input('modulo_id');
+
+        Log::info('modulo_id recibido: ' . $moduloId);
+
+        $query = Permission::select('id', 'name', 'nombre', 'modulo_id');
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('nombre', 'LIKE', "%{$search}%");
+            });
+        }
+
+        if ($moduloId) {
+            $query->where('modulo_id', $moduloId);
+        }
+
+        return $query->orderBy('id')->paginate($perPage);
+    })->name('api.permissions');
+
+
+    Route::get('/api/permissions/by-modulo', function (Request $request) {
+        $perPage = $request->input('per_page', 10);
+        $search = $request->input('search');
+        $moduloId = $request->input('modulo_id');
+
+        if (!$moduloId) {
+            return response()->json(['error' => 'modulo_id es requerido'], 400);
+        }
+
+        $query = Permission::select('id', 'name', 'nombre', 'modulo_id')
+            ->where('modulo_id', $moduloId);
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('nombre', 'LIKE', "%{$search}%");
+            });
+        }
+
+        return $query->orderBy('id')->paginate($perPage);
+    })->name('api.permissions.by-modulo');
+
+
+
+
+    Route::get('/api/permissions/no-modulo', function (Request $request) {
+        $perPage = $request->input('per_page', 10);
+        $search = $request->input('search');
+
+        $query = Permission::select('id', 'name', 'nombre', 'modulo_id')
+            ->whereNull('modulo_id');  // Solo permisos sin módulo asignado
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('nombre', 'LIKE', "%{$search}%");
+            });
+        }
+
+        return $query->paginate($perPage);
+    })->name('api.permissions.noModulo');
+
 
     Route::get('/api/rutas', function (Request $request) {
         $perPage = $request->input('per_page', 10);
@@ -111,6 +198,19 @@ Route::middleware([
         }
         return $query->paginate($perPage);
     })->name('api.rutas');
+
+    Route::get('/api/modulos', function (Request $request) {
+        $perPage = $request->input('per_page', 10);
+        $search = $request->input('search');
+        $query = Modulo::query();
+
+        if ($search) {
+            $query->where('nombre', 'LIKE', "%{$search}%");
+        }
+
+        return $query->orderBy('id', 'asc')->paginate($perPage);
+    })->name('api.modulos');
+
 
     Route::get('/api/predios', function (Request $request) {
         $search = $request->query('search');

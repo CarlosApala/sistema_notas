@@ -81,6 +81,8 @@ async function fetchData() {
         const res = await fetch(url)
         const data = await res.json()
 
+        console.log(data);
+
         registros.value = data.data || data
         tieneMas.value = !!data.next_page_url || (data.meta?.current_page < data.meta?.last_page)
     } catch (e) {

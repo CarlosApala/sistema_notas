@@ -93,7 +93,7 @@ const form = useForm({
     rol: '',
     permisos: [] // ✅ Campo incluido desde el inicio
 })
-
+console.log(props.estructuraPermisos);
 // Estado para el modal
 const modalVisible = ref(false)
 

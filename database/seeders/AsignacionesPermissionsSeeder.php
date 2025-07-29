@@ -11,8 +11,6 @@ class AsignacionesPermissionsSeeder extends Seeder
     public function run()
     {
         $permisos = [
-
-            'asignaciones.ver',
             'asignaciones.crear',
             'asignaciones.editar',
             'asignaciones.eliminar',

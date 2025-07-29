@@ -12,7 +12,6 @@ class LecturadoresPermissionsSeeder extends Seeder
     {
         $permissions = [
 
-            'lecturadores.ver',
             'lecturadores.crear',
             'lecturadores.editar',
             'lecturadores.eliminar',

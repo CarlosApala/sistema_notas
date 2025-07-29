@@ -15,8 +15,6 @@ class PermissionSeederZonas extends Seeder
     {
         $permisosZona = [
 
-
-                'zona.ver' ,        // Ver detalles
                 'zona.crear',           // Crear nueva zona
                 'zona.editar',      // Editar zona
                 'zona.eliminar',       // Eliminar zona
