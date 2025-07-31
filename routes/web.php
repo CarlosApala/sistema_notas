@@ -94,7 +94,7 @@ Route::middleware([
     Route::resource('/sistema/zonas', ZonasController::class);
 
     Route::get('/sistema/instalaciones/eliminar', [InstalacionController::class, 'indexDelete'])->name('instalaciones.delete');
-    Route::get('/sistema/instalaciones/editar', [InstalacionController::class, 'indexEdit'])->name('instalaciones.edit');
+    Route::get('/sistema/instalaciones/editar', [InstalacionController::class, 'indexEdit'])->name('instalaciones.edit.otra');
     Route::resource('/sistema/instalaciones', InstalacionController::class);
     Route::post('/sistema/instalaciones/{id}/restore', [InstalacionController::class, 'restore'])->name('instalaciones.restore');
 
