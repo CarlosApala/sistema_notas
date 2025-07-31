@@ -49,10 +49,14 @@ jobs:
           # Aquí public/build ya existe, podemos dar permisos
           sudo chown -R www-data:www-data /var/www/laravel/public/build
           sudo chmod -R 775 /var/www/laravel/public/build
+          
+          # Ajustar permisos para storage y cache (esto es crítico para el error que tienes)
+          sudo chown -R www-data:www-data /var/www/laravel/storage /var/www/laravel/bootstrap/cache
+          sudo chmod -R 775 /var/www/laravel/storage /var/www/laravel/bootstrap/cache
 
           sudo chown -R www-data:www-data /var/www/laravel/bootstrap/cache
           sudo chmod -R 775 /var/www/laravel/bootstrap/cache
-
+          
           sudo chmod -R 775 storage bootstrap/cache public/build
           sudo chown -R www-data:www-data storage bootstrap/cache public/build
 
