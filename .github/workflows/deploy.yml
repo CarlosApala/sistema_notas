@@ -41,7 +41,7 @@ jobs:
           cd /var/www/laravel
           composer install --no-dev --optimize-autoloader
           
-          mkdir -p public/build
+          sudo mkdir -p /var/www/laravel/public/build/assets
           sudo chown -R www-data:www-data /var/www/laravel/public/build
           sudo chmod -R 775 /var/www/laravel/public/build
 
