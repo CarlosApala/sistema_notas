@@ -35,7 +35,7 @@ jobs:
           --exclude='vendor' \
           --exclude='.env' \
           --exclude='public/build' \       # <== Excluye public/build para que no borre la carpeta creada en servidor
-        ./ administrador@177.222.44.38:/var/www/laravel
+          ./ administrador@177.222.44.38:/var/www/laravel
 
     - name: Ejecutar comandos en el servidor
       run: |
