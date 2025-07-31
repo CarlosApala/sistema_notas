@@ -23,8 +23,8 @@ jobs:
     - name: Preparar permisos para rsync
       run: |
         ssh -i ~/.ssh/id_rsa administrador@177.222.44.38 << 'EOF'
-          sudo chown -R administrador:www-data /var/www/laravel/storage /var/www/laravel/bootstrap/cache /var/www/laravel/public/build
-          sudo chmod -R 775 /var/www/laravel/storage /var/www/laravel/bootstrap/cache /var/www/laravel/public/build
+          sudo chown -R administrador:www-data /var/www/laravel/storage /var/www/laravel/bootstrap/cache
+          sudo chmod -R 775 /var/www/laravel/storage /var/www/laravel/bootstrap/cache
         EOF
 
     - name: 🚚 Subir archivos al servidor (excluyendo solo lo necesario)
@@ -42,18 +42,22 @@ jobs:
           set -e
           cd /var/www/laravel
           composer install --no-dev --optimize-autoloader
-          
+
           npm install
           npm run build
 
-          sudo chown -R www-data:www-data /var/www/laravel/storage /var/www/laravel/bootstrap/cache /var/www/laravel/public/build
-          sudo chmod -R 775 /var/www/laravel/storage /var/www/laravel/bootstrap/cache /var/www/laravel/public/build
+          # Aquí public/build ya existe, podemos dar permisos
+          sudo chown -R www-data:www-data /var/www/laravel/public/build
+          sudo chmod -R 775 /var/www/laravel/public/build
+
+          sudo chown -R www-data:www-data /var/www/laravel/bootstrap/cache
+          sudo chmod -R 775 /var/www/laravel/bootstrap/cache
+
+          sudo chmod -R 775 storage bootstrap/cache public/build
+          sudo chown -R www-data:www-data storage bootstrap/cache public/build
 
           php artisan config:cache
           php artisan route:cache
           php artisan view:cache
-
-          cp public/build/.vite/manifest.json public/build/manifest.json
-
           echo "✅ Despliegue completado en el servidor."
         EOF
