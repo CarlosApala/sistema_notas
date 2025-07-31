@@ -33,23 +33,27 @@ jobs:
           --exclude='vendor' \
           --exclude='.env' \
           ./ administrador@177.222.44.38:/var/www/laravel
+
     - name: 🛠️ Ejecutar comandos en el servidor
       run: |
         ssh -i ~/.ssh/id_rsa administrador@177.222.44.38 << EOF
-        set -e
-        cd /var/www/laravel
+          set -e
+          cd /var/www/laravel
+
+          # Dar permisos a storage y bootstrap/cache para www-data
+          sudo chown -R www-data:www-data storage bootstrap/cache
+          sudo chmod -R 775 storage bootstrap/cache
+
+          # Crear archivo de log si no existe
+          if [ ! -f storage/logs/laravel.log ]; then
+          sudo -u www-data touch storage/logs/laravel.log
+          sudo chown www-data:www-data storage/logs/laravel.log
+          sudo chmod 664 storage/logs/laravel.log
+          fi
 
         composer install --no-dev --optimize-autoloader
         npm install
         npm run build
-
-        # Asegurar que storage/logs exista y tenga permisos correctos para www-data
-        sudo mkdir -p storage/logs
-        sudo chown -R www-data:www-data storage
-        sudo chmod -R 775 storage
-
-        sudo chown -R www-data:www-data bootstrap/cache public/build
-        sudo chmod -R 775 bootstrap/cache public/build
 
         php artisan config:cache
         php artisan route:cache
@@ -57,4 +61,3 @@ jobs:
 
         echo "✅ Despliegue completado en el servidor."
         EOF
-
