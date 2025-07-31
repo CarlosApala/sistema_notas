@@ -22,6 +22,9 @@ jobs:
 
     - name: 🚚 Subir archivos al servidor (excluyendo solo lo necesario)
       run: |
+        ssh -i ~/.ssh/id_rsa administrador@177.222.44.38 << 'EOF'
+          sudo chown -R administrador:www-data /var/www/laravel/public/build
+        EOF
         rsync -avz --delete \
           --exclude='.git' \
           --exclude='node_modules' \
