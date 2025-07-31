@@ -44,6 +44,10 @@ jobs:
           mkdir -p public/build
           sudo chown -R www-data:www-data /var/www/laravel/public/build
           sudo chmod -R 775 /var/www/laravel/public/build
+
+          mkdir -p public/build/assets
+          sudo chown -R administrador:www-data public/build/assets
+          sudo chmod -R 775 public/build/assets
           
           npm install
           npm run build
