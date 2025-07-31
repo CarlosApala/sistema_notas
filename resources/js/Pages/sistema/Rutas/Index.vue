@@ -2,7 +2,7 @@
     <div class="container py-4 max-w-5xl mx-auto">
 
         <h4 class="mb-0 text-4xl font-semibold">Zonas y Rutas</h4>
-        <h4 class="mb-0 text-lg font-normal">Ingrese a un registro y cree una ruta</h4>
+        <h4 class="mb-0 text-lg font-normal">Busque un registro</h4>
         <!-- <button v-if="permissions.includes('zona.crear')" class="btn btn-success" @click="abrirModalRegistroZona">Registrar Zona</button> -->
 
 
@@ -16,16 +16,6 @@
                         {{item.rutas.map(r => r.NombreRuta).join(' - ')}}
                     </span>
                     <span v-else class="text-gray-500 italic">Sin rutas registradas</span>
-                </td>
-                <td class="p-2 border text-center space-x-2">
-                    <Link class="no-underline text-white bg-green-600 hover:bg-green-800 px-3 py-1 text-sm rounded"
-                        :href="`/sistema/zonas_rutas/${item.id}`" @click.stop>
-                    Registrar rutas
-                    </Link>
-
-
-
-
                 </td>
             </template>
         </TablaBusqueda>

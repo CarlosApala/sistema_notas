@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\RutasLecturador;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Models\Role;
@@ -19,14 +20,19 @@ class UsuariosLecturadoresController extends Controller
         try {
             $user = auth()->user();
 
-            if (!$user || !$user->can('personal_interno.ver')) {
-                abort(403, 'No tienes permiso para ver este módulo');
-            }
+            // Verificación directa en la tabla user_permisos
+            $permisoExiste = DB::table('user_permisos')
+                ->join('permissions', 'user_permisos.permissions_id', '=', 'permissions.id')
+                ->where('user_permisos.users_id', $user->id)
+                ->where('permissions.name', 'lecturadores.crear')
+                ->exists();
+
+
 
             $search = $request->input('search');
             $onlyDeleted = $request->boolean('deleted');
 
-            $query = User::role('lecturador'); // ← filtramos por rol
+            $query = User::role('lecturador');
 
             if ($onlyDeleted) {
                 $query->onlyTrashed();
@@ -44,12 +50,80 @@ class UsuariosLecturadoresController extends Controller
                 ->paginate(10)
                 ->appends($request->query());
 
+            // Obtener todos los permisos del usuario desde la tabla user_permisos
+            $permisos = DB::table('user_permisos')
+                ->join('permissions', 'user_permisos.permissions_id', '=', 'permissions.id')
+                ->where('user_permisos.users_id', $user->id)
+                ->pluck('permissions.name');
+
             return Inertia::render('sistema/Usuarios_Lecturadores/Index', [
                 'usuarios' => $usuarios,
                 'filters' => [
                     'search' => $search,
                     'deleted' => $onlyDeleted,
                 ],
+                'permissions' => $permisos,
+                'flash' => [
+                    'success' => session('success'),
+                    'error' => session('error'),
+                ],
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error en index de UsuariosLecturadores: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Error al cargar usuarios lecturadores.');
+        }
+    }
+
+    public function indexDelete(Request $request)
+    {
+        try {
+            $user = auth()->user();
+
+            // Verificación directa en la tabla user_permisos
+            $permisoExiste = DB::table('user_permisos')
+                ->join('permissions', 'user_permisos.permissions_id', '=', 'permissions.id')
+                ->where('user_permisos.users_id', $user->id)
+                ->where('permissions.name', 'lecturadores.crear')
+                ->exists();
+
+            if (!$permisoExiste) {
+                abort(403, 'No tienes permiso para ver este módulo');
+            }
+
+            $search = $request->input('search');
+            $onlyDeleted = $request->boolean('deleted');
+
+            $query = User::role('lecturador');
+
+            if ($onlyDeleted) {
+                $query->onlyTrashed();
+            }
+
+            if ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'ilike', "%{$search}%")
+                        ->orWhere('email', 'ilike', "%{$search}%")
+                        ->orWhere('username', 'ilike', "%{$search}%");
+                });
+            }
+
+            $usuarios = $query->orderBy('id', 'asc')
+                ->paginate(10)
+                ->appends($request->query());
+
+            // Obtener todos los permisos del usuario desde la tabla user_permisos
+            $permisos = DB::table('user_permisos')
+                ->join('permissions', 'user_permisos.permissions_id', '=', 'permissions.id')
+                ->where('user_permisos.users_id', $user->id)
+                ->pluck('permissions.name');
+
+            return Inertia::render('sistema/Usuarios_Lecturadores/IndexDelete', [
+                'usuarios' => $usuarios,
+                'filters' => [
+                    'search' => $search,
+                    'deleted' => $onlyDeleted,
+                ],
+                'permissions' => $permisos,
                 'flash' => [
                     'success' => session('success'),
                     'error' => session('error'),
@@ -87,21 +161,20 @@ class UsuariosLecturadoresController extends Controller
         return redirect()->back()->with('success', 'Rol Lecturador asignado correctamente.');
     }
     public function destroy($id)
-{
-    try {
-        $usuario = User::findOrFail($id);
+    {
+        try {
+            $usuario = User::findOrFail($id);
 
-        if (!$usuario->hasRole('lecturador')) {
-            return redirect()->back()->with('error', 'Este usuario no tiene el rol Lecturador.');
+            if (!$usuario->hasRole('lecturador')) {
+                return redirect()->back()->with('error', 'Este usuario no tiene el rol Lecturador.');
+            }
+
+            $usuario->delete(); // Soft delete si el modelo usa SoftDeletes
+
+            return redirect()->back()->with('success', 'Usuario lecturador eliminado correctamente.');
+        } catch (\Exception $e) {
+            Log::error('Error al eliminar usuario lecturador: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Error al eliminar usuario lecturador.');
         }
-
-        $usuario->delete(); // Soft delete si el modelo usa SoftDeletes
-
-        return redirect()->back()->with('success', 'Usuario lecturador eliminado correctamente.');
-    } catch (\Exception $e) {
-        Log::error('Error al eliminar usuario lecturador: ' . $e->getMessage());
-        return redirect()->back()->with('error', 'Error al eliminar usuario lecturador.');
     }
-}
-
 }

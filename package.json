@@ -21,6 +21,7 @@
     "dependencies": {
         "@balkangraph/orgchart.js": "^8.19.28",
         "@inertiajs/inertia": "^0.11.1",
+        "@inertiajs/inertia-vue3": "^0.6.0",
         "@popperjs/core": "^2.11.8",
         "bootstrap": "^5.3.7",
         "fix": "^0.0.6",

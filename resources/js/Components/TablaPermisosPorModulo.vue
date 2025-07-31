@@ -85,7 +85,7 @@ const props = defineProps({
   acciones: {
     type: Array,
     default: () => [
-      'ver',
+
       'crear',
       'editar',
       'eliminar',

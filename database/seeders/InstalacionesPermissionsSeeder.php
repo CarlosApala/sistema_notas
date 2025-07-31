@@ -21,7 +21,7 @@ class InstalacionesPermissionsSeeder extends Seeder
 
         foreach ($permissions as $perm) {
             // Evita insertar permisos duplicados
-            Permission::firstOrCreate(['name' => $perm]);
+            Permission::firstOrCreate(['name' => $perm,'programa'=>'instalaciones']);
         }
     }
 }

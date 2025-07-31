@@ -6,7 +6,7 @@ use App\Models\Permission;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class ConfiguracionSeeder extends Seeder
+class ZonaRutasSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,14 +14,14 @@ class ConfiguracionSeeder extends Seeder
     public function run(): void
     {
         $permisos = [
-            'configuracion.crear',
-            'configuracion.editar',
-            'configuracion.eliminar',
-            'configuracion.eliminados',
+            'zona_ruta.crear',
+            'zona_ruta.editar',
+            'zona_ruta.eliminar',
+            'zona_ruta.eliminados',
         ];
 
         foreach ($permisos as $permiso) {
-            Permission::firstOrCreate(['name' => $permiso,'programa'=>'configuracion'
+            Permission::firstOrCreate(['name' => $permiso,'programa'=>'zona_ruta'
         ]);
         }
     }

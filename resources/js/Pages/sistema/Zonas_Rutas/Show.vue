@@ -39,9 +39,7 @@
             <p v-else class="text-muted">No hay rutas asignadas a esta zona.</p>
         </div>
 
-        <Link class="btn btn-secondary mb-4" :href="`/sistema/zonas_rutas`">
-        Volver
-        </Link>
+
     </div>
 </template>
 

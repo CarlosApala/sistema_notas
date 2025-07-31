@@ -20,7 +20,8 @@ class UsuariosPermissionsSeeder extends Seeder
         ];
 
         foreach ($permisos as $permiso) {
-            Permission::firstOrCreate(['name' => $permiso]);
+            Permission::firstOrCreate(['name' => $permiso,'programa'=>'usuarios'
+        ]);
         }
     }
 }

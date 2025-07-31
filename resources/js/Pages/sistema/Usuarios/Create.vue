@@ -39,16 +39,11 @@
                     <input v-model="form.numero_celular" type="text" class="w-full border rounded px-3 py-2 bg-gray-100"
                         readonly />
                 </div>
-                <div>
-                    <label class="block mb-1 font-medium">Rol (opcional)</label>
-                    <input v-model="form.rol" type="text" class="w-full border rounded px-3 py-2 bg-gray-100"
-                        readonly />
-                </div>
 
                 <!-- Tabla de permisos -->
                 <div class="mt-8">
                     <h2 class="text-lg font-semibold mb-4">Permisos asignados</h2>
-                    <TablaPermisosPorModulo v-model="permisosSeleccionados" :estructura="estructuraPermisos" />
+                    <PermisosPorModulo v-model="permisosSeleccionados" :estructura="estructuraModulos" />
                 </div>
 
                 <div class="flex justify-end mt-6">
@@ -75,63 +70,87 @@ import { ref } from 'vue'
 import { useForm } from '@inertiajs/vue3'
 import App from '@/Layouts/AppLayout.vue'
 import TablaModal from '@/Components/TablaModal.vue'
-import TablaPermisosPorModulo from '@/Components/TablaPermisosPorModulo.vue'
+import Swal from 'sweetalert2'
+//import TablaPermisosPorModulo from '@/Components/TablaPermisosPorModulo.vue'
+import PermisosPorModulo from '@/Components/PermisosPorModulo.vue'
 
 defineOptions({ layout: App })
 
 const props = defineProps({
     roles: Array,
-    estructuraPermisos: Object
+    estructuraModulos: Object,
+    permisosUsuario: Array
 })
+
+let idUsuario;
 
 // Formulario principal
 const form = useForm({
+    personal_interno_id:'',
     nombres: '',
     apellidos: '',
     carnet_identidad: '',
     numero_celular: '',
-    rol: '',
-    permisos: [] // ✅ Campo incluido desde el inicio
+    permisos: []
 })
-console.log(props.estructuraPermisos);
-// Estado para el modal
+
+// Modal
 const modalVisible = ref(false)
 
-// Permisos seleccionados desde la tabla
-const permisosSeleccionados = ref([])
+// Inicializa los permisos seleccionados con los permisos que vienen desde el controlador
+const permisosSeleccionados = ref([...props.permisosUsuario])
 
-// Abrir modal de selección de usuario
 function abrirModal() {
     modalVisible.value = true
 }
 
-// Cerrar el modal
 function cerrarModal() {
     modalVisible.value = false
 }
 
-// Asignar datos del usuario seleccionado
 function seleccionarUsuario(usuario) {
+
+    console.log(' datos de usuairo')
+    console.log(usuario);
+    form.personal_interno_id=usuario.id
     form.nombres = usuario.nombres
     form.apellidos = usuario.apellidos
     form.carnet_identidad = usuario.carnet_identidad
     form.numero_celular = usuario.numero_celular
-    form.rol = usuario.rol || ''
     cerrarModal()
 }
 
-// Enviar el formulario al backend
 function submit() {
-    form.permisos = [...permisosSeleccionados.value] // ✅ Enviar permisos como array plano
+  form.personal_interno_id = form.personal_interno_id || null;
 
-    console.log('Formulario enviado:', form)
+  // Extraer solo el campo 'name' de los permisos seleccionados
+  form.permisos = permisosSeleccionados.value;
 
-    form.post('/sistema/usuarios', {
-        preserveScroll: true,
-        onSuccess: () => {
-            form.reset()
-            permisosSeleccionados.value = []
-        }
-    })
+  console.log('Formulario enviado:', form);
+
+  form.post('/sistema/usuarios', {
+    preserveScroll: true,
+    onSuccess: () => {
+      form.reset();
+      permisosSeleccionados.value = [];
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Usuario guardado',
+        text: 'Los datos han sido registrados correctamente.',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Aceptar',
+      });
+    },
+    onError: () => {
+          console.error('Errores de validación:', errors);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Ocurrió un error al guardar el usuario.',
+      });
+    }
+  });
 }
+
 </script>

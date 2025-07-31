@@ -45,6 +45,67 @@ class PredioController extends Controller
             ],
         ]);
     }
+
+    public function indexEdit(Request $request)
+    {
+        $query = Predio::query();
+
+        // Si pide ver solo eliminados
+        if ($request->boolean('deleted')) {
+            $query->onlyTrashed();
+        }
+
+        // Filtro de búsqueda (dirección, zonaBarrio, distrito)
+        if ($search = $request->input('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('direccion', 'ILIKE', "%{$search}%")
+                    ->orWhere('zonaBarrio', 'ILIKE', "%{$search}%")
+                    ->orWhere('distrito', 'ILIKE', "%{$search}%");
+            });
+        }
+
+        // Ordenar por ID ascendente
+        $predios = $query->orderBy('id', 'asc')->paginate(10)->withQueryString();
+
+        return Inertia::render('sistema/Predios/IndexEdit', [
+            'predios' => $predios,
+            'filters' => $request->only('search', 'deleted'),
+            'flash' => [
+                'success' => session('success'),
+            ],
+        ]);
+    }
+
+    public function indexDelete(Request $request)
+    {
+        $query = Predio::query();
+
+        // Si pide ver solo eliminados
+        if ($request->boolean('deleted')) {
+            $query->onlyTrashed();
+        }
+
+        // Filtro de búsqueda (dirección, zonaBarrio, distrito)
+        if ($search = $request->input('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('direccion', 'ILIKE', "%{$search}%")
+                    ->orWhere('zonaBarrio', 'ILIKE', "%{$search}%")
+                    ->orWhere('distrito', 'ILIKE', "%{$search}%");
+            });
+        }
+
+        // Ordenar por ID ascendente
+        $predios = $query->orderBy('id', 'asc')->paginate(10)->withQueryString();
+
+        return Inertia::render('sistema/Predios/IndexDelete', [
+            'predios' => $predios,
+            'filters' => $request->only('search', 'deleted'),
+            'flash' => [
+                'success' => session('success'),
+            ],
+        ]);
+    }
+
     public function show($id)
     {
         try {

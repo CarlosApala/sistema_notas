@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Permission;
 use App\Models\PersonalInterno;
-use App\Models\RutasLecturador;
+
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
+
 use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
+
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -23,8 +25,76 @@ class UserController extends Controller
         // Usuarios que tienen un personal interno asignado
         $users = User::whereNotNull('personal_id')->with('personal')->get();
 
+        // Si necesitas mostrar algo adicional por usuario (no obligatorio aquí)
+        $data = $users->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'username' => $user->username,
+                'email' => $user->email,
+            ];
+        });
+
+        // Obtener permisos del usuario autenticado desde tabla personalizada
+        $usuarioActual = Auth::user();
+        $permisos = $usuarioActual?->permissions->pluck('name') ?? [];
+
+
+
         return Inertia::render('sistema/Usuarios/Index', [
-            'users' => $users,
+            'users' => $data,
+            'permissions' => $permisos,
+            'flash' => ['success' => session('success')],
+        ]);
+    }
+
+    public function indexDelete()
+    {
+        // Usuarios que tienen un personal interno asignado
+        $users = User::whereNotNull('personal_id')->with('personal')->get();
+
+        // Si necesitas mostrar algo adicional por usuario (no obligatorio aquí)
+        $data = $users->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'username' => $user->username,
+                'email' => $user->email,
+            ];
+        });
+
+        // Obtener permisos del usuario autenticado desde tabla personalizada
+        $usuarioActual = Auth::user();
+        $permisos = $usuarioActual?->permissions->pluck('name') ?? [];
+
+
+
+        return Inertia::render('sistema/Usuarios/IndexDelete', [
+            'users' => $data,
+            'permissions' => $permisos,
+            'flash' => ['success' => session('success')],
+        ]);
+    }
+
+    public function indexEdit()
+    {
+        // Usuarios que tienen un personal interno asignado
+        $users = User::whereNotNull('personal_id')->with('personal')->get();
+
+        // Si necesitas mostrar algo adicional por usuario (no obligatorio aquí)
+        $data = $users->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'username' => $user->username,
+                'email' => $user->email,
+            ];
+        });
+
+        // Obtener permisos del usuario autenticado desde tabla personalizada
+        $usuarioActual = Auth::user();
+        $permisos = $usuarioActual?->permissions->pluck('name') ?? [];
+
+        return Inertia::render('sistema/Usuarios/IndexEdit', [
+            'users' => $data,
+            'permissions' => $permisos,
             'flash' => ['success' => session('success')],
         ]);
     }
@@ -36,53 +106,71 @@ class UserController extends Controller
 
     public function create()
     {
-        $roles = Role::all(['id', 'name']);
+        // Traer todos los permisos con su módulo asociado
+        $permisosConModulos = Permission::select('permissions.name', 'modulos.nombre as modulo_nombre', 'permissions.programa')
+            ->join('modulos', 'permissions.modulo_id', '=', 'modulos.id')
+            ->get();
 
-        $estructuraModulos = [
-            'Gestión' => [
-                'Usuarios' => 'usuarios',
-                'Personal Interno' => 'personal_interno',
-                'Lecturadores' => 'lecturadores',
-                'Zona' => 'zona',
-                'Predios' => 'predios',
-                'Instalaciones' => 'instalaciones',
-                'Asignaciones' => 'asignaciones'
-            ]
-        ];
+        // Estructura deseada: [modulo => [programa => [ ['accion' => '', 'name' => ''] ] ] ]
+        $estructura = [];
 
+        foreach ($permisosConModulos as $permiso) {
+            $modulo = $permiso->modulo_nombre;
+            $programa = $permiso->programa;
 
-        $personasSinUsuario = PersonalInterno::whereDoesntHave('user')->orderBy('id', 'asc')->paginate(10);
+            $partes = explode('.', $permiso->name);
+            $accion = $partes[1] ?? null;
+
+            if (!$accion) {
+                continue;
+            }
+
+            if (!isset($estructura[$modulo])) {
+                $estructura[$modulo] = [];
+            }
+
+            if (!isset($estructura[$modulo][$programa])) {
+                $estructura[$modulo][$programa] = [];
+            }
+
+            $estructura[$modulo][$programa][] = [
+                'accion' => $accion,
+                'name' => $permiso->name,
+            ];
+        }
 
         return Inertia::render('sistema/Usuarios/Create', [
-            'personas' => $personasSinUsuario,
-            'roles' => $roles,
-            'estructuraPermisos' => $estructuraModulos,
+            'estructuraModulos' => $estructura,
+            'permisosUsuario' => [], // Inicialmente vacío
         ]);
     }
+
+
+
 
 
     public function store(Request $request)
     {
         try {
-            $validated = $request->validate([
-                'nombres' => 'required|string|max:255',
-                'apellidos' => 'required|string|max:255',
-                'carnet_identidad' => 'required|string|max:50|exists:personal_interno,carnet_identidad',
-                'numero_celular' => 'nullable|string|max:20',
-                'rol' => 'nullable|string|exists:roles,name',
-                'permisos' => 'present|array',
-                'permisos.*' => 'string|exists:permissions,name'
-            ]);
+            // Validación: solo id de personal interno y permisos
 
+
+
+            $validated = $request->validate([
+                'personal_interno_id' => 'required|exists:personal_interno,id',
+                'permisos' => 'present|array',
+                'permisos.*' => 'string|exists:permissions,name',
+            ]);
 
 
             DB::beginTransaction();
 
-            $personal = PersonalInterno::where('carnet_identidad', $validated['carnet_identidad'])->firstOrFail();
+            // Buscar datos de personal_interno usando el id recibido
+            $personal = PersonalInterno::findOrFail($validated['personal_interno_id']);
 
-            $fullName = $validated['nombres'] . ' ' . $validated['apellidos'];
-
-            $usernameBase = $validated['nombres'] . substr($validated['carnet_identidad'], 0, 3);
+            // Armar nombre completo y username único basado en datos de personal
+            $fullName = $personal->nombres . ' ' . $personal->apellidos;
+            $usernameBase = $personal->nombres . substr($personal->carnet_identidad, 0, 3);
             $username = $usernameBase;
             $counter = 1;
 
@@ -91,34 +179,44 @@ class UserController extends Controller
                 $counter++;
             }
 
-            $email = $username . '@example.com';
-            $password = 'password';
 
+
+            $email = $username . '@example.com';
+            //dd($fullName,$username,$email);
+            // Crear usuario
             $user = User::create([
                 'name' => $fullName,
                 'email' => $email,
                 'username' => $username,
-                'password' => $password,
+                'password' => 'password', // Asegúrate de hashear la contraseña
+                'personal_id' => $personal->id
             ]);
 
-            $personal->update([
-                'nombres' => $validated['nombres'],
-                'apellidos' => $validated['apellidos'],
-                'numero_celular' => $validated['numero_celular'],
-            ]);
+            $user->save();
 
-            $user->update(['personal_id' => $personal->id]);
 
-            if (!empty($validated['rol'])) {
-                $user->assignRole($validated['rol']);
+            // Obtener IDs de permisos
+            $permisosIds = Permission::whereIn('name', $validated['permisos'])->pluck('id')->toArray();
+
+
+            // Limpiar permisos previos
+            DB::table('user_permisos')->where('users_id', $user->id)->delete();
+
+            // Insertar permisos nuevos
+            foreach ($permisosIds as $permisoId) {
+                DB::table('user_permisos')->insert([
+                    'users_id' => $user->id,
+                    'permissions_id' => $permisoId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
             }
 
-            $user->syncPermissions($validated['permisos']); // Siempre se recibe como array
+
 
             DB::commit();
-
             return redirect()
-                ->route('usuarios.index')
+                ->route('usuarios.create')
                 ->with('success', 'Usuario y personal registrados correctamente.');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -132,50 +230,112 @@ class UserController extends Controller
     }
 
 
-
-
     /**
      * Display the specified resource.
      */
     public function show($id)
     {
+        $user = User::findOrFail($id);
 
-        $user = User::with('roles.permissions')->findOrFail($id);
+        // Obtener permisos asignados directamente al usuario
+        $permisosUsuario = DB::table('user_permisos')
+            ->join('permissions', 'permissions.id', '=', 'user_permisos.permissions_id')
+            ->join('modulos', 'permissions.modulo_id', '=', 'modulos.id')
+            ->where('user_permisos.users_id', $user->id)
+            ->select('permissions.name', 'permissions.programa', 'modulos.nombre as modulo_nombre')
+            ->get();
 
+        // Construir estructura: "Gestión de Zonas" -> "zona" -> [acciones]
+        $estructura = [];
 
-        $permisosUsuario = $user->getAllPermissions()->pluck('name')->toArray();
+        foreach ($permisosUsuario as $permiso) {
+            $modulo = $permiso->modulo_nombre;
+            $programa = $permiso->programa;
+            $partes = explode('.', $permiso->name);
+            $accion = $partes[1] ?? null;
 
-        $permisosPorRol = [];
-        foreach ($user->roles as $rol) {
-            $permisosPorRol[$rol->name] = $rol->permissions->pluck('name')->toArray();
+            if (!$accion) continue;
+
+            if (!isset($estructura[$modulo])) {
+                $estructura[$modulo] = [];
+            }
+
+            if (!isset($estructura[$modulo][$programa])) {
+                $estructura[$modulo][$programa] = [];
+            }
+
+            $yaExiste = collect($estructura[$modulo][$programa])
+                ->contains('name', $permiso->name);
+
+            if (!$yaExiste) {
+                $estructura[$modulo][$programa][] = [
+                    'accion' => $accion,
+                    'name' => $permiso->name,
+                ];
+            }
         }
-
 
         return Inertia::render('sistema/Usuarios/Show', [
             'user' => $user,
-            'permisosUsuario' => $permisosUsuario,
-            'permisosPorRol' => $permisosPorRol,
+            'estructuraModulos' => $estructura,
         ]);
     }
 
-    public function edit(User $usuario)
+
+
+
+    public function edit($id)
     {
-        $rolesDisponibles = Role::all();
-        $permisosDisponibles = Permission::all();
-        $rolesUsuario = $usuario->roles->pluck('name')->toArray();
+        // Obtener permisos asignados directamente al usuario
+
+
+        $usuario = User::where('id', $id)->first();
 
 
 
-        // Limpiar espacios en permisos directos por seguridad
-        $permisosUsuarioDirectos = $usuario->permissions->pluck('name')->toArray();
+        $permisosUsuario = DB::table('user_permisos')
+            ->join('permissions', 'permissions.id', '=', 'user_permisos.permissions_id')
+            ->join('modulos', 'permissions.modulo_id', '=', 'modulos.id')
+            ->where('user_permisos.users_id', $usuario->id)
+            ->select('permissions.name', 'permissions.programa', 'modulos.nombre as modulo_nombre')
+            ->get();
+
+        // Construir estructura: "Gestión de Zonas" -> "zona" -> [acciones]
+        $estructura = [];
+
+        foreach ($permisosUsuario as $permiso) {
+            $modulo = $permiso->modulo_nombre;
+            $programa = $permiso->programa;
+            $partes = explode('.', $permiso->name);
+            $accion = $partes[1] ?? null;
+
+            if (!$accion) continue;
+
+            if (!isset($estructura[$modulo])) {
+                $estructura[$modulo] = [];
+            }
+
+            if (!isset($estructura[$modulo][$programa])) {
+                $estructura[$modulo][$programa] = [];
+            }
+
+            $yaExiste = collect($estructura[$modulo][$programa])
+                ->contains('name', $permiso->name);
+
+            if (!$yaExiste) {
+                $estructura[$modulo][$programa][] = [
+                    'accion' => $accion,
+                    'name' => $permiso->name,
+                ];
+            }
+        }
+
         return Inertia::render('sistema/Usuarios/Edit', [
-            'usuario' => $usuario,
-            'rolesDisponibles' => $rolesDisponibles,
-            'permisosDisponibles' => $permisosDisponibles,
-            'rolesUsuario' => $rolesUsuario,
-            'permisosUsuarioDirectos' => $permisosUsuarioDirectos,
+            'user' => $usuario,
+            'estructuraModulos' => $estructura,
         ]);
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -183,43 +343,56 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
+        $user = User::findOrFail($id); // Busca el usuario por ID
 
-        // Validación del usuario y sus permisos
-        $request->validate([
+        // Validación
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'username' => 'required|string|max:255',
-            'password' => 'nullable|string|confirmed|min:6',
-            'roles' => 'array',
-            'roles.*' => 'string|exists:roles,name',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'username' => 'required|string|max:255|unique:users,username,' . $user->id,
+            'password' => 'nullable|confirmed|min:6',
             'permisos' => 'array',
-            'permisos.*' => 'string|exists:permissions,name',
+            'permisos.*' => 'string'
         ]);
 
-        $usuario = User::findOrFail($id);
+        // Actualiza los datos del usuario
+        $user->fill([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'username' => $validated['username'],
+        ]);
 
-        $user = \App\Models\User::find($usuario);
-
-        $usuario->name = $request->name;
-        $usuario->email = $request->email;
-        $usuario->username = $request->username;
-
-        if (!empty($request->password)) {
-            $usuario->password = $request->password;
+        if (!empty($validated['password'])) {
+            $user->password = $request->password;
         }
 
-        $usuario->save();
+        $user->save();
 
-        // Sincronizar roles
-        $usuario->syncRoles($request->roles ?? []);
+        // Manejo manual de la tabla user_permisos
+        if (isset($validated['permisos'])) {
+            // Elimina permisos anteriores
+            DB::table('user_permisos')->where('users_id', $user->id)->delete();
 
-        // Sincronizar permisos directos
-        $usuario->syncPermissions($request->permisos ?? []);
+            // Obtiene IDs de los permisos por sus nombres
+            $permissionIds = DB::table('permissions')
+                ->whereIn('name', $validated['permisos'])
+                ->pluck('id')
+                ->toArray();
 
+            // Inserta los nuevos permisos
+            $now = now();
+            $insertData = array_map(fn($permissionId) => [
+                'users_id' => $user->id,
+                'permissions_id' => $permissionId,
+                'created_at' => $now,
+                'updated_at' => $now
+            ], $permissionIds);
+
+            DB::table('user_permisos')->insert($insertData);
+        }
         return redirect()->route('usuarios.index')
             ->with('success', 'Usuario actualizado correctamente.');
     }
-
 
     /**
      * Remove the specified resource from storage.

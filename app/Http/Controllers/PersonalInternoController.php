@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\PersonalInterno;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
@@ -18,10 +19,16 @@ class PersonalInternoController extends Controller
     public function index(Request $request)
     {
         try {
-
             $user = auth()->user();
 
-            if (!$user || !$user->can('personal_interno.ver')) {
+            // Verificación directa en la tabla user_permisos
+            $permisoExiste = DB::table('user_permisos')
+                ->join('permissions', 'user_permisos.permissions_id', '=', 'permissions.id')
+                ->where('user_permisos.users_id', $user->id)
+                ->where('permissions.name', 'personal_interno.crear')
+                ->exists();
+
+            if (!$permisoExiste) {
                 abort(403, 'No tienes permiso para ver este módulo');
             }
 
@@ -46,12 +53,144 @@ class PersonalInternoController extends Controller
                 ->paginate(10)
                 ->appends($request->query());
 
+            // Obtener los permisos asignados al usuario desde la tabla personalizada
+            $permisos = DB::table('user_permisos')
+                ->join('permissions', 'user_permisos.permissions_id', '=', 'permissions.id')
+                ->where('user_permisos.users_id', $user->id)
+                ->pluck('permissions.name');
+
             return Inertia::render('sistema/Personal_Interno/Index', [
                 'personalInterno' => $personalInterno,
                 'filters' => [
                     'search' => $search,
                     'deleted' => $onlyDeleted,
                 ],
+                'permissions' => $permisos,
+                'flash' => [
+                    'success' => session('success'),
+                    'error' => session('error'),
+                ],
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error en index de PersonalInterno: ' . $e->getMessage());
+
+            return redirect()->back()->with('error', 'Ocurrió un error al buscar el personal interno. Intenta nuevamente.');
+        }
+    }
+
+
+    public function indexEdit(Request $request)
+    {
+        try {
+            $user = auth()->user();
+
+            // Verificación directa en la tabla user_permisos
+            $permisoExiste = DB::table('user_permisos')
+                ->join('permissions', 'user_permisos.permissions_id', '=', 'permissions.id')
+                ->where('user_permisos.users_id', $user->id)
+                ->where('permissions.name', 'personal_interno.crear')
+                ->exists();
+
+            if (!$permisoExiste) {
+                abort(403, 'No tienes permiso para ver este módulo');
+            }
+
+            $search = $request->input('search');
+            $onlyDeleted = $request->boolean('deleted');
+
+            $query = PersonalInterno::query();
+
+            if ($onlyDeleted) {
+                $query->onlyTrashed();
+            }
+
+            if ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('nombres', 'ilike', "%{$search}%")
+                        ->orWhere('apellidos', 'ilike', "%{$search}%")
+                        ->orWhere('carnet_identidad', 'ilike', "%{$search}%");
+                });
+            }
+
+            $personalInterno = $query->orderBy('id', 'asc')
+                ->paginate(10)
+                ->appends($request->query());
+
+            // Obtener los permisos asignados al usuario desde la tabla personalizada
+            $permisos = DB::table('user_permisos')
+                ->join('permissions', 'user_permisos.permissions_id', '=', 'permissions.id')
+                ->where('user_permisos.users_id', $user->id)
+                ->pluck('permissions.name');
+
+            return Inertia::render('sistema/Personal_Interno/IndexEdit', [
+                'personalInterno' => $personalInterno,
+                'filters' => [
+                    'search' => $search,
+                    'deleted' => $onlyDeleted,
+                ],
+                'permissions' => $permisos,
+                'flash' => [
+                    'success' => session('success'),
+                    'error' => session('error'),
+                ],
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error en index de PersonalInterno: ' . $e->getMessage());
+
+            return redirect()->back()->with('error', 'Ocurrió un error al buscar el personal interno. Intenta nuevamente.');
+        }
+    }
+
+    public function indexDelete(Request $request)
+    {
+        try {
+            $user = auth()->user();
+
+            // Verificación directa en la tabla user_permisos
+            $permisoExiste = DB::table('user_permisos')
+                ->join('permissions', 'user_permisos.permissions_id', '=', 'permissions.id')
+                ->where('user_permisos.users_id', $user->id)
+                ->where('permissions.name', 'personal_interno.crear')
+                ->exists();
+
+            if (!$permisoExiste) {
+                abort(403, 'No tienes permiso para ver este módulo');
+            }
+
+            $search = $request->input('search');
+            $onlyDeleted = $request->boolean('deleted');
+
+            $query = PersonalInterno::query();
+
+            if ($onlyDeleted) {
+                $query->onlyTrashed();
+            }
+
+            if ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('nombres', 'ilike', "%{$search}%")
+                        ->orWhere('apellidos', 'ilike', "%{$search}%")
+                        ->orWhere('carnet_identidad', 'ilike', "%{$search}%");
+                });
+            }
+
+            $personalInterno = $query->orderBy('id', 'asc')
+                ->paginate(10)
+                ->appends($request->query());
+
+            // Obtener los permisos asignados al usuario desde la tabla personalizada
+            $permisos = DB::table('user_permisos')
+                ->join('permissions', 'user_permisos.permissions_id', '=', 'permissions.id')
+                ->where('user_permisos.users_id', $user->id)
+                ->pluck('permissions.name');
+
+            return Inertia::render('sistema/Personal_Interno/IndexDelete', [
+                'personalInterno' => $personalInterno,
+                'filters' => [
+                    'search' => $search,
+                    'deleted' => $onlyDeleted,
+                ],
+                'permissions' => $permisos,
                 'flash' => [
                     'success' => session('success'),
                     'error' => session('error'),

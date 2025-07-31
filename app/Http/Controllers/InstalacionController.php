@@ -61,6 +61,109 @@ class InstalacionController extends Controller
         }
     }
 
+    public function indexEdit(Request $request)
+    {
+        try {
+            $search = $request->input('search');
+            $onlyDeleted = $request->boolean('deleted');
+
+            // Consultar instalaciones con relación a predio
+            $query = Instalacion::with('predio');
+
+            if ($onlyDeleted) {
+                $query->onlyTrashed();
+            }
+
+            if ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('NumeroMedidor', 'ilike', "%{$search}%")
+                        ->orWhere('EstadoInstalacion', 'ilike', "%{$search}%")
+                        ->orWhere('EstadoAlcantarillado', 'ilike', "%{$search}%")
+                        ->orWhere('EstadoCorte', 'ilike', "%{$search}%")
+                        ->orWhereHas('predio', function ($q2) use ($search) {
+                            $q2->where('direccion', 'ilike', "%{$search}%")
+                                ->orWhere('zonaBarrio', 'ilike', "%{$search}%")
+                                ->orWhere('distrito', 'ilike', "%{$search}%");
+                        });
+                });
+            }
+
+            // Sin select para traer todos los campos y relación
+            $instalaciones = $query
+                ->orderBy('id', 'asc')
+                ->paginate(10)
+                ->appends($request->query());
+
+            return Inertia::render('sistema/Instalaciones/IndexEdit', [
+                'instalaciones' => $instalaciones,
+                'filters' => [
+                    'search' => $search,
+                    'deleted' => $onlyDeleted,
+                ],
+                'flash' => [
+                    'success' => session('success'),
+                    'error' => session('error'),
+                ],
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error en index de Instalaciones: ' . $e->getMessage());
+
+            return redirect()->back()->with('error', 'Ocurrió un error al cargar las instalaciones.');
+        }
+    }
+
+    public function indexDelete(Request $request)
+    {
+        try {
+            $search = $request->input('search');
+            $onlyDeleted = $request->boolean('deleted');
+
+            // Consultar instalaciones con relación a predio
+            $query = Instalacion::with('predio');
+
+            if ($onlyDeleted) {
+                $query->onlyTrashed();
+            }
+
+            if ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('NumeroMedidor', 'ilike', "%{$search}%")
+                        ->orWhere('EstadoInstalacion', 'ilike', "%{$search}%")
+                        ->orWhere('EstadoAlcantarillado', 'ilike', "%{$search}%")
+                        ->orWhere('EstadoCorte', 'ilike', "%{$search}%")
+                        ->orWhereHas('predio', function ($q2) use ($search) {
+                            $q2->where('direccion', 'ilike', "%{$search}%")
+                                ->orWhere('zonaBarrio', 'ilike', "%{$search}%")
+                                ->orWhere('distrito', 'ilike', "%{$search}%");
+                        });
+                });
+            }
+
+            // Sin select para traer todos los campos y relación
+            $instalaciones = $query
+                ->orderBy('id', 'asc')
+                ->paginate(10)
+                ->appends($request->query());
+
+            return Inertia::render('sistema/Instalaciones/IndexDelete', [
+                'instalaciones' => $instalaciones,
+                'filters' => [
+                    'search' => $search,
+                    'deleted' => $onlyDeleted,
+                ],
+                'flash' => [
+                    'success' => session('success'),
+                    'error' => session('error'),
+                ],
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error en index de Instalaciones: ' . $e->getMessage());
+
+            return redirect()->back()->with('error', 'Ocurrió un error al cargar las instalaciones.');
+        }
+    }
+
+
     public function create()
     {
         return Inertia::render('sistema/Instalaciones/Create');

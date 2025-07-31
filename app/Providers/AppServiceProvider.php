@@ -27,13 +27,14 @@ class AppServiceProvider extends ServiceProvider
         Inertia::share([
             'auth' => function () {
                 $user = auth()->user();
+
+
                 return [
                     'user' => $user ? [
                         'id' => $user->id,
                         'username' => $user->username,
                         'email' => $user->email,
-                        // agrega más campos que necesites
-                        'permissions' => $user ? $user->getAllPermissions()->pluck('name') : [],
+                        'permissions' => $user ? $user->permissions()->pluck('name') : [],
                     ] : null,
                 ];
             },

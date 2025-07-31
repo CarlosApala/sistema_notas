@@ -45,6 +45,8 @@ class DatabaseSeeder extends Seeder
             InstalacionesPermissionsSeeder::class,
             AsignacionesPermissionsSeeder::class,
             UsuariosPermissionsSeeder::class,
+            ConfiguracionSeeder::class,
+            ZonaRutasSeeder::class,
             RolePermissionSeeder::class
         ]);
     }

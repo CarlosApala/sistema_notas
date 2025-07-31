@@ -12,8 +12,9 @@ defineOptions({ layout: App });
 
 const page = usePage();
 const moduloId = page.props.modulo.id;
-
+const nombreModulo=page.props.modulo.nombre;
 // Haz reactivos los datos que pueden cambiar
+
 const permisosUsuario = ref(page.props.permisosUsuario || []);
 const estructuraModulos = reactive(page.props.estructuraModulos || {});
 
@@ -138,7 +139,7 @@ async function recargarPermisos() {
 
 <template>
   <div class="p-6 max-w-4xl mx-auto bg-white rounded shadow">
-    <h2 class="text-xl font-bold mb-4">Asignar Permiso al Módulo</h2>
+    <h2 class="text-xl font-bold mb-4">Asignar Permiso al Módulo <h1>{{ nombreModulo }}</h1></h2>
 
     <form @submit.prevent="submit" class="space-y-4">
       <div>

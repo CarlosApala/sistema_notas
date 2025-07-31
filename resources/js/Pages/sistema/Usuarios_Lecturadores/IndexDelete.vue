@@ -2,7 +2,7 @@
     <div class="container mx-auto p-4">
         <h1 class="text-2xl font-bold mb-4">
             Lecturadores
-
+            <span v-if="filters.deleted">(eliminados)</span>
         </h1>
 
         <div v-if="flash.success" class="alert alert-success mb-4">
@@ -15,6 +15,19 @@
                     class="form-control" />
                 <button type="submit" class="btn btn-primary">Buscar</button>
             </form>
+
+            <!-- <div class="flex gap-2 flex-wrap">
+                <Link v-if="tienePermiso('lecturadores.crear')" href="/sistema/usuarios_lecturadores/create"
+                    class="btn btn-success">
+                Nuevo Lecturador
+                </Link>
+
+                <Link v-if="tienePermiso('lecturadores.eliminados')"
+                    :href="filters.deleted ? '/sistema/usuarios_lecturadores' : '/sistema/usuarios_lecturadores?deleted=true'"
+                    class="btn btn-secondary">
+                {{ filters.deleted ? 'Ver Activos' : 'Ver Eliminados' }}
+                </Link>
+            </div> -->
         </div>
 
         <div class="overflow-x-auto">

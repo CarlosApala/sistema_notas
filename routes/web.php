@@ -72,7 +72,10 @@ Route::middleware([
 
 
 
-
+    Route::get('/sistema/usuarios/editar', [UserController::class, 'indexEdit'])
+        ->name('usuarios.editarIndex');
+    Route::get('/sistema/usuarios/delete', [UserController::class, 'indexDelete'])
+        ->name('usuarios.editarDelete');
     Route::resource('/sistema/usuarios', UserController::class);
     Route::post('/usuarios/{id}/assign-role', [UserController::class, 'assignRole'])
         ->name('usuarios.assignRole');
@@ -84,23 +87,44 @@ Route::middleware([
     Route::put('/sistema/zonas_rutas/actualizar-ruta/{ruta}', [ZonasRutaController::class, 'actualizarRuta'])->name('zonas_rutas.actualizarRuta');
     Route::delete('/sistema/zonas_rutas/delete-ruta/{ruta}', [ZonasRutaController::class, 'eliminarRuta'])->name('zonas_rutas.eliminarRuta');
 
+
+    Route::get('/sistema/rutas/editar-rutas', [RutasController::class,'indexEdit'])->name('rutas.editar');
+    Route::get('/sistema/rutas/eliminar-rutas', [RutasController::class,'indexDelete'])->name('rutas.eliminar');
     Route::resource('/sistema/rutas', RutasController::class);
     Route::resource('/sistema/zonas', ZonasController::class);
 
+    Route::get('/sistema/instalaciones/eliminar', [InstalacionController::class, 'indexDelete'])->name('instalaciones.delete');
+    Route::get('/sistema/instalaciones/editar', [InstalacionController::class, 'indexEdit'])->name('instalaciones.edit');
     Route::resource('/sistema/instalaciones', InstalacionController::class);
     Route::post('/sistema/instalaciones/{id}/restore', [InstalacionController::class, 'restore'])->name('instalaciones.restore');
 
+    Route::get('/sistema/predios/eliminar', [PredioController::class,'indexDelete'])->name('predios.indexDelete');
+    Route::get('/sistema/predios/editar', [PredioController::class,'indexEdit'])->name('predios.indexEditar');
     Route::resource('/sistema/predios', PredioController::class);
     Route::post('/sistema/predios/{id}/restore', [PredioController::class, 'restore'])->name('predios.restore');
 
     Route::resource('/sistema/organigrama', OrganigramaController::class);
 
+    Route::get('/sistema/usuarios_lecturadores/editar', [UsuariosLecturadoresController::class, 'indexEdit'])
+        ->name('usuarios_lecturadores.editarIndex');
+    Route::get('/sistema/usuarios_lecturadores/eliminar', [UsuariosLecturadoresController::class, 'indexDelete'])
+        ->name('usuarios_lecturadores.eliminarIndex');
     Route::resource('/sistema/usuarios_lecturadores', UsuariosLecturadoresController::class);
     Route::post('/sistema/usuarios_lecturadores/{id}/assign-lecturador', [UsuariosLecturadoresController::class, 'assignLecturador']);
 
-
+    Route::get('/sistema/personal_interno/editar', [PersonalInternoController::class, 'indexEdit'])
+        ->name('personal_interno.editarIndex');
+    Route::get('/sistema/personal_interno/eliminar', [PersonalInternoController::class, 'indexDelete'])
+        ->name('personal_interno.eliminarIndex');
     Route::resource('/sistema/personal_interno', PersonalInternoController::class);
     Route::post('/sistema/personal_interno/{id}/restore', [PersonalInternoController::class, 'restore'])->name('personal_interno.restore');
+
+    Route::get('/zonas-editar', [ZonasController::class, 'indexEdit']);
+    Route::get('/zonas-eliminar', [ZonasController::class, 'indexDelete']);
+    //Route::get('/sistema/zonas/editar', [ZonasController::class, 'indexEdit']);
+    Route::resource('/sistema/zonas', ZonasController::class);
+
+
 
     Route::resource('permisos', PermissionController::class)->except(['index']);
 
@@ -110,7 +134,7 @@ Route::middleware([
     Route::post('/sistema/Modulos/{id}/restore', [ConfiguracionController::class, 'restore'])->name('configuracion.restore'); */
 
     Route::get('/sistema/modulos/{id}/asignarPrograma', [ModulosController::class, 'asignar'])
-    ->name('modulos.asignar');
+        ->name('modulos.asignar');
     Route::get('/sistema/modulos/eliminar', [ModulosController::class, 'eliminar'])->name('modulos.eliminar');
     Route::get('/sistema/modulos/modificar', [ModulosController::class, 'modificar'])->name('modulos.modificar');
     Route::resource('/sistema/modulos', ModulosController::class);
@@ -134,7 +158,7 @@ Route::middleware([
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'LIKE', "%{$search}%")
-                  ->orWhere('nombre', 'LIKE', "%{$search}%");
+                    ->orWhere('nombre', 'LIKE', "%{$search}%");
             });
         }
 
@@ -161,7 +185,7 @@ Route::middleware([
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'LIKE', "%{$search}%")
-                  ->orWhere('nombre', 'LIKE', "%{$search}%");
+                    ->orWhere('nombre', 'LIKE', "%{$search}%");
             });
         }
 
@@ -181,7 +205,7 @@ Route::middleware([
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'LIKE', "%{$search}%")
-                  ->orWhere('nombre', 'LIKE', "%{$search}%");
+                    ->orWhere('nombre', 'LIKE', "%{$search}%");
             });
         }
 
@@ -321,15 +345,26 @@ Route::middleware([
 
         return response()->json($zonas);
     });
-    Route::get('/api/zonas', function (Request $request) {
-        $search = $request->query('search');
-        $query = Zonas::query();
-        if ($search) {
-            $query->where('NombreZona', 'like', "%{$search}%")
-                ->orWhere('Distrito', 'like', "%{$search}%");
-        }
-        return response()->json($query->paginate($request->input('per_page', 10)));
-    });
+        Route::get('/api/zonas', function (Request $request) {
+            $search = $request->query('search');
+            $query = Zonas::query();
+
+            if ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('NombreZona', 'like', "%{$search}%");
+                });
+            }
+
+            $query->orderBy('id', 'asc');
+
+            $perPage = $request->query('per_page', 10);
+            $zonas = $query->paginate($perPage)->appends($request->query());
+
+            // Opcional: Si quieres ocultar timestamps o columnas que no necesitas,
+            // puedes usar ->makeHidden(['created_at', 'updated_at'])
+
+            return response()->json($zonas);
+        });
 
     Route::get('/api/usuarios', function (Request $request) {
         $query = User::query();

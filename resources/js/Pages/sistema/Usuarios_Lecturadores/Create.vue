@@ -1,6 +1,7 @@
 <template>
     <div class="container mx-auto p-4">
-        <h1 class="text-2xl font-bold mb-6">Usuarios sin rol Lecturador</h1>
+        <h1 class="text-2xl font-bold mb-6">Crear Lecturadores</h1>
+        <h2 class="text-lg font-bold mb-6">Seleccione un usuario</h2>
         <!-- Botón Volver -->
 
         <Link href="/sistema/usuarios_lecturadores"

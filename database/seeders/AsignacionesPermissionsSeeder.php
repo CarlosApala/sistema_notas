@@ -19,7 +19,7 @@ class AsignacionesPermissionsSeeder extends Seeder
         ];
 
         foreach ($permisos as $permission) {
-            Permission::firstOrCreate(['name' => $permission]);
+            Permission::firstOrCreate(['name' => $permission,'programa'=>'asignaciones']);
         }
     }
 }

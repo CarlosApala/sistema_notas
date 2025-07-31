@@ -30,6 +30,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'id',
         'name',
         'email',
         'username',
@@ -75,5 +76,14 @@ class User extends Authenticatable
     public function personal()
     {
         return $this->belongsTo(PersonalInterno::class, 'personal_id');
+    }
+
+    public function permissions()
+    {
+        return $this->belongsToMany(Permission::class, 'user_permisos', 'users_id', 'permissions_id');
+    }
+    public function permisosPorModulo()
+    {
+        return $this->hasMany(UserPermiso::class, 'users_id');
     }
 }

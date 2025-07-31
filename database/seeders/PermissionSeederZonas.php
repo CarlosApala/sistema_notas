@@ -23,7 +23,7 @@ class PermissionSeederZonas extends Seeder
         ];
 
         foreach ($permisosZona as $permiso) {
-            Permission::firstOrCreate(['name' => $permiso]);
+            Permission::firstOrCreate(['name' => $permiso,'programa'=>'zona']);
         }
     }
 }

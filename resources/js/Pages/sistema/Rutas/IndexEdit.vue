@@ -18,9 +18,9 @@
                     <span v-else class="text-gray-500 italic">Sin rutas registradas</span>
                 </td>
                 <td class="p-2 border text-center space-x-2">
-                    <Link class="no-underline text-white bg-green-600 hover:bg-green-800 px-3 py-1 text-sm rounded"
+                    <Link class="no-underline text-white bg-indigo-600 hover:bg-indigo-800 px-3 py-1 text-sm rounded"
                         :href="`/sistema/zonas_rutas/${item.id}`" @click.stop>
-                    Registrar rutas
+                    Modificar
                     </Link>
 
 

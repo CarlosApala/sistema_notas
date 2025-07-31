@@ -17,7 +17,7 @@
                     <span v-else class="text-gray-500 italic">Sin rutas registradas</span>
                 </td>
                 <td class="p-2 border text-center space-x-2">
-                    <Link v-if="permissions.includes('zona.ver')" class="btn btn-info btn-sm px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    <Link  class="btn btn-info btn-sm px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
                         :href="`/sistema/zonas_rutas/${item.id}`" @click.stop>
                     Ver más
                     </Link>
@@ -42,7 +42,7 @@ import { usePage } from '@inertiajs/vue3'
 
 const page = usePage()
 const permissions = page.props.auth?.user?.permissions ?? page.props.permissions ?? []
-defineOptions({ layout: AppLayout })
+    defineOptions({ layout: AppLayout })
 
 const columnas = [
     { key: 'id', label: '#' },

@@ -11,10 +11,17 @@ class RutasController extends Controller
 {
     public function index()
     {
-        $rutas = Rutas::select('id', 'NombreRuta')->orderByDesc('id')->paginate(10);
-
-        return response()->json($rutas);
+        return Inertia::render('sistema/Rutas/Index');
     }
+
+    public function indexEdit(){
+        return Inertia::render('sistema/Rutas/IndexEdit');
+    }
+
+    public function indexDelete(){
+        return Inertia::render('sistema/Rutas/IndexDelete');
+    }
+
 
 
     public function create()

@@ -2,32 +2,28 @@
     <div class="container mx-auto p-4 max-w-5xl">
 
 
-        <div v-if="flash.success" class="alert alert-success mb-4">
-            {{ flash.success }}
-        </div>
+        <div v-if="flash.success" class="alert alert-success mb-4">{{ flash.success }}</div>
 
         <div class="mb-4 flex flex-wrap gap-2 justify-between items-center">
             <h1 class="text-2xl font-bold mb-4">
-                Instalaciones
-
+                Lista de los Predios
             </h1>
 
         </div>
 
-        <TablaBusqueda :key="fetchUrl" :titulo="'Lista de Instalaciones'" :fetch-url="fetchUrl" :columnas="columnas" :per-page="10"
+        <TablaBusqueda :key="fetchUrl" :titulo="'Lista de Predios'" :fetch-url="fetchUrl" :columnas="columnas" :per-page="10"
             @onRowClick="handleRowClick">
             <template #row="{ item }">
                 <td class="p-2 border">{{ item.id }}</td>
-                <td class="p-2 border">{{ item.NumeroMedidor }}</td>
-                <td class="p-2 border">{{ item.CodigoUbicacion }}</td>
-                <td class="p-2 border">{{ item.EstadoInstalacion }}</td>
-                <td class="p-2 border">{{ item.EstadoAlcantarillado }}</td>
+                <td class="p-2 border">{{ item.direccion }}</td>
+                <td class="p-2 border">{{ item.zonaBarrio }}</td>
+                <td class="p-2 border">{{ item.distrito }}</td>
+
                 <td class="p-2 border text-center space-x-2">
 
-                        <Link v-if="permissions.includes('instalaciones.ver')" :href="`/sistema/instalaciones/${item.id}`" class="btn btn-info btn-sm px-3 py-1">
-                        Ver
-                        </Link>
 
+                        <Link :href="`/sistema/predios/${item.id}`" class="btn btn-info btn-sm">Ver</Link>
+                        <button  @click.stop="eliminar(item.id)" class="btn btn-danger btn-sm">Eliminar</button>
 
                 </td>
             </template>
@@ -35,7 +31,7 @@
     </div>
 </template>
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { Link, router } from '@inertiajs/vue3'
 import Swal from 'sweetalert2'
 import App from '@/Layouts/AppLayout.vue'
@@ -44,7 +40,6 @@ import { usePage } from '@inertiajs/vue3'
 
 const page = usePage()
 const permissions = page.props.auth?.user?.permissions ?? page.props.permissions ?? []
-
 defineOptions({ layout: App })
 
 const props = defineProps({
@@ -55,24 +50,26 @@ const props = defineProps({
 const filters = ref({ ...props.filters })
 const busqueda = ref(filters.value.search || '')
 
-// Generar URL para la API según filtros actuales
+// Computed para generar la URL de la API con los parámetros actuales
 const fetchUrl = computed(() => {
-  const url = new URL('/api/instalaciones', window.location.origin)
+  const url = new URL('/api/predios', window.location.origin)
+
   if (filters.value.deleted) url.searchParams.append('deleted', 'true')
   if (busqueda.value) url.searchParams.append('search', busqueda.value)
   url.searchParams.append('per_page', '10')
+
   return url.toString()
 })
 
+// Columnas para la tabla
 const columnas = [
   { key: 'id', label: 'ID' },
-  { key: 'NumeroMedidor', label: 'Medidor' },
-  { key: 'CodigoUbicacion', label: 'Código Ubicación' },
-  { key: 'EstadoInstalacion', label: 'Estado Instalación' },
-  { key: 'EstadoAlcantarillado', label: 'Alcantarillado' },
+  { key: 'direccion', label: 'Dirección' },
+  { key: 'zonaBarrio', label: 'Zona/Barrio' },
+  { key: 'distrito', label: 'Distrito' },
 ]
 
-// Debounce para búsqueda
+// Debounce para búsqueda: actualiza filtros.search 500ms después de cambiar la búsqueda
 let timeout = null
 watch(busqueda, () => {
   clearTimeout(timeout)
@@ -81,10 +78,10 @@ watch(busqueda, () => {
   }, 500)
 })
 
-// Al cambiar filtros, sincronizamos URL con replace para no recargar y mantener estado
+// Cuando cambien los filtros, actualiza la URL con replace para mantener estado y sincronizar rutas
 watch(filters, (newFilters) => {
   router.replace({
-    url: '/sistema/instalaciones',
+    url: '/sistema/predios',
     data: { ...newFilters },
     preserveState: true,
   })
@@ -96,48 +93,59 @@ function toggleDeleted() {
 }
 
 function handleRowClick(item) {
-  router.visit(`/sistema/instalaciones/${item.id}`)
+  router.visit(`/sistema/predios/${item.id}`)
 }
 
 function eliminar(id) {
   Swal.fire({
     title: '¿Estás seguro?',
-    text: 'Esta acción eliminará la instalación.',
+    text: 'Esta acción eliminará el predio.',
     icon: 'warning',
     showCancelButton: true,
     confirmButtonText: 'Sí, eliminar',
     cancelButtonText: 'Cancelar',
   }).then((result) => {
     if (result.isConfirmed) {
-      router.delete(`/sistema/instalaciones/${id}`, { preserveState: true })
+      router.delete(`/sistema/predios/${id}`, { preserveState: true })
     }
   })
 }
 
 function restaurar(id) {
   Swal.fire({
-    title: '¿Restaurar instalación?',
-    text: '¿Estás seguro que deseas restaurarla?',
+    title: '¿Restaurar predio?',
+    text: '¿Estás seguro que deseas restaurar este predio?',
     icon: 'warning',
     showCancelButton: true,
     confirmButtonText: 'Sí, restaurar',
     cancelButtonText: 'Cancelar',
   }).then((result) => {
     if (result.isConfirmed) {
-      router.post(`/sistema/instalaciones/${id}/restore`, {}, {
-        preserveState: true,
-        onSuccess: () => {
-          Swal.fire('Restaurada', 'La instalación ha sido restaurada.', 'success')
-          // Opcional: forzar recarga de listado, por ejemplo
-          router.get('/sistema/instalaciones', {
-            deleted: true,
-            search: filters.value.search || '',
-          }, { preserveState: true, replace: true })
-        },
-        onError: () => {
-          Swal.fire('Error', 'No se pudo restaurar la instalación.', 'error')
+      router.post(
+        `/sistema/predios/${id}/restore`,
+        {},
+        {
+          preserveState: true,
+          onSuccess: () => {
+            Swal.fire('Restaurado', 'El predio ha sido restaurado correctamente.', 'success')
+            // Actualizar la página forzando recarga de listado
+            router.get(
+              '/sistema/predios',
+              {
+                deleted: true,
+                search: filters.value.search || '',
+              },
+              {
+                preserveState: true,
+                replace: true,
+              }
+            )
+          },
+          onError: () => {
+            Swal.fire('Error', 'Ocurrió un error al restaurar el predio.', 'error')
+          },
         }
-      })
+      )
     }
   })
 }

@@ -102,6 +102,7 @@ const cargar = async (url = props.fetchUrl) => {
         const res = await fetch(u)
         const json = await res.json()
         datos.value = json
+        console.log('mostrar datos')
         console.log(json)
         urlActual.value = url
     } catch (e) {

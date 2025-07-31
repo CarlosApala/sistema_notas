@@ -44,16 +44,14 @@
             <td class="border border-gray-300 px-4 py-2">{{ persona.nacionalidad || '-' }}</td>
             <td class="border border-gray-300 px-4 py-2">{{ persona.numero_celular || '-' }}</td>
             <td class="border border-gray-300 px-4 py-2 text-center space-x-2 whitespace-nowrap">
-
-                <Link v-if="permissions.includes('personal_interno.ver')"  :href="`/sistema/personal_interno/${persona.id}`"
+                <Link  :href="`/sistema/personal_interno/${persona.id}`"
                   class="btn btn-info btn-sm px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700" >
                   Ver
                 </Link>
-                <Link v-if="permissions.includes('personal_interno.editar')" :href="`/sistema/personal_interno/${persona.id}/edit`"
+                <Link :href="`/sistema/personal_interno/${persona.id}/edit`"
                   class="btn btn-warning btn-sm px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600">
                   Editar
                 </Link>
-
 
             </td>
           </tr>

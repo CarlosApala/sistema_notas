@@ -25,13 +25,11 @@
                     <strong>Confirmar contraseña:</strong>
                     <input type="password" v-model="form.password_confirmation" class="input" />
                 </div>
+                <h4 class="font-semibold mb-2">Programas asignados:</h4>
+                <PermisosPorModulo v-model="form.permisos" :estructura="estructuraModulos" :bloqueado="false" />
             </div>
 
-            <!-- Tabla de permisos -->
-            <h4 class="font-semibold mb-2">Permisos asignados:</h4>
-            <TablaPermisosPorModulo v-model="form.permisos" :estructura="estructuraModulos" :acciones="acciones" />
-
-
+            <!-- Permisos -->
 
 
             <div class="mt-6 flex justify-end">
@@ -39,8 +37,6 @@
                     Actualizar Usuario
                 </button>
             </div>
-
-
         </form>
     </div>
 </template>
@@ -49,44 +45,44 @@
 import { reactive } from 'vue'
 import { router } from '@inertiajs/vue3'
 import App from '@/Layouts/AppLayout.vue'
-import TablaPermisosPorModulo from '@/Components/TablaPermisosPorModulo.vue'
+import PermisosPorModulo from '@/Components/PermisosPorModulo.vue'
 
 defineOptions({ layout: App })
 
 const props = defineProps({
-    usuario: Object,
-    rolesDisponibles: Array,
-    permisosDisponibles: Array,
-    rolesUsuario: Array,
-    permisosUsuarioDirectos: Array,
+    user: Object,
+    estructuraModulos: Object
 })
 
-const form = reactive({
-    name: props.usuario.name,
-    email: props.usuario.email,
-    username: props.usuario.username,
-    password: '',
-    password_confirmation: '',
-    roles: [...props.rolesUsuario],
-    permisos: [...props.permisosUsuarioDirectos],
-})
-
-function submit() {
-    router.put(route('usuarios.update', props.usuario.id), form)
+// Extraer los permisos (names) desde estructuraModulos para el v-model
+const permisosIniciales = []
+console.log(props.estructuraModulos);
+for (const modulo in props.estructuraModulos) {
+    for (const programa in props.estructuraModulos[modulo]) {
+        props.estructuraModulos[modulo][programa].forEach(p => {
+            permisosIniciales.push(p.name)
+        })
+    }
 }
 
-const acciones = ['ver', 'crear', 'editar', 'eliminar', 'eliminados', 'restaurar']
+console.log('mostrando permisos')
+console.log(permisosIniciales)
 
-const estructuraModulos = {
-    'Gestión': {
-        'Usuarios': 'usuarios',
-        'Personal Interno': 'personal_interno',
-        'Lecturadores': 'lecturadores',
-        'Zona': 'zona',
-        'Predios': 'predios',
-        'Instalaciones': 'instalaciones',
-        'Asignaciones': 'asignaciones'
-    }
+
+// Formulario reactivo
+const form = reactive({
+    name: props.user.name,
+    email: props.user.email,
+    username: props.user.username,
+    password: '',
+    password_confirmation: '',
+    permisos: permisosIniciales,
+})
+
+// Enviar actualización al backend
+function submit() {
+    console.log(form);
+    router.put(`/sistema/usuarios/${props.user.id}`, form)
 }
 </script>
 
@@ -98,21 +94,11 @@ const estructuraModulos = {
     border-radius: 4px;
 }
 
-.bg-gray-100 {
-    background-color: #f7fafc;
-}
-
 .container {
     max-width: 900px;
 }
 
 .card {
     background-color: white;
-}
-
-.table-auto th,
-.table-auto td {
-    border: 1px solid #ddd;
-    padding: 6px 10px;
 }
 </style>

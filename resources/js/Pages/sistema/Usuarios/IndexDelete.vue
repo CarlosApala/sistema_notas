@@ -3,7 +3,8 @@
         <h1 class="text-2xl font-bold mb-4">Usuarios del Sistema</h1>
 
 
-        <tabla-busqueda titulo="Lista de Usuarios" fetch-url="/api/usuarios" :columnas="columnas" :per-page="10"
+
+        <TablaBusqueda titulo="Lista de Usuarios" fetch-url="/api/usuarios" :columnas="columnas" :per-page="10"
             @onRowClick="handleRowClick">
             <template #row="{ item }">
                 <td class="p-2 border">{{ item.name }}</td>
@@ -16,9 +17,13 @@
                     Ver
                     </Link>
 
+                    <button v-if="permissions.includes('usuarios.eliminar')" @click.stop="deleteUser(item.id)"
+                        class="btn btn-danger btn-sm px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">
+                        Eliminar
+                    </button>
                 </td>
             </template>
-        </tabla-busqueda>
+        </TablaBusqueda>
     </div>
 </template>
 

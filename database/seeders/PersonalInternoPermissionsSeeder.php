@@ -19,7 +19,7 @@ class PersonalInternoPermissionsSeeder extends Seeder
         ];
 
         foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission]);
+            Permission::firstOrCreate(['name' => $permission,'programa'=>"personal interno"]);
 
         }
     }

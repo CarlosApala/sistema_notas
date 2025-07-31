@@ -36,6 +36,10 @@ class ModulosController extends Controller
             ]
         ]);
     }
+
+
+
+
     function create()
     {
         return Inertia::render('sistema/Modulos/Create_Module');
@@ -61,7 +65,6 @@ class ModulosController extends Controller
             'permisosUsuario' => $modulo->permissions->pluck('name')->unique()->values()
         ]);
     }
-
 
 
 
