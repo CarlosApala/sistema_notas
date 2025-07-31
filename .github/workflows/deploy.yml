@@ -19,14 +19,6 @@ jobs:
         echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan 177.222.44.38 >> ~/.ssh/known_hosts
-
-    - name: Preparar permisos para rsync en storage y cache
-      run: |
-        ssh -i ~/.ssh/id_rsa administrador@177.222.44.38 << 'EOF'
-          sudo chown -R administrador:www-data /var/www/laravel/storage /var/www/laravel/bootstrap/cache
-          sudo chmod -R 775 /var/www/laravel/storage /var/www/laravel/bootstrap/cache
-        EOF
-
     - name: 🚚 Subir archivos al servidor (excluyendo solo lo necesario)
       run: |
         rsync -avz --delete \
@@ -34,23 +26,19 @@ jobs:
           --exclude='node_modules' \
           --exclude='vendor' \
           --exclude='.env' \
-          --exclude='public/build' \       # <== Excluye public/build para que no borre la carpeta creada en servidor
           ./ administrador@177.222.44.38:/var/www/laravel
-
-    - name: Ejecutar comandos en el servidor
+    - name: 🛠️ Ejecutar comandos en el servidor
       run: |
-        ssh -i ~/.ssh/id_rsa administrador@177.222.44.38 << 'EOF'
-          set -e
-          cd /var/www/laravel
-          composer install --no-dev --optimize-autoloader
-          npm install
-          npm run build
-          sudo chown -R www-data:www-data /var/www/laravel/public/build
-          sudo chmod -R 775 /var/www/laravel/public/build
-          sudo chown -R www-data:www-data /var/www/laravel/storage /var/www/laravel/bootstrap/cache
-          sudo chmod -R 775 /var/www/laravel/storage /var/www/laravel/bootstrap/cache
-          php artisan config:cache
-          php artisan route:cache
-          php artisan view:cache
-          echo "✅ Despliegue completado en el servidor."
+        ssh -i ~/.ssh/id_rsa administrador@177.222.44.38 << EOF
+        set -e
+        cd /var/www/laravel
+        composer install --no-dev --optimize-autoloader
+        npm install
+        npm run build
+        php artisan config:cache
+        php artisan route:cache
+        php artisan view:cache
+        chmod -R 775 storage bootstrap/cache
+        sudo chown -R www-data:www-data storage bootstrap/cache
+        echo "✅ Despliegue completado en el servidor."
         EOF
