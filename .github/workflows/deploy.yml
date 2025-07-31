@@ -32,15 +32,15 @@ jobs:
     - name: 🛠️ Ejecutar comandos en el servidor
       run: |
         ssh -i ~/.ssh/id_rsa administrador@177.222.44.38 << 'EOF'
-          cd /var/www/laravel
-          composer install --no-dev --optimize-autoloader
-          npm install
-          npm run build
-          php artisan config:cache
-          php artisan route:cache
-          php artisan view:cache
-          # Ajusta permisos sin chown o con sudo si está configurado:
-          chmod -R 775 storage bootstrap/cache
-          #chown -R www-data:www-data storage bootstrap/cache  # Elimina o usa sudo si puedes
-          echo "✅ Despliegue completado en el servidor."
+        cd /var/www/laravel
+        composer install --no-dev --optimize-autoloader
+        npm install
+        npm run build
+        php artisan config:cache
+        php artisan route:cache
+        php artisan view:cache
+        chmod -R 775 storage bootstrap/cache
+        sudo chown -R www-data:www-data storage bootstrap/cache
+        echo "✅ Despliegue completado en el servidor."
         EOF
+
