@@ -20,7 +20,7 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan 177.222.44.38 >> ~/.ssh/known_hosts
 
-    - name: Preparar permisos para rsync
+    - name: Preparar permisos para rsync en storage y cache
       run: |
         ssh -i ~/.ssh/id_rsa administrador@177.222.44.38 << 'EOF'
           sudo chown -R administrador:www-data /var/www/laravel/storage /var/www/laravel/bootstrap/cache
@@ -34,7 +34,8 @@ jobs:
           --exclude='node_modules' \
           --exclude='vendor' \
           --exclude='.env' \
-          ./ administrador@177.222.44.38:/var/www/laravel
+          --exclude='public/build' \       # <== Excluye public/build para que no borre la carpeta creada en servidor
+        ./ administrador@177.222.44.38:/var/www/laravel
 
     - name: Ejecutar comandos en el servidor
       run: |
@@ -42,24 +43,12 @@ jobs:
           set -e
           cd /var/www/laravel
           composer install --no-dev --optimize-autoloader
-
           npm install
           npm run build
-
-          # Aquí public/build ya existe, podemos dar permisos
           sudo chown -R www-data:www-data /var/www/laravel/public/build
           sudo chmod -R 775 /var/www/laravel/public/build
-          
-          # Ajustar permisos para storage y cache (esto es crítico para el error que tienes)
           sudo chown -R www-data:www-data /var/www/laravel/storage /var/www/laravel/bootstrap/cache
           sudo chmod -R 775 /var/www/laravel/storage /var/www/laravel/bootstrap/cache
-
-          sudo chown -R www-data:www-data /var/www/laravel/bootstrap/cache
-          sudo chmod -R 775 /var/www/laravel/bootstrap/cache
-          
-          sudo chmod -R 775 storage bootstrap/cache public/build
-          sudo chown -R www-data:www-data storage bootstrap/cache public/build
-
           php artisan config:cache
           php artisan route:cache
           php artisan view:cache
