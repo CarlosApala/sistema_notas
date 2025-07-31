@@ -8,11 +8,7 @@ export default defineConfig({
             usePolling: true,
         },
     },
-    build: {
-        outDir: 'public/build',
-        manifest: true,
-        emptyOutDir: true,
-    },
+
     plugins: [
         laravel({
             input: ["resources/js/app.js", "resources/css/app.css"],
