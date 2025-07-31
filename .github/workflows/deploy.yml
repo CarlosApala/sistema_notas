@@ -40,29 +40,32 @@ jobs:
           set -e
           cd /var/www/laravel
 
-          # Crear carpetas si no existen
+          # Crear carpetas si no existen (necesario)
           sudo mkdir -p storage/logs bootstrap/cache
 
-          # Dar permisos correctos recursivamente
-          sudo chown -R www-data:www-data storage bootstrap/cache
+          # Permisos para que administrador pueda escribir
+          sudo chown -R administrador:administrador storage bootstrap/cache
           sudo chmod -R 775 storage bootstrap/cache
 
-          # Crear archivo laravel.log si no existe, asignar dueño y permisos
+          # Crear archivo laravel.log si no existe
           if [ ! -f storage/logs/laravel.log ]; then
-          sudo -u www-data touch storage/logs/laravel.log
-          sudo chown www-data:www-data storage/logs/laravel.log
-          sudo chmod 664 storage/logs/laravel.log
+          touch storage/logs/laravel.log
           fi
 
-          # Ahora ya puedes correr composer install sin problemas
+          # composer install ejecutado como administrador
           composer install --no-dev --optimize-autoloader
 
           npm install
           npm run build
 
+          # Cachear configs y rutas
           php artisan config:cache
           php artisan route:cache
           php artisan view:cache
 
-          echo "✅ Despliegue completado."
-          EOF
+          # Finalmente, cambiar dueño a www-data para producción
+          sudo chown -R www-data:www-data storage bootstrap/cache public/build
+          sudo chmod -R 775 storage bootstrap/cache public/build
+
+          echo "✅ Despliegue completado en el servidor."
+        EOF
