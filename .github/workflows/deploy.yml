@@ -31,7 +31,8 @@ jobs:
 
     - name: 🛠️ Ejecutar comandos en el servidor
       run: |
-        ssh -i ~/.ssh/id_rsa administrador@177.222.44.38 << 'EOF'
+        ssh -i ~/.ssh/id_rsa administrador@177.222.44.38 << EOF
+        set -e
         cd /var/www/laravel
         composer install --no-dev --optimize-autoloader
         npm install
@@ -43,4 +44,5 @@ jobs:
         sudo chown -R www-data:www-data storage bootstrap/cache
         echo "✅ Despliegue completado en el servidor."
         EOF
+
 
