@@ -29,22 +29,23 @@ jobs:
           --exclude='.env' \
           ./ administrador@177.222.44.38:/var/www/laravel
 
-    - name: 🛠️ Ejecutar comandos en el servidor
+    - name: Ejecutar comandos en el servidor
       run: |
         ssh -i ~/.ssh/id_rsa administrador@177.222.44.38 << 'EOF'
-        set -e
-        cd /var/www/laravel
-        composer install --no-dev --optimize-autoloader
-        npm install
-        npm run build
-        cp public/build/.vite/manifest.json public/build/manifest.json
-        php artisan config:cache
-        php artisan route:cache
-        php artisan view:cache
-        chmod -R 775 storage bootstrap/cache public/build
-        sudo chown -R www-data:www-data storage bootstrap/cache public/build
-        echo "✅ Despliegue completado en el servidor."
-        EOF  
+          set -e
+          cd /var/www/laravel
+          composer install --no-dev --optimize-autoloader
+          npm install
+          npm run build
+          cp public/build/.vite/manifest.json public/build/manifest.json
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+          chmod -R 775 storage bootstrap/cache public/build
+          sudo chown -R www-data:www-data storage bootstrap/cache public/build
+          echo "✅ Despliegue completado en el servidor."
+        EOF
+
 
 
 
