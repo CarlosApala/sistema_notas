@@ -8,7 +8,7 @@ export default defineConfig({
             usePolling: true,
         },
     },
-     build: {
+    build: {
         outDir: 'public/build',
         manifest: true,
         emptyOutDir: true,
@@ -17,7 +17,7 @@ export default defineConfig({
         laravel({
             input: ["resources/js/app.js", "resources/css/app.css"],
             refresh: true,
-            buildDirectory: 'build',
+            // 🔴 No incluyas buildDirectory
         }),
         vue({
             template: {
