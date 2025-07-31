@@ -26,6 +26,7 @@ jobs:
           mkdir -p /var/www/laravel/public/build
           sudo chown -R administrador:www-data /var/www/laravel/bootstrap/cache /var/www/laravel/storage /var/www/laravel/public/build
           sudo chmod -R 775 /var/www/laravel/bootstrap/cache /var/www/laravel/storage /var/www/laravel/public/build
+        EOF
         rsync -avz --delete \
           --exclude='.git' \
           --exclude='node_modules' \
