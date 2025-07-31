@@ -43,7 +43,7 @@ jobs:
         chmod -R 775 storage bootstrap/cache public/build
         sudo chown -R www-data:www-data storage bootstrap/cache public/build
         echo "✅ Despliegue completado en el servidor."
-    EOF
+        EOF
 
 
 
