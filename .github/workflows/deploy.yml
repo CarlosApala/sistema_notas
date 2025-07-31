@@ -20,6 +20,15 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan 177.222.44.38 >> ~/.ssh/known_hosts
 
+    - name: 🔧 Ajustar permisos antes de rsync
+      run: |
+        ssh -i ~/.ssh/id_rsa administrador@177.222.44.38 << 'EOF'
+          # Cambiar propietario a administrador para que pueda modificar todo
+          sudo chown -R administrador:www-data /var/www/laravel
+          # Dar permisos de escritura y lectura al grupo en public/build
+          sudo chmod -R 775 /var/www/laravel/public/build
+        EOF
+
     - name: 🚚 Subir archivos al servidor
       run: |
         rsync -avz --delete \
@@ -41,7 +50,8 @@ jobs:
           php artisan config:cache
           php artisan route:cache
           php artisan view:cache
-          chmod -R 775 storage bootstrap/cache
-          chown -R www-data:www-data storage bootstrap/cache
+          # Permisos para carpetas de escritura de Laravel
+          chmod -R 775 storage bootstrap/cache public/build
+          chown -R www-data:www-data storage bootstrap/cache public/build
           echo "✅ Despliegue completado en el servidor."
         EOF
