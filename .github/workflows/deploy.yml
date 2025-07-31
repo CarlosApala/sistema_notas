@@ -19,6 +19,12 @@ jobs:
         echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan 177.222.44.38 >> ~/.ssh/known_hosts
+    - name: 🧹 Asegurar permisos antes de subir archivos
+      run: |
+        ssh -i ~/.ssh/id_rsa administrador@177.222.44.38 << EOF
+        sudo chown -R administrador:administrador /var/www/laravel
+        sudo chmod -R 775 /var/www/laravel
+        EOF
     - name: 🚚 Subir archivos al servidor (excluyendo solo lo necesario)
       run: |
         rsync -avz --delete \
