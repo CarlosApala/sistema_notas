@@ -35,6 +35,11 @@ jobs:
           set -e
           cd /var/www/laravel
           composer install --no-dev --optimize-autoloader
+          sudo chown -R www-data:www-data /var/www/laravel/public/build
+          sudo chmod -R 775 /var/www/laravel/public/build
+          # idem para bootstrap/cache si usas rsync allí
+          sudo chown -R www-data:www-data /var/www/laravel/bootstrap/cache
+          sudo chmod -R 775 /var/www/laravel/bootstrap/cache
           npm install
           npm run build
           cp public/build/.vite/manifest.json public/build/manifest.json
