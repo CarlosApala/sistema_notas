@@ -38,11 +38,13 @@ jobs:
         ssh -i ~/.ssh/id_rsa administrador@177.222.44.38 << EOF
         set -e
         cd /var/www/laravel
-
-        # 📦 Instalar dependencias
         composer install --no-dev --optimize-autoloader
         npm install
         npm run build
+        sudo chown -R www-data:www-data public/build
+        sudo chmod -R 775 public/build
+        sudo chown -R www-data:www-data storage bootstrap/cache
+        sudo chmod -R 775 storage bootstrap/cache
 
         # 🧹 Cachear configuración
         php artisan config:cache
