@@ -36,7 +36,7 @@ class DatabaseSeeder extends Seeder
             //InstalacionSeeder::class,
             //RutasSeeder::class,
             //ZonasSeeder::class,
-            //PersonalInternoSeeder::class,
+            PersonalInternoSeeder::class,
             UserRoleSeeder::class,
             PersonalInternoPermissionsSeeder::class,
             LecturadoresPermissionsSeeder::class,

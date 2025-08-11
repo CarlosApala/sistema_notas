@@ -11,22 +11,16 @@ class PersonalInternoSeeder extends Seeder
 {
     public function run(): void
     {
-        $data = [];
-
-        for ($i = 1; $i <= 25; $i++) {
-            $data[] = [
-                'nombres'           => "Nombre{$i}",
-                'apellidos'         => "Apellido{$i}",
-                'fecha_nacimiento'  => Carbon::now()->subYears(rand(20, 50))->subDays(rand(0, 365))->format('Y-m-d'),
-                'carnet_identidad'  => "CI{$i}" . rand(1000, 9999),
-                'nacionalidad'      => 'Boliviana',
-                'numero_celular'    => '7' . rand(1000000, 9999999),
-                'estado_civil'      => ['Soltero', 'Casado', 'Divorciado'][rand(0, 2)],
-                'created_at'        => now(),
-                'updated_at'        => now(),
-            ];
-        }
-
-        DB::table('personal_interno')->insert($data);
+        DB::table('personal_interno')->insert([
+            'nombres'           => "Admin",
+            'apellidos'         => "User",
+            'fecha_nacimiento'  => '1990-01-01',
+            'carnet_identidad'  => "CI1234567",
+            'nacionalidad'      => 'Boliviana',
+            'numero_celular'    => '71234567',
+            'estado_civil'      => 'Soltero',
+            'created_at'        => now(),
+            'updated_at'        => now(),
+        ]);
     }
 }
