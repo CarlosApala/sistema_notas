@@ -54,6 +54,10 @@ jobs:
 
           # composer install ejecutado como administrador
           composer install --no-dev --optimize-autoloader
+          
+          # Limpiar antes de instalar npm
+          rm -rf node_modules
+          rm -f package-lock.json
 
           npm install
           npm run build
