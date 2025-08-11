@@ -32,13 +32,13 @@ class DatabaseSeeder extends Seeder
         ]); */
 
         $this->call([
-            /* PredioSeeder::class,
-            InstalacionSeeder::class,
-            RutasSeeder::class,
-            ZonasSeeder::class,
-            PersonalInternoSeeder::class, */
+            //PredioSeeder::class,
+            //InstalacionSeeder::class,
+            //RutasSeeder::class,
+            //ZonasSeeder::class,
+            //PersonalInternoSeeder::class,
             UserRoleSeeder::class,
-            /* PersonalInternoPermissionsSeeder::class,
+            PersonalInternoPermissionsSeeder::class,
             LecturadoresPermissionsSeeder::class,
             PermissionSeederZonas::class,
             PrediosPermissionsSeeder::class,
@@ -46,7 +46,7 @@ class DatabaseSeeder extends Seeder
             AsignacionesPermissionsSeeder::class,
             UsuariosPermissionsSeeder::class,
             ConfiguracionSeeder::class,
-            ZonaRutasSeeder::class, */
+            ZonaRutasSeeder::class,
             RolePermissionSeeder::class
         ]);
     }
