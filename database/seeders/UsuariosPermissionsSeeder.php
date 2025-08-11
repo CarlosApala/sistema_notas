@@ -15,8 +15,6 @@ class UsuariosPermissionsSeeder extends Seeder
             'usuarios.crear',
             'usuarios.editar',
             'usuarios.eliminar',
-            'usuarios.eliminados',
-            'usuarios.restaurar',
         ];
 
         foreach ($permisos as $permiso) {

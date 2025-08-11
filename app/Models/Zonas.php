@@ -24,4 +24,8 @@ class Zonas extends Model
     {
         return $this->hasMany(Rutas::class,'zona_id');
     }
+    public function predios()
+    {
+        return $this->hasMany(Predio::class, 'idZona');
+    }
 }

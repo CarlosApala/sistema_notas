@@ -14,8 +14,6 @@ class AsignacionesPermissionsSeeder extends Seeder
             'asignaciones.crear',
             'asignaciones.editar',
             'asignaciones.eliminar',
-            'asignaciones.eliminados',
-            'asignaciones.restaurar',
         ];
 
         foreach ($permisos as $permission) {

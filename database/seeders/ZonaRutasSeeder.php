@@ -17,7 +17,6 @@ class ZonaRutasSeeder extends Seeder
             'zona_ruta.crear',
             'zona_ruta.editar',
             'zona_ruta.eliminar',
-            'zona_ruta.eliminados',
         ];
 
         foreach ($permisos as $permiso) {

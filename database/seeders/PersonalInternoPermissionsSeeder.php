@@ -14,8 +14,6 @@ class PersonalInternoPermissionsSeeder extends Seeder
             'personal_interno.crear',
             'personal_interno.editar',
             'personal_interno.eliminar',
-            'personal_interno.eliminados',
-            'personal_interno.restaurar',
         ];
 
         foreach ($permissions as $permission) {

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Predio;
+use App\Models\RutaInstalaciones;
+use App\Models\Rutas;
 use App\Models\Zonas;
 use Dotenv\Exception\ValidationException;
 use Illuminate\Http\Request;
@@ -209,43 +211,53 @@ class PredioController extends Controller
         }
     }
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'direccion' => 'required|string|max:255',
-            'ubicaciongps' => 'nullable|string|max:255',
-            'zonaBarrio' => 'nullable|string|max:255',
-            'distrito' => 'nullable|string|max:255',
-            'UnidadVecinal' => 'nullable|string|max:255',
-            'Manzana' => 'nullable|string|max:255',
-            'AreaPredio' => 'nullable|numeric|min:0',
-            'LongitudFrente' => 'nullable|numeric|min:0',
-            'AreaConstruida' => 'nullable|numeric|min:0',
-            'NroHaitaciones' => 'nullable|integer|min:0',
-            'NroPisos' => 'nullable|integer|min:0',
-            'NroGrifos' => 'nullable|integer|min:0',
-            'NroBaños' => 'nullable|integer|min:0',
-            'TipoEdificacion' => 'nullable|string|max:255',
-            'Pavimento' => 'nullable|boolean',
-            'EstadoEdificacion' => 'nullable|string|max:255',
-            'PredioHabitado' => 'nullable|boolean',
-            'Observaciones' => 'nullable|string',
+{
+    $validated = $request->validate([
+        'direccion' => 'required|string|max:255',
+        'ubicaciongps' => 'nullable|string|max:255',
+        'ruta_id' => 'required|exists:rutas,id',  // Ahora validamos la ruta, no la zona
+        'distrito' => 'nullable|string|max:255',
+        'UnidadVecinal' => 'nullable|string|max:255',
+        'Manzana' => 'nullable|string|max:255',
+        'AreaPredio' => 'nullable|numeric|min:0',
+        'LongitudFrente' => 'nullable|numeric|min:0',
+        'AreaConstruida' => 'nullable|numeric|min:0',
+        'NroHaitaciones' => 'nullable|integer|min:0',
+        'NroPisos' => 'nullable|integer|min:0',
+        'NroGrifos' => 'nullable|integer|min:0',
+        'NroBaños' => 'nullable|integer|min:0',
+        'TipoEdificacion' => 'nullable|string|max:255',
+        'Pavimento' => 'nullable|boolean',
+        'EstadoEdificacion' => 'nullable|string|max:255',
+        'PredioHabitado' => 'nullable|boolean',
+        'Observaciones' => 'nullable|string',
+    ]);
+
+    try {
+        $predio = Predio::create($validated);
+
+        RutaInstalaciones::create([
+            'idRuta' => $validated['ruta_id'],
+            'idPredio' => $predio->id,
+            'idZona' => Rutas::find($validated['ruta_id'])->zona_id, // obtenemos la zona de la ruta
+            'nInstalacion' => null,
         ]);
 
-        try {
-            Predio::create($validated);
+        return redirect()
+            ->route('predios.index')
+            ->with('success', 'Predio y ruta instalación creada correctamente.');
 
-            return redirect()
-                ->route('predios.index')
-                ->with('success', 'Predio creado correctamente.');
-        } catch (\Exception $e) {
-            Log::error('Error al guardar predio: ' . $e->getMessage());
+    } catch (\Exception $e) {
+        Log::error('Error al guardar predio o ruta instalación: ' . $e->getMessage());
 
-            return redirect()
-                ->back()
-                ->withErrors(['error' => 'Hubo un problema al guardar el predio.'])
-                ->withInput();
-        }
+        return redirect()
+            ->back()
+            ->withErrors(['error' => 'Hubo un problema al guardar el predio y la ruta instalación.'])
+            ->withInput();
     }
+}
+
+
     public function destroy(Predio $predio)
     {
         $predio->delete();

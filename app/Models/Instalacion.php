@@ -56,4 +56,9 @@ class Instalacion extends Model
     {
         return \Carbon\Carbon::parse($value)->format('Y-m-d');
     }
+    // Relación: una instalación tiene muchos consumos
+    public function consumos()
+    {
+        return $this->hasMany(Consumo::class, 'idInstalacion', 'id');
+    }
 }

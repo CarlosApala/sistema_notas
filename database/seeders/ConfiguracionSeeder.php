@@ -17,7 +17,6 @@ class ConfiguracionSeeder extends Seeder
             'configuracion.crear',
             'configuracion.editar',
             'configuracion.eliminar',
-            'configuracion.eliminados',
         ];
 
         foreach ($permisos as $permiso) {

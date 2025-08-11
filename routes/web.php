@@ -88,8 +88,8 @@ Route::middleware([
     Route::delete('/sistema/zonas_rutas/delete-ruta/{ruta}', [ZonasRutaController::class, 'eliminarRuta'])->name('zonas_rutas.eliminarRuta');
 
 
-    Route::get('/sistema/rutas/editar-rutas', [RutasController::class,'indexEdit'])->name('rutas.editar');
-    Route::get('/sistema/rutas/eliminar-rutas', [RutasController::class,'indexDelete'])->name('rutas.eliminar');
+    Route::get('/sistema/rutas/editar-rutas', [RutasController::class, 'indexEdit'])->name('rutas.editar');
+    Route::get('/sistema/rutas/eliminar-rutas', [RutasController::class, 'indexDelete'])->name('rutas.eliminar');
     Route::resource('/sistema/rutas', RutasController::class);
     Route::resource('/sistema/zonas', ZonasController::class);
 
@@ -98,8 +98,8 @@ Route::middleware([
     Route::resource('/sistema/instalaciones', InstalacionController::class);
     Route::post('/sistema/instalaciones/{id}/restore', [InstalacionController::class, 'restore'])->name('instalaciones.restore');
 
-    Route::get('/sistema/predios/eliminar', [PredioController::class,'indexDelete'])->name('predios.indexDelete');
-    Route::get('/sistema/predios/editar', [PredioController::class,'indexEdit'])->name('predios.indexEditar');
+    Route::get('/sistema/predios/eliminar', [PredioController::class, 'indexDelete'])->name('predios.indexDelete');
+    Route::get('/sistema/predios/editar', [PredioController::class, 'indexEdit'])->name('predios.indexEditar');
     Route::resource('/sistema/predios', PredioController::class);
     Route::post('/sistema/predios/{id}/restore', [PredioController::class, 'restore'])->name('predios.restore');
 
@@ -345,26 +345,35 @@ Route::middleware([
 
         return response()->json($zonas);
     });
-        Route::get('/api/zonas', function (Request $request) {
-            $search = $request->query('search');
-            $query = Zonas::query();
+    Route::get('/api/zonas', function (Request $request) {
+        $search = $request->query('search');
+        $query = Zonas::query();
 
-            if ($search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('NombreZona', 'like', "%{$search}%");
-                });
-            }
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('NombreZona', 'like', "%{$search}%");
+            });
+        }
 
-            $query->orderBy('id', 'asc');
+        $query->orderBy('id', 'asc');
 
-            $perPage = $request->query('per_page', 10);
-            $zonas = $query->paginate($perPage)->appends($request->query());
+        $perPage = $request->query('per_page', 10);
+        $zonas = $query->paginate($perPage)->appends($request->query());
 
-            // Opcional: Si quieres ocultar timestamps o columnas que no necesitas,
-            // puedes usar ->makeHidden(['created_at', 'updated_at'])
+        // Opcional: Si quieres ocultar timestamps o columnas que no necesitas,
+        // puedes usar ->makeHidden(['created_at', 'updated_at'])
 
-            return response()->json($zonas);
-        });
+        return response()->json($zonas);
+    });
+
+    Route::get('/api/zonas/rutas/{zona}', function ($zonaId) {
+        $rutas = Rutas::where('zona_id', $zonaId)->get();
+
+        return response()->json([
+            'rutas' => $rutas,
+        ]);
+    });
+
 
     Route::get('/api/usuarios', function (Request $request) {
         $query = User::query();

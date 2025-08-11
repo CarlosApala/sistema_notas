@@ -17,9 +17,7 @@ class PermissionSeederZonas extends Seeder
 
                 'zona.crear',           // Crear nueva zona
                 'zona.editar',      // Editar zona
-                'zona.eliminar',       // Eliminar zona
-                'zona.eliminados', // Restaurar zona (si usas soft deletes)
-                'zona.restaurar'
+                'zona.eliminar',
         ];
 
         foreach ($permisosZona as $permiso) {

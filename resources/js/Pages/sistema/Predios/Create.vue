@@ -38,6 +38,20 @@
                 </p>
             </div>
 
+             <!-- Select para Rutas, carga dinámicamente según zona -->
+      <div>
+        <label for="ruta_id" class="block font-medium mb-1">Ruta</label>
+        <select v-model="form.ruta_id" id="ruta_id"
+          class="form-select w-full border rounded px-3 py-2"
+          :disabled="rutas.length === 0"
+          required>
+          <option value="" disabled>Seleccione una ruta</option>
+          <option v-for="ruta in rutas" :key="ruta.id" :value="ruta.id">
+            {{ ruta.NombreRuta }}
+          </option>
+        </select>
+        <p v-if="errors.ruta_id" class="text-red-600 text-sm mt-1">{{ errors.ruta_id }}</p>
+      </div>
             <!-- Resto de campos igual -->
 
             <div>
@@ -219,6 +233,7 @@ const form = ref({
     direccion: '',
     ubicaciongps: '',
     zonaBarrio: '',
+    zona_id:null,
     distrito: '',
     UnidadVecinal: '',
     Manzana: '',
@@ -239,7 +254,7 @@ const form = ref({
 const errors = ref({})
 const processing = ref(false)
 const modalVisible = ref(false)
-
+const rutas=ref([])
 function abrirModal() {
     modalVisible.value = true
 }
@@ -248,10 +263,21 @@ function cerrarModal() {
     modalVisible.value = false
 }
 
-function seleccionarZona(zona) {
+async function seleccionarZona(zona) {
+  form.value.zona_id = zona.id
   form.value.zonaBarrio = zona.NombreZona
-  form.value.distrito = zona.Distrito // opcional, si quieres actualizar automáticamente el distrito
+  form.value.distrito = zona.Distrito
+  form.value.ruta_id = null
   cerrarModal()
+
+  try {
+    const res = await fetch(`/api/zonas/rutas/${zona.id}`)
+    const data = await res.json()
+    rutas.value = data.rutas || []
+  } catch (error) {
+    console.error('Error cargando rutas:', error)
+    rutas.value = []
+  }
 }
 
 

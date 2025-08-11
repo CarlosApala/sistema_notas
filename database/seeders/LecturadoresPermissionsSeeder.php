@@ -13,10 +13,7 @@ class LecturadoresPermissionsSeeder extends Seeder
         $permissions = [
 
             'lecturadores.crear',
-            'lecturadores.editar',
             'lecturadores.eliminar',
-            'lecturadores.eliminados',
-            'lecturadores.restaurar',
 
         ];
 

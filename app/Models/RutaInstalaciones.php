@@ -33,7 +33,7 @@ class RutaInstalaciones extends Model
 
     public function predio()
     {
-        return $this->belongsTo(Predio::class, 'idPredio');
+        return $this->belongsTo(Predio::class, 'idPredio','id');
     }
 
     // Método para obtener el código completo como 1.13.69.10

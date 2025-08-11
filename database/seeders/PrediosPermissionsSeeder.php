@@ -14,8 +14,6 @@ class PrediosPermissionsSeeder extends Seeder
             'predios.crear',
             'predios.editar',
             'predios.eliminar',
-            'predios.eliminados',
-            'predios.restaurar',
         ];
 
         foreach ($permisos as $permiso) {

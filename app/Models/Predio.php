@@ -44,4 +44,23 @@ class Predio extends Model
     {
         return \Carbon\Carbon::parse($value)->format('Y-m-d');
     }
+
+    public function rutas()
+    {
+        return $this->belongsToMany(
+            Rutas::class,
+            'ruta_instalaciones',
+            'idPredio', // FK en ruta_instalaciones para predios
+            'idRuta'    // FK en ruta_instalaciones para rutas
+        )->withPivot('nInstalacion', 'idZona')->withTimestamps();
+    }
+
+    public function zona()
+    {
+        return $this->belongsTo(Zonas::class, 'idZona');
+    }
+    public function instalaciones()
+    {
+        return $this->hasMany(Instalacion::class, 'idPredio','id');
+    }
 }

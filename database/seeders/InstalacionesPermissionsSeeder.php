@@ -15,8 +15,6 @@ class InstalacionesPermissionsSeeder extends Seeder
             'instalaciones.crear',
             'instalaciones.editar',
             'instalaciones.eliminar',
-            'instalaciones.eliminados',
-            'instalaciones.restaurar',
         ];
 
         foreach ($permissions as $perm) {
