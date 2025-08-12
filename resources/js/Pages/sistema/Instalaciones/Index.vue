@@ -24,7 +24,7 @@
                 <td class="p-2 border">{{ item.EstadoAlcantarillado }}</td>
                 <td class="p-2 border text-center space-x-2">
 
-                        <Link v-if="permissions.includes('instalaciones.ver')" :href="`/sistema/instalaciones/${item.id}`" class="btn btn-info btn-sm px-3 py-1">
+                        <Link  :href="`/sistema/instalaciones/${item.id}`" class="btn btn-info btn-sm px-3 py-1">
                         Ver
                         </Link>
 

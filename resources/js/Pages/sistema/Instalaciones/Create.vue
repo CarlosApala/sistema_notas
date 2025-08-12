@@ -123,7 +123,8 @@
         <TablaModal :visible="showPredioModal" titulo="Seleccionar Predio" :columnas="[
             { key: 'direccion', label: 'Dirección' },
             { key: 'zonaBarrio', label: 'Zona/Barrio' },
-            { key: 'distrito', label: 'Distrito' }
+            { key: 'distrito', label: 'Distrito' },
+
         ]" fetch-url="/api/predios" @close="showPredioModal = false" @select="onSelectPredio" />
     </div>
 </template>
@@ -180,6 +181,7 @@ async function loadPredios(page = 1) {
         const res = await fetch(`/api/predios?page=${page}`)
         if (!res.ok) throw new Error('Error al cargar predios')
         predios.value = await res.json()
+        console.log(predios.value);
     } catch (e) {
         console.error('Error al cargar predios:', e)
     } finally {

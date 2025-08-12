@@ -29,7 +29,7 @@
                         Restaurar
                     </button>
                     <template v-else>
-                        <Link v-if="permissions.includes('predios.ver')" :href="`/sistema/predios/${item.id}`" class="btn btn-info btn-sm">Ver</Link>
+                        <Link  :href="`/sistema/predios/${item.id}`" class="btn btn-info btn-sm">Ver</Link>
                         <Link v-if="permissions.includes('predios.editar')" :href="`/sistema/predios/${item.id}/edit`" class="btn btn-warning btn-sm">Editar</Link>
                         <button v-if="permissions.includes('predios.eliminar')" @click.stop="eliminar(item.id)" class="btn btn-danger btn-sm">Eliminar</button>
                     </template>
