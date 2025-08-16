@@ -4,7 +4,7 @@
 
         <tabla-busqueda
             titulo="Lista de Usuarios"
-            fetch-url="/api/usuarios"
+            fetch-url="/nLecturaMovil/api/usuarios"
             :columnas="columnas"
             :per-page="10"
             @onRowClick="handleRowClick">
@@ -14,14 +14,14 @@
                 <td class="p-2 border">{{ item.email }}</td>
                 <td class="p-2 border">{{ item.username }}</td>
                 <td class="p-2 border space-x-2">
-                    <Link :href="`/sistema/usuarios/${item.id}`"
+                    <Link :href="`/nLecturaMovil/sistema/usuarios/${item.id}`"
                         class="btn btn-info btn-sm px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
                         @click.stop>
                         Ver
                     </Link>
 
                     <Link v-if="permissions.includes('usuarios.editar')"
-                        :href="`/sistema/usuarios/${item.id}/edit`"
+                        :href="`/nLecturaMovil/sistema/usuarios/${item.id}/edit`"
                         class="btn btn-warning btn-sm px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
                         @click.stop>
                         Editar
@@ -52,6 +52,6 @@ const columnas = [
 ]
 
 function handleRowClick(user) {
-    router.visit(`/sistema/usuarios/${user.id}`)
+    router.visit(`/nLecturaMovil/sistema/usuarios/${user.id}`)
 }
 </script>

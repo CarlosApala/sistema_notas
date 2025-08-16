@@ -350,17 +350,18 @@ class PersonalInternoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(PersonalInterno $personalInterno)
+    public function destroy($id)
     {
         try {
+            $personalInterno = PersonalInterno::findOrFail($id);
             $personalInterno->delete();
 
-            return redirect()->route('personal_interno.index')
+            return redirect()->route('personal_interno.eliminarIndex')
                 ->with('success', 'Personal interno eliminado correctamente');
         } catch (\Exception $e) {
-            Log::error("Error al eliminar personal interno id {$personalInterno->id}: {$e->getMessage()}");
+            Log::error("Error al eliminar personal interno id {$id}: {$e->getMessage()}");
 
-            return redirect()->route('personal_interno.index')
+            return redirect()->route('personal_interno.eliminarIndex')
                 ->withErrors('No se pudo eliminar el personal interno.');
         }
     }

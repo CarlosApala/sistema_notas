@@ -65,7 +65,7 @@ onMounted(() => {
 })
 
 function submitZona() {
-    form.post('/sistema/zonas', {
+    form.post('/nLecturaMovil/sistema/zonas', {
         onSuccess: () => {
             form.reset()
         },

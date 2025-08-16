@@ -82,7 +82,7 @@ const form = reactive({
 // Enviar actualización al backend
 function submit() {
     console.log(form);
-    router.put(`/sistema/usuarios/${props.user.id}`, form)
+    router.put(`/nLecturaMovil/sistema/usuarios/${props.user.id}`, form)
 }
 </script>
 

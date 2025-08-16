@@ -105,7 +105,7 @@
                     </span>
                     Guardar
                 </button>
-                <Link href="/sistema/personal_interno"
+                <Link href="/nLecturaMovil/sistema/personal_interno"
                     class="btn btn-secondary bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
                 Cancelar
                 </Link>

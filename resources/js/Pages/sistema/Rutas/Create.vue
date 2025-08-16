@@ -6,7 +6,7 @@
         <!-- <button v-if="permissions.includes('zona.crear')" class="btn btn-success" @click="abrirModalRegistroZona">Registrar Zona</button> -->
 
 
-        <TablaBusqueda titulo="Lista de Zonas" fetch-url="/api/zonas_rutas" :columnas="columnas" :per-page="10"
+        <TablaBusqueda titulo="Lista de Zonas" fetch-url="/nLecturaMovil/api/zonas_rutas" :columnas="columnas" :per-page="10"
             @onRowClick="() => { }">
             <template #row="{ item }">
                 <td class="p-2 border">{{ item.id }}</td>
@@ -19,7 +19,7 @@
                 </td>
                 <td class="p-2 border text-center space-x-2">
                     <Link class="no-underline text-white bg-green-600 hover:bg-green-800 px-3 py-1 text-sm rounded"
-                        :href="`/sistema/zonas_rutas/${item.id}`" @click.stop>
+                        :href="`/nLecturaMovil/sistema/zonas_rutas/${item.id}`" @click.stop>
                     Registrar rutas
                     </Link>
 
@@ -67,7 +67,7 @@ function abrirModalRegistroZona() {
         if (result.isConfirmed && result.value) {
             const form = useForm({ NombreZona: result.value })
 
-            form.post('/sistema/zonas', {
+            form.post('/nLecturaMovil/sistema/zonas', {
                 onSuccess: () => {
                     Swal.fire('¡Registrado!', 'Zona registrada correctamente.', 'success')
                 },
@@ -93,7 +93,7 @@ function confirmarEliminacion(id) {
     }).then((result) => {
         if (result.isConfirmed) {
             const form = useForm({})
-            form.delete(`/sistema/zonas/${id}`, {
+            form.delete(`/nLecturaMovil/sistema/zonas/${id}`, {
                 onSuccess: () => {
                     Swal.fire('Eliminado', 'La zona ha sido eliminada.', 'success')
                 },

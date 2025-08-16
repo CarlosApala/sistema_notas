@@ -121,6 +121,8 @@
                                         :class="{ 'rotate-icon-open': menuStore.openMenus.lecturadores }"></i>
                                 </a>
                                 <ul v-show="menuStore.openMenus.lecturadores" class="nav flex-column ms-3">
+
+
                                     <li v-if="tienePermiso('lecturadores.crear')">
                                         <Link :href="route('usuarios_lecturadores.create')" class="nav-link">
                                         <i class="fa fa-circle-o"></i> Crear Personal
@@ -139,42 +141,34 @@
                                     </li>
                                 </ul>
                             </li>
-
-
-
-
-                            <!-- Otros enlaces planos -->
-                            <!-- <li class="nav-item">
-                                <Link href="/sistema/organigrama" class="nav-link"><i class="fa fa-sitemap"></i>
-                                Organigrama</Link>
-                            </li> -->
-
                             <!-- Zonas -->
                             <li class="nav-item" v-if="permisosPorModulo.zona.value">
                                 <a href="#" class="nav-link d-flex justify-content-between align-items-center"
-                                    @click.prevent="toggleMenu('zona')">
+                                    @click.prevent="menuStore.toggleMenu('zona')">
                                     <span><i class="fa fa-users"></i> Zonas</span>
-                                    <i class="fa fa-angle-left" :class="{ 'rotate-icon-open': openMenus.zona }"></i>
+                                    <i class="fa fa-angle-left" :class="{ 'rotate-icon-open': menuStore.openMenus.zona }"></i>
                                 </a>
-                                <ul v-show="openMenus.zona" class="nav flex-column ms-3">
+                                <ul v-show="menuStore.openMenus.zona" class="nav flex-column ms-3">
                                     <li v-if="tienePermiso('zona.crear')">
-                                        <Link href="/sistema/zonas/create" class="nav-link">
+                                        <Link href="/nLecturaMovil/sistema/zonas/create" class="nav-link">
                                         <i class="fa fa-circle-o"></i> Crear zonas
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link href="/sistema/zonas" class="nav-link">
+                                        <Link href="/nLecturaMovil/sistema/zonas" class="nav-link">
                                         <i class="fa fa-circle-o"></i> Buscar
                                         </Link>
                                     </li>
                                     <li v-if="tienePermiso('zona.editar')">
-                                        <Link href="/zonas-editar" class="nav-link">
+                                        <Link :href="route('rutas.editar')" class="nav-link">
+
                                         <i class="fa fa-circle-o"></i> Editar
                                         </Link>
                                     </li>
 
                                     <li v-if="tienePermiso('zona.eliminar')">
-                                        <Link href="/zonas-eliminar" class="nav-link">
+                                        <Link :href="route('rutas.eliminar')" class="nav-link">
+
                                         <i class="fa fa-circle-o"></i> Eliminar
                                         </Link>
                                     </li>
@@ -190,23 +184,23 @@
                                 </a>
                                 <ul v-show="openMenus.zona_ruta" class="nav flex-column ms-3">
                                     <li v-if="tienePermiso('zona_ruta.crear')">
-                                        <Link href="/sistema/rutas/create" class="nav-link">
+                                        <Link href="/nLecturaMovil/sistema/rutas/create" class="nav-link">
                                         <i class="fa fa-circle-o"></i> Crear ruta
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link href="/sistema/rutas" class="nav-link">
+                                        <Link href="/nLecturaMovil/sistema/rutas" class="nav-link">
                                         <i class="fa fa-circle-o"></i> Buscar
                                         </Link>
                                     </li>
                                     <li v-if="tienePermiso('zona_ruta.editar')">
-                                        <Link href="/sistema/rutas/editar-rutas" class="nav-link">
+                                        <Link href="/nLecturaMovil/sistema/rutas/editar-rutas" class="nav-link">
                                         <i class="fa fa-circle-o"></i> Editar
                                         </Link>
                                     </li>
 
                                     <li v-if="tienePermiso('zona_ruta.eliminar')">
-                                        <Link href="/sistema/rutas/eliminar-rutas" class="nav-link">
+                                        <Link href="/nLecturaMovil/sistema/rutas/eliminar-rutas" class="nav-link">
                                         <i class="fa fa-circle-o"></i> Eliminar
                                         </Link>
                                     </li>
@@ -222,23 +216,23 @@
                                 </a>
                                 <ul v-show="openMenus.predios" class="nav flex-column ms-3">
                                     <li v-if="tienePermiso('predios.crear')">
-                                        <Link href="/sistema/predios/create" class="nav-link">
+                                        <Link href="/nLecturaMovil/sistema/predios/create" class="nav-link">
                                         <i class="fa fa-circle-o"></i> Crear predio
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link href="/sistema/predios/index" class="nav-link">
+                                        <Link href="/nLecturaMovil/sistema/predios/index" class="nav-link">
                                         <i class="fa fa-circle-o"></i> Buscar
                                         </Link>
                                     </li>
                                     <li v-if="tienePermiso('predios.editar')">
-                                        <Link href="/sistema/predios/editar" class="nav-link">
+                                        <Link href="/nLecturaMovil/sistema/predios/editar" class="nav-link">
                                         <i class="fa fa-circle-o"></i> Editar
                                         </Link>
                                     </li>
 
                                     <li v-if="tienePermiso('predios.eliminar')">
-                                        <Link href="/sistema/predios/eliminar" class="nav-link">
+                                        <Link href="/nLecturaMovil/sistema/predios/eliminar" class="nav-link">
                                         <i class="fa fa-circle-o"></i> Eliminar
                                         </Link>
                                     </li>
@@ -255,23 +249,23 @@
                                 </a>
                                 <ul v-show="openMenus.instalaciones" class="nav flex-column ms-3">
                                     <li v-if="tienePermiso('instalaciones.crear')">
-                                        <Link href="/sistema/instalaciones/create" class="nav-link">
+                                        <Link href="/nLecturaMovil/sistema/instalaciones/create" class="nav-link">
                                         <i class="fa fa-circle-o"></i> Crear instalaciones
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link href="/sistema/instalaciones/index" class="nav-link">
+                                        <Link href="/nLecturaMovil/sistema/instalaciones/index" class="nav-link">
                                         <i class="fa fa-circle-o"></i> Buscar
                                         </Link>
                                     </li>
                                     <li v-if="tienePermiso('instalaciones.editar')">
-                                        <Link href="/sistema/instalaciones/editar" class="nav-link">
+                                        <Link href="/nLecturaMovil/sistema/instalaciones/editar" class="nav-link">
                                         <i class="fa fa-circle-o"></i> Editar
                                         </Link>
                                     </li>
 
                                     <li v-if="tienePermiso('instalaciones.eliminar')">
-                                        <Link href="/sistema/instalaciones/eliminar" class="nav-link">
+                                        <Link href="/nLecturaMovil/sistema/instalaciones/eliminar" class="nav-link">
                                         <i class="fa fa-circle-o"></i> Eliminar
                                         </Link>
                                     </li>
@@ -279,11 +273,12 @@
                             </li>
 
                             <!-- <li class="nav-item">
-                                <Link href="/sistema/zonas_rutas" class="nav-link"><i class="fa fa-map"></i> Zonas y
+                                <Link href="/nLecturaMovil/sistema/zonas_rutas" class="nav-link"><i class="fa fa-map"></i> Zonas y
                                 Rutas</Link>
                             </li> -->
                             <li class="nav-item" v-if="permisosPorModulo.asignaciones.value">
-                                <Link href="/sistema/lecturadores" class="nav-link"><i class="fa fa-address-card"></i>
+                                <Link href="/nLecturaMovil/sistema/lecturadores" class="nav-link"><i
+                                    class="fa fa-address-card"></i>
                                 Asignaciones</Link>
                             </li>
 
@@ -297,19 +292,21 @@
                                 </a>
                                 <ul v-show="openMenus.configuracion" class="nav flex-column ms-3">
                                     <li v-if="tienePermiso('configuracion.crear')">
-                                        <Link href="/sistema/modulos/create" class="nav-link"><i class="fa fa-cog"></i>
+                                        <Link href="/nLecturaMovil/sistema/modulos/create" class="nav-link"><i
+                                            class="fa fa-cog"></i>
                                         Crear Módulo</Link>
                                     </li>
                                     <li>
-                                        <Link href="/sistema/modulos" class="nav-link"><i class="fa fa-cog"></i> Asignar
+                                        <Link href="/nLecturaMovil/sistema/modulos" class="nav-link"><i
+                                            class="fa fa-cog"></i> Asignar
                                         Programa</Link>
                                     </li>
                                     <li v-if="tienePermiso('configuracion.editar')">
-                                        <Link href="/sistema/modulos/modificar" class="nav-link"><i
+                                        <Link href="/nLecturaMovil/sistema/modulos/modificar" class="nav-link"><i
                                             class="fa fa-cog"></i> Modificar</Link>
                                     </li>
                                     <li v-if="tienePermiso('configuracion.eliminar')">
-                                        <Link href="/sistema/modulos/eliminar" class="nav-link"><i
+                                        <Link href="/nLecturaMovil/sistema/modulos/eliminar" class="nav-link"><i
                                             class="fa fa-cog"></i> Eliminar</Link>
                                     </li>
                                 </ul>

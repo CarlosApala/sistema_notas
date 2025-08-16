@@ -49,7 +49,7 @@
           </div>
 
           <div class="flex justify-between">
-            <Link href="/sistema/lecturadores" class="btn btn-secondary">
+            <Link href="/nLecturaMovil/sistema/lecturadores" class="btn btn-secondary">
               Volver atrás
             </Link>
 
@@ -148,8 +148,8 @@ async function loadData() {
   loading.value = true
   try {
     const [rutasRes, usuariosRes] = await Promise.all([
-      fetch('/api/rutas'),
-      fetch('/api/usuarios')
+      fetch('/nLecturaMovil/api/rutas'),
+      fetch('/nLecturaMovil/api/usuarios')
     ])
     rutas.value = await rutasRes.json()
     usuarios.value = await usuariosRes.json()
@@ -178,12 +178,12 @@ async function submit() {
     processing.value = true
     errors.value = {}
 
-    router.put(`/sistema/lecturadores/${props.asignacion.id}`, form.value, {
+    router.put(`/nLecturaMovil/sistema/lecturadores/${props.asignacion.id}`, form.value, {
       onSuccess: () => {
         processing.value = false
         Swal.fire('Actualizado', 'La asignación se ha actualizado correctamente.', 'success')
           .then(() => {
-            router.get('/sistema/lecturadores')  // <-- Aquí la redirección
+            router.get('/nLecturaMovil/sistema/lecturadores')  // <-- Aquí la redirección
           })
       },
       onError: (err) => {

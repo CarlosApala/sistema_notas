@@ -88,7 +88,7 @@
 
 
                 <div class="md:col-span-2 flex justify-between">
-                    <router-link href="/sistema/personal_interno" class="btn btn-secondary">
+                    <router-link href="/nLecturaMovil/sistema/personal_interno" class="btn btn-secondary">
                         Volver atrás
                     </router-link>
 
@@ -146,11 +146,11 @@ function submit() {
             processing.value = true
             errors.value = {}
 
-            router.put(`/sistema/personal_interno/${props.personal.id}`, form.value, {
+            router.put(`/nLecturaMovil/sistema/personal_interno/${props.personal.id}`, form.value, {
                 onSuccess: () => {
                     processing.value = false
                     Swal.fire('Actualizado', 'El personal interno ha sido actualizado correctamente.', 'success').then(() => {
-                        router.get('/sistema/personal_interno')
+                        router.get('/nLecturaMovil/sistema/personal_interno')
                     })
                 },
                 onError: (err) => {

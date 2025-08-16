@@ -77,7 +77,7 @@ function abrirModalRegistroRuta() {
                 zona_id: props.zona.id
             })
 
-            form.post('/sistema/zonas_rutas', {
+            form.post('/nLecturaMovil/sistema/zonas_rutas', {
                 onSuccess: () => {
                     Swal.fire('¡Registrado!', 'Ruta registrada correctamente.', 'success')
                     location.reload() // o mejor actualizar datos desde API si quieres SPA más fluida
@@ -110,7 +110,7 @@ function abrirModalActualizarRuta(ruta) {
             })
 
             // Asumo que tu ruta de actualización es tipo PUT y recibe id en la url
-            form.put(`/sistema/zonas_rutas/actualizar-ruta/${ruta.id}`, {
+            form.put(`/nLecturaMovil/sistema/zonas_rutas/actualizar-ruta/${ruta.id}`, {
                 onSuccess: () => {
                     Swal.fire('¡Actualizado!', 'Ruta actualizada correctamente.', 'success')
                     location.reload()
@@ -136,7 +136,7 @@ function confirmarEliminacionRuta(id) {
     }).then((result) => {
         if (result.isConfirmed) {
             const form = useForm({})
-            form.delete(`/sistema/zonas_rutas/delete-ruta/${id}`, {
+            form.delete(`/nLecturaMovil/sistema/zonas_rutas/delete-ruta/${id}`, {
                 onSuccess: () => {
                     Swal.fire('Eliminado', 'La ruta ha sido eliminada.', 'success')
                     location.reload()

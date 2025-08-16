@@ -8,7 +8,7 @@
                 Lista de las Zonas <span v-if="filters.deleted">(eliminadas)</span>
             </h1>
             <div class="flex gap-2 flex-wrap">
-                <Link v-if="permissions.includes('zonas.crear')" href="/sistema/zonas/create" class="btn btn-success">
+                <Link v-if="permissions.includes('zonas.crear')" href="/nLecturaMovil/sistema/zonas/create" class="btn btn-success">
                 Registrar Zona
                 </Link>
                 <button v-if="permissions.includes('zonas.eliminar')" @click="toggleDeleted" class="btn btn-secondary">
@@ -24,14 +24,14 @@
                 <td class="p-2 border">{{ item.NombreZona }}</td>
 
                 <td class="p-2 border text-center space-x-2">
-                    <Link :href="`/sistema/zonas/${item.id}`" class="btn btn-info btn-sm">
+                    <Link :href="`/nLecturaMovil/sistema/zonas/${item.id}`" class="btn btn-info btn-sm">
                     Ver
                     </Link>
                     <button class="btn btn-warning btn-sm" @click="editarZonaSwal(item)">
                         Editar
                     </button>
 
-                    <!-- <Link :href="`/sistema/zonas/${item.id}/edit`" class="btn btn-warning btn-sm">Editar</Link> -->
+                    <!-- <Link :href="`/nLecturaMovil/sistema/zonas/${item.id}/edit`" class="btn btn-warning btn-sm">Editar</Link> -->
 
                 </td>
             </template>
@@ -61,7 +61,7 @@ const busqueda = ref(filters.value.search || '')
 
 // Computed para generar la URL de la API con los parámetros actuales
 const fetchUrl = computed(() => {
-    const url = new URL('/api/zonas', window.location.origin)
+    const url = new URL('/nLecturaMovil/api/zonas', window.location.origin)
 
     if (filters.value.deleted) url.searchParams.append('deleted', 'true')
     if (busqueda.value) url.searchParams.append('search', busqueda.value)
@@ -88,7 +88,7 @@ watch(busqueda, () => {
 // Cuando cambien los filtros, actualiza la URL con replace para mantener estado y sincronizar rutas
 watch(filters, (newFilters) => {
     router.replace({
-        url: '/sistema/zonas',
+        url: '/nLecturaMovil/sistema/zonas',
         data: { ...newFilters },
         preserveState: true,
     })
@@ -100,7 +100,7 @@ function toggleDeleted() {
 }
 
 function handleRowClick(item) {
-    router.visit(`/sistema/zonas/${item.id}`)
+    router.visit(`/nLecturaMovil/sistema/zonas/${item.id}`)
 }
 
 async function editarZonaSwal(item) {
@@ -118,7 +118,7 @@ async function editarZonaSwal(item) {
     })
 
     if (nuevoNombre && nuevoNombre !== item.NombreZona) {
-        router.put(`/sistema/zonas/${item.id}`, {
+        router.put(`/nLecturaMovil/sistema/zonas/${item.id}`, {
             NombreZona: nuevoNombre,
         }, {
             preserveScroll: true,

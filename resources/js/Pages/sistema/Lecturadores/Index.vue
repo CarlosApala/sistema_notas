@@ -17,11 +17,11 @@
             </form>
 
             <div class="flex gap-2 flex-wrap">
-                <Link v-if="permissions.includes('asignaciones.crear')"  href="/sistema/lecturadores/create" class="btn btn-success">
+                <Link v-if="permissions.includes('asignaciones.crear')"  href="/nLecturaMovil/sistema/lecturadores/create" class="btn btn-success">
                 Asignar Ruta
                 </Link>
 
-                <Link v-if="permissions.includes('asignaciones.eliminados')" :href="filters.deleted ? '/sistema/lecturadores' : '/sistema/lecturadores?deleted=true'"
+                <Link v-if="permissions.includes('asignaciones.eliminados')" :href="filters.deleted ? '/nLecturaMovil/sistema/lecturadores' : '/nLecturaMovil/sistema/lecturadores?deleted=true'"
                     class="btn btn-secondary">
                 {{ filters.deleted ? 'Ver Activos' : 'Ver Eliminados' }}
                 </Link>
@@ -53,11 +53,11 @@
                             </button>
                         </template>
                         <template v-else >
-                            <Link v-if="permissions.includes('asignaciones.ver')" :href="`/sistema/lecturadores/${asignacion.id}`"
+                            <Link v-if="permissions.includes('asignaciones.ver')" :href="`/nLecturaMovil/sistema/lecturadores/${asignacion.id}`"
                                 class="btn btn-info btn-sm px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">
                             Ver
                             </Link>
-                            <Link v-if="permissions.includes('asignaciones.editar')" :href="`/sistema/lecturadores/${asignacion.id}/edit`"
+                            <Link v-if="permissions.includes('asignaciones.editar')" :href="`/nLecturaMovil/sistema/lecturadores/${asignacion.id}/edit`"
                                 class="btn btn-warning btn-sm px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600">
                             Editar
                             </Link>
@@ -119,7 +119,7 @@ let timeout = null
 watch(() => filters.value.search, () => {
     clearTimeout(timeout)
     timeout = setTimeout(() => {
-        router.get('/sistema/lecturadores', filters.value, {
+        router.get('/nLecturaMovil/sistema/lecturadores', filters.value, {
             preserveState: true,
             replace: true,
         })
@@ -128,7 +128,7 @@ watch(() => filters.value.search, () => {
 
 
 function buscar() {
-    router.get('/sistema/lecturadores', filters.value, {
+    router.get('/nLecturaMovil/sistema/lecturadores', filters.value, {
         preserveState: true,
         replace: true,
     })
@@ -144,7 +144,7 @@ function eliminar(id) {
         cancelButtonText: 'Cancelar',
     }).then((result) => {
         if (result.isConfirmed) {
-            router.delete(`/sistema/lecturadores/${id}`, {
+            router.delete(`/nLecturaMovil/sistema/lecturadores/${id}`, {
                 preserveState: true,
             })
         }
@@ -161,7 +161,7 @@ function restaurar(id) {
         cancelButtonText: 'Cancelar',
     }).then((result) => {
         if (result.isConfirmed) {
-            router.post(`/sistema/lecturadores/${id}/restore`, {}, {
+            router.post(`/nLecturaMovil/sistema/lecturadores/${id}/restore`, {}, {
                 preserveState: true,
                 onSuccess: () => {
                     Swal.fire({
@@ -170,7 +170,7 @@ function restaurar(id) {
                         icon: 'success',
                     }).then(() => {
                         // Opcionalmente recargas para que se actualice la lista
-                        router.get('/sistema/lecturadores', {}, {
+                        router.get('/nLecturaMovil/sistema/lecturadores', {}, {
                             preserveState: false,
                             replace: true,
                         })

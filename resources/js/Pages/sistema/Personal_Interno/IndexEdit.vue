@@ -44,11 +44,11 @@
             <td class="border border-gray-300 px-4 py-2">{{ persona.nacionalidad || '-' }}</td>
             <td class="border border-gray-300 px-4 py-2">{{ persona.numero_celular || '-' }}</td>
             <td class="border border-gray-300 px-4 py-2 text-center space-x-2 whitespace-nowrap">
-                <Link  :href="`/sistema/personal_interno/${persona.id}`"
+                <Link  :href="`/nLecturaMovil/sistema/personal_interno/${persona.id}`"
                   class="btn btn-info btn-sm px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700" >
                   Ver
                 </Link>
-                <Link :href="`/sistema/personal_interno/${persona.id}/edit`"
+                <Link :href="`/nLecturaMovil/sistema/personal_interno/${persona.id}/edit`"
                   class="btn btn-warning btn-sm px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600">
                   Editar
                 </Link>
@@ -84,6 +84,7 @@ import Swal from 'sweetalert2'
 import App from '@/Layouts/AppLayout.vue'
 import { ref, watch } from 'vue'
 import { usePage } from '@inertiajs/vue3'
+import {route} from 'ziggy-js'
 
 const page = usePage()
 const permissions = page.props.auth?.user?.permissions ?? page.props.permissions ?? []
@@ -102,7 +103,7 @@ let timeout = null
 watch(() => filters.value.search, () => {
   clearTimeout(timeout)
   timeout = setTimeout(() => {
-    router.get('/sistema/personal_interno', filters.value, {
+    router.get(route('personal_interno.editarIndex'), filters.value, {
       preserveState: true,
       replace: true,
     })
@@ -110,7 +111,7 @@ watch(() => filters.value.search, () => {
 })
 
 function buscar() {
-  router.get('/sistema/personal_interno', filters.value, {
+  router.get(route('personal_interno.editarIndex'), filters.value, {
     preserveState: true,
     replace: true,
   })
@@ -126,7 +127,7 @@ function eliminar(id) {
     cancelButtonText: 'Cancelar',
   }).then((result) => {
     if (result.isConfirmed) {
-      router.delete(`/sistema/personal_interno/${id}`, {
+      router.delete(route('personal_interno.destroy', id), {
         preserveState: true,
       })
     }
@@ -143,7 +144,7 @@ function restaurar(id) {
     cancelButtonText: 'Cancelar',
   }).then((result) => {
     if (result.isConfirmed) {
-      router.post(`/sistema/personal_interno/${id}/restore`, {}, {
+      router.post(`/nLecturaMovil/sistema/personal_interno/${id}/restore`, {}, {
         preserveState: true,
         onSuccess: () => {
           Swal.fire({
@@ -152,7 +153,7 @@ function restaurar(id) {
             icon: 'success',
           }).then(() => {
             // Aquí recargamos la vista de eliminados
-            router.get('/sistema/personal_interno', { deleted: true }, {
+            router.get('/nLecturaMovil/sistema/personal_interno', { deleted: true }, {
               preserveState: false,
               replace: true,
             })

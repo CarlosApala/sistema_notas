@@ -18,7 +18,7 @@
                     </span>
                     Guardar
                 </button>
-                <Link href="/sistema/instalaciones"
+                <Link href="/nLecturaMovil/sistema/instalaciones"
                     class="btn btn-secondary bg-gray-500 hover:bg-gray-600 text-white rounded px-4 py-2">
                 Cancelar
                 </Link>
@@ -125,7 +125,7 @@
             { key: 'zonaBarrio', label: 'Zona/Barrio' },
             { key: 'distrito', label: 'Distrito' },
 
-        ]" fetch-url="/api/predios" @close="showPredioModal = false" @select="onSelectPredio" />
+        ]" fetch-url="/nLecturaMovil/api/predios" @close="showPredioModal = false" @select="onSelectPredio" />
     </div>
 </template>
 
@@ -178,7 +178,7 @@ const loadingPredios = ref(false)
 async function loadPredios(page = 1) {
     loadingPredios.value = true
     try {
-        const res = await fetch(`/api/predios?page=${page}`)
+        const res = await fetch(`/nLecturaMovil/api/predios?page=${page}`)
         if (!res.ok) throw new Error('Error al cargar predios')
         predios.value = await res.json()
         console.log(predios.value);
@@ -208,7 +208,7 @@ function submit() {
     processing.value = true
     errors.value = {}
 
-    router.post('/sistema/instalaciones', form.value, {
+    router.post('/nLecturaMovil/sistema/instalaciones', form.value, {
         onSuccess: () => {
             processing.value = false
         },

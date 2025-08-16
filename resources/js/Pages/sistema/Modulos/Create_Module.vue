@@ -16,7 +16,7 @@ const page = usePage();
 const flashMessage = computed(() => page.props.flash?.success);
 
 function handleSubmit() {
-    form.post("/sistema/modulos", {
+    form.post("/nLecturaMovil/sistema/modulos", {
         preserveScroll: true,
         onSuccess: () => {
             form.reset();

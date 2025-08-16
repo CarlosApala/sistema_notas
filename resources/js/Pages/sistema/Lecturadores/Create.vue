@@ -61,20 +61,20 @@
             <!-- Columna derecha: Tabla dinámica -->
             <div class="bg-white p-6 rounded shadow max-h-[500px] overflow-auto">
                 <template v-if="visibleTable === 'rutas'">
-                    <TablaBusqueda titulo="Selecciona una Ruta" fetchUrl="/api/rutas" :columnas="[
+                    <TablaBusqueda titulo="Selecciona una Ruta" fetchUrl="/nLecturaMovil/api/rutas" :columnas="[
                         { key: 'id', label: 'ID' },
                         { key: 'NombreRuta', label: 'Nombre Ruta' }
                     ]" :onRowClick="selectRuta" :perPage="10" />
                 </template>
 
                 <template v-if="visibleTable === 'usuarios'">
-                    <TablaBusqueda titulo="Selecciona un Usuario" fetchUrl="/api/lecturadores" :columnas="[
+                    <TablaBusqueda titulo="Selecciona un Usuario" fetchUrl="/nLecturaMovil/api/lecturadores" :columnas="[
                         { key: 'id', label: 'ID' },
                         { key: 'name', label: 'Nombre' },
                         { key: 'email', label: 'Email' }
                     ]" :onRowClick="selectUsuario" :perPage="10" />
                     <div class="text-center mt-2">
-                        <Link href="/sistema/usuarios_lecturadores" class="text-blue-600 hover:underline text-sm">
+                        <Link href="/nLecturaMovil/sistema/usuarios_lecturadores" class="text-blue-600 hover:underline text-sm">
                         Ver Usuarios Lecturadores
                         </Link>
                     </div>
@@ -137,7 +137,7 @@ watch([selectedYear, selectedMonth], ([newYear, newMonth]) => {
 
 const buscarRutas = async () => {
     try {
-        const url = new URL('/api/rutas', window.location.origin)
+        const url = new URL('/nLecturaMovil/api/rutas', window.location.origin)
         url.searchParams.set('search', searchRuta.value)
         url.searchParams.set('per_page', 50)
 
@@ -160,8 +160,8 @@ async function loadData() {
     loading.value = true
     try {
         const [rutasRes, usuariosRes] = await Promise.all([
-            fetch('/api/rutas'),
-            fetch('/api/lecturadores'),
+            fetch('/nLecturaMovil/api/rutas'),
+            fetch('/nLecturaMovil/api/lecturadores'),
         ])
 
         if (!rutasRes.ok || !usuariosRes.ok) throw new Error('Error al cargar datos')
@@ -211,7 +211,7 @@ function submit() {
     processing.value = true
     errors.value = {}
 
-    router.post('/sistema/lecturadores', form.value, {
+    router.post('/nLecturaMovil/sistema/lecturadores', form.value, {
         onSuccess: () => {
             processing.value = false
             // Opcional: limpiar formulario

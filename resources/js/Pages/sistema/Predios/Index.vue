@@ -9,7 +9,7 @@
                 Lista de los Predios <span v-if="filters.deleted">(eliminados)</span>
             </h1>
             <div class="flex gap-2 flex-wrap" >
-                <Link v-if="permissions.includes('predios.crear')" href="/sistema/predios/create" class="btn btn-success">Registrar Predio</Link>
+                <Link v-if="permissions.includes('predios.crear')" href="/nLecturaMovil/sistema/predios/create" class="btn btn-success">Registrar Predio</Link>
                 <button v-if="permissions.includes('predios.eliminar')" @click="toggleDeleted" class="btn btn-secondary">
                     {{ filters.deleted ? 'Ver Activos' : 'Ver Eliminados' }}
                 </button>
@@ -29,8 +29,8 @@
                         Restaurar
                     </button>
                     <template v-else>
-                        <Link  :href="`/sistema/predios/${item.id}`" class="btn btn-info btn-sm">Ver</Link>
-                        <Link v-if="permissions.includes('predios.editar')" :href="`/sistema/predios/${item.id}/edit`" class="btn btn-warning btn-sm">Editar</Link>
+                        <Link  :href="`/nLecturaMovil/sistema/predios/${item.id}`" class="btn btn-info btn-sm">Ver</Link>
+                        <Link v-if="permissions.includes('predios.editar')" :href="`/nLecturaMovil/sistema/predios/${item.id}/edit`" class="btn btn-warning btn-sm">Editar</Link>
                         <button v-if="permissions.includes('predios.eliminar')" @click.stop="eliminar(item.id)" class="btn btn-danger btn-sm">Eliminar</button>
                     </template>
                 </td>
@@ -60,7 +60,7 @@ const busqueda = ref(filters.value.search || '')
 
 // Computed para generar la URL de la API con los parámetros actuales
 const fetchUrl = computed(() => {
-  const url = new URL('/api/predios', window.location.origin)
+  const url = new URL('/nLecturaMovil/api/predios', window.location.origin)
 
   if (filters.value.deleted) url.searchParams.append('deleted', 'true')
   if (busqueda.value) url.searchParams.append('search', busqueda.value)
@@ -89,7 +89,7 @@ watch(busqueda, () => {
 // Cuando cambien los filtros, actualiza la URL con replace para mantener estado y sincronizar rutas
 watch(filters, (newFilters) => {
   router.replace({
-    url: '/sistema/predios',
+    url: '/nLecturaMovil/sistema/predios',
     data: { ...newFilters },
     preserveState: true,
   })
@@ -101,7 +101,7 @@ function toggleDeleted() {
 }
 
 function handleRowClick(item) {
-  router.visit(`/sistema/predios/${item.id}`)
+  router.visit(`/nLecturaMovil/sistema/predios/${item.id}`)
 }
 
 function eliminar(id) {
@@ -114,7 +114,7 @@ function eliminar(id) {
     cancelButtonText: 'Cancelar',
   }).then((result) => {
     if (result.isConfirmed) {
-      router.delete(`/sistema/predios/${id}`, { preserveState: true })
+      router.delete(`/nLecturaMovil/sistema/predios/${id}`, { preserveState: true })
     }
   })
 }
@@ -130,7 +130,7 @@ function restaurar(id) {
   }).then((result) => {
     if (result.isConfirmed) {
       router.post(
-        `/sistema/predios/${id}/restore`,
+        `/nLecturaMovil/sistema/predios/${id}/restore`,
         {},
         {
           preserveState: true,
@@ -138,7 +138,7 @@ function restaurar(id) {
             Swal.fire('Restaurado', 'El predio ha sido restaurado correctamente.', 'success')
             // Actualizar la página forzando recarga de listado
             router.get(
-              '/sistema/predios',
+              '/nLecturaMovil/sistema/predios',
               {
                 deleted: true,
                 search: filters.value.search || '',

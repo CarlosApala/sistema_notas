@@ -4,7 +4,7 @@
         <h2 class="text-lg font-bold mb-6">Seleccione un usuario</h2>
         <!-- Botón Volver -->
 
-        <Link href="/sistema/usuarios_lecturadores"
+        <Link href="/nLecturaMovil/sistema/usuarios_lecturadores"
                     class="btn btn-secondary bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
                 Cancelar
                 </Link>
@@ -50,7 +50,7 @@ const flash = usePage().props.flash || {}
 
 function assignRole(userId) {
     console.log(userId)
-    router.post(`/sistema/usuarios_lecturadores/${userId}/assign-lecturador`)
+    router.post(`/nLecturaMovil/sistema/usuarios_lecturadores/${userId}/assign-lecturador`)
 }
 
 function goBack() {

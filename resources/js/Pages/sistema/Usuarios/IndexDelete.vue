@@ -4,14 +4,14 @@
 
 
 
-        <TablaBusqueda titulo="Lista de Usuarios" fetch-url="/api/usuarios" :columnas="columnas" :per-page="10"
+        <TablaBusqueda titulo="Lista de Usuarios" fetch-url="/nLecturaMovil/api/usuarios" :columnas="columnas" :per-page="10"
             @onRowClick="handleRowClick">
             <template #row="{ item }">
                 <td class="p-2 border">{{ item.name }}</td>
                 <td class="p-2 border">{{ item.email }}</td>
                 <td class="p-2 border">{{ item.username }}</td>
                 <td class="p-2 border space-x-2">
-                    <Link  :href="`/sistema/usuarios/${item.id}`"
+                    <Link  :href="`/nLecturaMovil/sistema/usuarios/${item.id}`"
                         class="btn btn-info btn-sm px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
                         @click.stop>
                     Ver
@@ -51,7 +51,7 @@ const columnas = [
 // Manejo del clic en fila, si quieres navegar o mostrar detalles
 function handleRowClick(user) {
     // Por ejemplo, ir a la vista detalle del usuario:
-    router.visit(`/sistema/usuarios/${user.id}`)
+    router.visit(`/nLecturaMovil/sistema/usuarios/${user.id}`)
 }
 
 // Función para eliminar usuario (podrías hacer un botón externo o un slot en tablaBusqueda si soporta)
@@ -67,7 +67,7 @@ function deleteUser(id) {
         cancelButtonText: 'Cancelar',
     }).then((result) => {
         if (result.isConfirmed) {
-            router.delete(`/sistema/usuarios/${id}`, {
+            router.delete(`/nLecturaMovil/sistema/usuarios/${id}`, {
                 onSuccess: () => {
                     Swal.fire('¡Eliminado!', 'El usuario ha sido eliminado.', 'success')
                 }

@@ -2,7 +2,7 @@
     <div class="container mx-auto p-4">
         <h1 class="text-2xl font-bold mb-4">Detalle de Personal Interno</h1>
 
-        <Link href="/sistema/personal_interno" class="btn btn-secondary mb-4">
+        <Link href="/nLecturaMovil/sistema/personal_interno" class="btn btn-secondary mb-4">
             Volver al listado
         </Link>
 

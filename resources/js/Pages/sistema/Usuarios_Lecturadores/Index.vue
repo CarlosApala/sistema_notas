@@ -110,7 +110,7 @@ let timeout = null
 watch(() => filters.value.search, () => {
     clearTimeout(timeout)
     timeout = setTimeout(() => {
-        router.get('/sistema/usuarios_lecturadores', filters.value, {
+        router.get('/nLecturaMovil/sistema/usuarios_lecturadores', filters.value, {
             preserveState: true,
             replace: true,
         })
@@ -118,7 +118,7 @@ watch(() => filters.value.search, () => {
 })
 
 function buscar() {
-    router.get('/sistema/usuarios_lecturadores', filters.value, {
+    router.get('/nLecturaMovil/sistema/usuarios_lecturadores', filters.value, {
         preserveState: true,
         replace: true,
     })
@@ -134,7 +134,7 @@ function eliminar(id) {
         cancelButtonText: 'Cancelar',
     }).then((result) => {
         if (result.isConfirmed) {
-            router.delete(`/sistema/usuarios_lecturadores/${id}`, {
+            router.delete(`/nLecturaMovil/sistema/usuarios_lecturadores/${id}`, {
                 preserveState: true,
             })
         }
@@ -151,7 +151,7 @@ function restaurar(id) {
         cancelButtonText: 'Cancelar',
     }).then((result) => {
         if (result.isConfirmed) {
-            router.post(`/sistema/usuarios_lecturadores/${id}/restore`, {}, {
+            router.post(`/nLecturaMovil/sistema/usuarios_lecturadores/${id}/restore`, {}, {
                 preserveState: true,
                 onSuccess: () => {
                     Swal.fire({
@@ -159,7 +159,7 @@ function restaurar(id) {
                         text: 'El registro ha sido restaurado correctamente.',
                         icon: 'success',
                     }).then(() => {
-                        router.get('/sistema/usuarios_lecturadores', { deleted: true }, {
+                        router.get('/nLecturaMovil/sistema/usuarios_lecturadores', { deleted: true }, {
                             preserveState: false,
                             replace: true,
                         })

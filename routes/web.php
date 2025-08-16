@@ -60,7 +60,7 @@ Route::prefix('nLecturaMovil')->group(function () {
 Route::prefix('nLecturaMovil')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login'])->name('login.post');
-      Route::get('/forgot-password', [PasswordController::class, 'showLinkRequestForm'])
+    Route::get('/forgot-password', [PasswordController::class, 'showLinkRequestForm'])
         ->name('password.request');
 
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
@@ -129,6 +129,8 @@ Route::middleware([
             ->name('personal_interno.eliminarIndex');
         Route::resource('/sistema/personal_interno', PersonalInternoController::class);
         Route::post('/sistema/personal_interno/{id}/restore', [PersonalInternoController::class, 'restore'])->name('personal_interno.restore');
+        // Cambia de GET a DELETE
+
 
         Route::get('/zonas-editar', [ZonasController::class, 'indexEdit']);
         Route::get('/zonas-eliminar', [ZonasController::class, 'indexDelete']);

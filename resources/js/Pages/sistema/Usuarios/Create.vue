@@ -55,7 +55,7 @@
         </div>
 
         <!-- Modal de selección de usuario -->
-        <TablaModal :visible="modalVisible" titulo="Usuarios Personal Interno" fetch-url="/api/personal_interno"
+        <TablaModal :visible="modalVisible" titulo="Usuarios Personal Interno" fetch-url="/nLecturaMovil/api/personal_interno"
             :columnas="[
                 { key: 'id', label: 'ID' },
                 { key: 'nombres', label: 'Nombre' },
@@ -128,7 +128,7 @@ function submit() {
 
   console.log('Formulario enviado:', form);
 
-  form.post('/sistema/usuarios', {
+  form.post('/nLecturaMovil/sistema/usuarios', {
     preserveScroll: true,
     onSuccess: () => {
       form.reset();

@@ -4,7 +4,7 @@
 
 
 
-        <TablaBusqueda titulo="Lista de Zonas" fetch-url="/api/zonas" :columnas="columnas" :per-page="10"
+        <TablaBusqueda titulo="Lista de Zonas" fetch-url="/nLecturaMovil/api/zonas" :columnas="columnas" :per-page="10"
             @onRowClick="handleRowClick">
         </TablaBusqueda>
     </div>
@@ -29,7 +29,7 @@ const columnas = [
 // Manejo del clic en fila, si quieres navegar o mostrar detalles
 function handleRowClick(user) {
     // Por ejemplo, ir a la vista detalle del usuario:
-    router.visit(`/sistema/zonas/${user.id}`)
+    router.visit(`/nLecturaMovil/sistema/zonas/${user.id}`)
 }
 
 </script>

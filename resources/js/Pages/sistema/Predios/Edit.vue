@@ -218,7 +218,7 @@
         </div>
 
         <div class="md:col-span-2 flex justify-between">
-          <router-link href="/sistema/predios" class="btn btn-secondary">
+          <router-link href="/nLecturaMovil/sistema/predios" class="btn btn-secondary">
             Volver atrás
           </router-link>
 
@@ -285,11 +285,11 @@ function submit() {
       processing.value = true
       errors.value = {}
 
-      router.put(`/sistema/predios/${props.predio.id}`, form.value, {
+      router.put(`/nLecturaMovil/sistema/predios/${props.predio.id}`, form.value, {
         onSuccess: () => {
           processing.value = false
           Swal.fire('Actualizado', 'El predio se ha actualizado correctamente.', 'success').then(() => {
-            router.get('/sistema/predios')
+            router.get('/nLecturaMovil/sistema/predios')
           })
         },
         onError: (err) => {

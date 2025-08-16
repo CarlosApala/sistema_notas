@@ -35,7 +35,7 @@ function asignarPrograma(id) {
             <td class="p-2 border">{{ item.descripcion }}</td>
             <td class="p-2 border space-x-2">
                 <Link
-                    :href="`/sistema/modulos/${item.id}/asignarPrograma`"
+                    :href="`/nLecturaMovil/sistema/modulos/${item.id}/asignarPrograma`"
                     class="btn btn-info btn-sm px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
                     @click.stop
                 >

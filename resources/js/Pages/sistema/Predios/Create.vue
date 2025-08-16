@@ -206,7 +206,7 @@
         </form>
 
         <!-- Modal para selección de zonas -->
-        <TablaModal :visible="modalVisible" titulo="Seleccione una Zona" fetch-url="/api/zonas" :columnas="[
+        <TablaModal :visible="modalVisible" titulo="Seleccione una Zona" fetch-url="/nLecturaMovil/api/zonas" :columnas="[
             { key: 'NombreZona', label: 'Zona' },
             { key: 'Distrito', label: 'Distrito' }
         ]" @select="seleccionarZona" @close="cerrarModal" />
@@ -271,7 +271,7 @@ async function seleccionarZona(zona) {
   cerrarModal()
 
   try {
-    const res = await fetch(`/api/zonas/rutas/${zona.id}`)
+    const res = await fetch(`/nLecturaMovil/api/zonas/rutas/${zona.id}`)
     const data = await res.json()
     rutas.value = data.rutas || []
   } catch (error) {
@@ -285,7 +285,7 @@ function submit() {
     processing.value = true
     errors.value = {}
 
-    router.post('/sistema/predios', form.value, {
+    router.post('/nLecturaMovil/sistema/predios', form.value, {
         onSuccess: () => {
             processing.value = false
         },

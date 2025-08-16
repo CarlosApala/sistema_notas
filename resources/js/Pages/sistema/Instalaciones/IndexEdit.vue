@@ -24,10 +24,10 @@
                 <td class="p-2 border">{{ item.EstadoAlcantarillado }}</td>
                 <td class="p-2 border text-center space-x-2">
 
-                        <Link  :href="`/sistema/instalaciones/${item.id}`" class="btn btn-info btn-sm px-3 py-1">
+                        <Link  :href="`/nLecturaMovil/sistema/instalaciones/${item.id}`" class="btn btn-info btn-sm px-3 py-1">
                         Ver
                         </Link>
-                        <Link v-if="permissions.includes('instalaciones.editar')" :href="`/sistema/instalaciones/${item.id}/edit`" class="btn btn-warning btn-sm px-3 py-1">
+                        <Link v-if="permissions.includes('instalaciones.editar')" :href="`/nLecturaMovil/sistema/instalaciones/${item.id}/edit`" class="btn btn-warning btn-sm px-3 py-1">
                         Editar
                         </Link>
 
@@ -60,7 +60,7 @@ const busqueda = ref(filters.value.search || '')
 
 // Generar URL para la API según filtros actuales
 const fetchUrl = computed(() => {
-  const url = new URL('/api/instalaciones', window.location.origin)
+  const url = new URL('/nLecturaMovil/api/instalaciones', window.location.origin)
   if (filters.value.deleted) url.searchParams.append('deleted', 'true')
   if (busqueda.value) url.searchParams.append('search', busqueda.value)
   url.searchParams.append('per_page', '10')
@@ -87,7 +87,7 @@ watch(busqueda, () => {
 // Al cambiar filtros, sincronizamos URL con replace para no recargar y mantener estado
 watch(filters, (newFilters) => {
   router.replace({
-    url: '/sistema/instalaciones',
+    url: '/nLecturaMovil/sistema/instalaciones',
     data: { ...newFilters },
     preserveState: true,
   })
@@ -99,7 +99,7 @@ function toggleDeleted() {
 }
 
 function handleRowClick(item) {
-  router.visit(`/sistema/instalaciones/${item.id}`)
+  router.visit(`/nLecturaMovil/sistema/instalaciones/${item.id}`)
 }
 
 function eliminar(id) {
@@ -112,7 +112,7 @@ function eliminar(id) {
     cancelButtonText: 'Cancelar',
   }).then((result) => {
     if (result.isConfirmed) {
-      router.delete(`/sistema/instalaciones/${id}`, { preserveState: true })
+      router.delete(`/nLecturaMovil/sistema/instalaciones/${id}`, { preserveState: true })
     }
   })
 }
@@ -127,12 +127,12 @@ function restaurar(id) {
     cancelButtonText: 'Cancelar',
   }).then((result) => {
     if (result.isConfirmed) {
-      router.post(`/sistema/instalaciones/${id}/restore`, {}, {
+      router.post(`/nLecturaMovil/sistema/instalaciones/${id}/restore`, {}, {
         preserveState: true,
         onSuccess: () => {
           Swal.fire('Restaurada', 'La instalación ha sido restaurada.', 'success')
           // Opcional: forzar recarga de listado, por ejemplo
-          router.get('/sistema/instalaciones', {
+          router.get('/nLecturaMovil/sistema/instalaciones', {
             deleted: true,
             search: filters.value.search || '',
           }, { preserveState: true, replace: true })

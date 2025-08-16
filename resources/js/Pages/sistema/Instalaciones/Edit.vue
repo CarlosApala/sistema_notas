@@ -96,7 +96,7 @@
                 </div>
 
                 <div class="flex justify-between items-center pt-4">
-                    <router-link href="/sistema/instalaciones" class="btn btn-secondary px-4 py-2 rounded">
+                    <router-link href="/nLecturaMovil/sistema/instalaciones" class="btn btn-secondary px-4 py-2 rounded">
                         Cancelar
                     </router-link>
 
@@ -112,7 +112,7 @@
             { key: 'direccion', label: 'Dirección' },
             { key: 'zonaBarrio', label: 'Zona/Barrio' },
             { key: 'distrito', label: 'Distrito' }
-        ]" fetch-url="/api/predios" @close="showPredioModal = false" @select="(predio) => {
+        ]" fetch-url="/nLecturaMovil/api/predios" @close="showPredioModal = false" @select="(predio) => {
     predioSeleccionado.value = predio
     form.value.idPredio = predio.id
 }" />
@@ -165,7 +165,7 @@ const selectedPredioDisplay = computed(() => {
 async function loadPredios() {
     loading.value = true
     try {
-        const res = await fetch('/api/predios')
+        const res = await fetch('/nLecturaMovil/api/predios')
         predios.value = await res.json()
     } catch (error) {
         Swal.fire('Error', 'No se pudo cargar la lista de predios.', 'error')
@@ -200,11 +200,11 @@ async function submit() {
     processing.value = true
     errors.value = {}
 
-    router.put(`/sistema/instalaciones/${props.instalacion.id}`, form.value, {
+    router.put(`/nLecturaMovil/sistema/instalaciones/${props.instalacion.id}`, form.value, {
         onSuccess: () => {
             processing.value = false
             Swal.fire('Actualizado', 'La instalación se ha actualizado correctamente.', 'success').then(() => {
-                router.get('/sistema/instalaciones')
+                router.get('/nLecturaMovil/sistema/instalaciones')
             })
         },
         onError: (err) => {
