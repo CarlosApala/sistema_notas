@@ -33,7 +33,7 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('/dashboard');
+            return Inertia::location(route('dashboard'));
         }
 
         return back()->withErrors([
@@ -46,12 +46,13 @@ class LoginController extends Controller
     // Método para logout
     public function logout(Request $request)
     {
+
         Auth::logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return Inertia::location('/login');
+        return Inertia::location(route('login'));
     }
     public function username()
     {

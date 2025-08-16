@@ -62,7 +62,11 @@ Route::prefix('nLecturaMovil')->group(function () {
     Route::post('/login', [LoginController::class, 'login'])->name('login.post');
       Route::get('/forgot-password', [PasswordController::class, 'showLinkRequestForm'])
         ->name('password.request');
+
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
+
+
 
 Route::middleware([
     'auth:sanctum',

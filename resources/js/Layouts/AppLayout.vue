@@ -97,7 +97,8 @@
                                             class="fa fa-circle-o"></i> Crear Usuario</Link>
                                     </li>
                                     <li>
-                                        <Link :href="route('usuarios.index')" class="nav-link"><i class="fa fa-circle-o"></i>
+                                        <Link :href="route('usuarios.index')" class="nav-link"><i
+                                            class="fa fa-circle-o"></i>
                                         Buscar</Link>
                                     </li>
                                     <li v-if="tienePermiso('usuarios.editar')">
@@ -126,7 +127,7 @@
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link :href="route('usuarios_lecturadores.index')"  class="nav-link">
+                                        <Link :href="route('usuarios_lecturadores.index')" class="nav-link">
                                         <i class="fa fa-circle-o"></i> Buscar
                                         </Link>
                                     </li>
@@ -319,7 +320,7 @@
 
                     <!-- Logout -->
                     <div class="logout-footer">
-                        <Link :href="route('logout')"  class="nav-link text-danger">
+                        <Link :href="route('logout')" method="post" class="nav-link text-danger">
 
                         <i class="fa fa-sign-out"></i> Cerrar Sesión
                         </Link>
