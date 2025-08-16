@@ -3,7 +3,7 @@ import laravel from "laravel-vite-plugin";
 import vue from "@vitejs/plugin-vue";
 
 export default defineConfig({
-    base: '/nLecturaMovil/', // Agrega el prefijo aquí
+    base: '/nLecturaMovil/build/', // Agrega el prefijo aquí
     server: {
         watch: {
             usePolling: true,
