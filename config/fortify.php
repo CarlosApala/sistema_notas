@@ -86,7 +86,7 @@ return [
     |
     */
 
-    'prefix' => '',
+    'prefix' => 'nLecturaMovil',
 
     'domain' => null,
 

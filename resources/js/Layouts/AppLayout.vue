@@ -319,7 +319,8 @@
 
                     <!-- Logout -->
                     <div class="logout-footer">
-                        <Link :href="route('logout')" method="post" class="nav-link text-danger">
+                        <Link :href="route('logout')"  class="nav-link text-danger">
+
                         <i class="fa fa-sign-out"></i> Cerrar Sesión
                         </Link>
                     </div>

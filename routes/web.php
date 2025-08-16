@@ -31,7 +31,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
+use Laravel\Fortify\Http\Controllers\PasswordController;
 use Spatie\Permission\Models\Role;
 
 /*
@@ -58,15 +58,11 @@ Route::prefix('nLecturaMovil')->group(function () {
 });
 
 Route::prefix('nLecturaMovil')->group(function () {
-
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-    // Ruta para procesar el login (POST)
     Route::post('/login', [LoginController::class, 'login'])->name('login.post');
-
-    // Ruta para logout (POST)
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+      Route::get('/forgot-password', [PasswordController::class, 'showLinkRequestForm'])
+        ->name('password.request');
 });
-
 
 Route::middleware([
     'auth:sanctum',
