@@ -118,7 +118,7 @@
 import { ref } from 'vue'
 import { router, Link } from '@inertiajs/vue3'
 import App from '@/Layouts/AppLayout.vue'
-
+import { route } from 'ziggy-js' // ✅ Correcto
 defineOptions({ layout: App })
 
 const form = ref({
@@ -142,7 +142,7 @@ function submit() {
     processing.value = true
     errors.value = {}
 
-    router.post('/sistema/personal_interno', form.value, {
+    router.post(route('personal_interno.store'), form.value, {
         onSuccess: () => {
             processing.value = false
         },

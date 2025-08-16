@@ -79,6 +79,6 @@ const form = useForm({
 })
 
 function submit() {
-  form.post('/login')
+  form.post(route('login.post')); // Usa el nombre de la ruta en lugar de la URL directa
 }
 </script>

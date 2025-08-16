@@ -12,7 +12,7 @@
             </p>
             <p class="fw-semibold">Por favor, inicie sesión para acceder a las funcionalidades del sistema.</p>
 
-            <Link href="/login" class="btn btn-light mt-4 px-4 py-2 fw-semibold">
+            <Link :href="route('login')" class="btn btn-light mt-4 px-4 py-2 fw-semibold">
             Iniciar Sesión
             </Link>
         </div>

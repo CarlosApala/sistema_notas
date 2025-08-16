@@ -43,7 +43,7 @@
 
                             <!-- Inicio -->
                             <li class="nav-item">
-                                <Link href="/dashboard" class="nav-link">
+                                <Link :href="route('dashboard')" class="nav-link">
                                 <i class="fa fa-home"></i> Inicio
                                 </Link>
                             </li>
@@ -51,29 +51,31 @@
                             <!-- Personal Interno -->
                             <li class="nav-item" v-if="permisosPorModulo.personal_interno.value">
                                 <a href="#" class="nav-link d-flex justify-content-between align-items-center"
-                                    @click.prevent="toggleMenu('personal_interno')">
+                                    @click.prevent="menuStore.toggleMenu('personal_interno')">
                                     <span><i class="fa fa-users"></i> Personal Interno</span>
                                     <i class="fa fa-angle-left"
-                                        :class="{ 'rotate-icon-open': openMenus.personal_interno }"></i>
+                                        :class="{ 'rotate-icon-open': menuStore.openMenus.personal_interno }"></i>
                                 </a>
-                                <ul v-show="openMenus.personal_interno" class="nav flex-column ms-3">
+                                <ul v-show="menuStore.openMenus.personal_interno" class="nav flex-column ms-3">
+                                    <!-- Tus elementos de menú... -->
                                     <li v-if="tienePermiso('personal_interno.crear')">
-                                        <Link href="/sistema/personal_interno/create" class="nav-link">
+                                        <Link :href="route('personal_interno.create')" :preserve-state="true"
+                                            class="nav-link">
                                         <i class="fa fa-circle-o"></i> Crear Personal
                                         </Link>
                                     </li>
-                                    <li >
-                                        <Link href="/sistema/personal_interno" class="nav-link">
+                                    <li>
+                                        <Link :href="route('personal_interno.index')" class="nav-link">
                                         <i class="fa fa-circle-o"></i> Buscar
                                         </Link>
                                     </li>
                                     <li v-if="tienePermiso('personal_interno.editar')">
-                                        <Link href="/sistema/personal_interno/editar" class="nav-link">
+                                        <Link :href="route('personal_interno.editarIndex')" class="nav-link">
                                         <i class="fa fa-circle-o"></i> Editar
                                         </Link>
                                     </li>
                                     <li v-if="tienePermiso('personal_interno.eliminar')">
-                                        <Link href="/sistema/personal_interno/eliminar" class="nav-link">
+                                        <Link :href="route('personal_interno.eliminarIndex')" class="nav-link">
                                         <i class="fa fa-circle-o"></i> Eliminar
                                         </Link>
                                     </li>
@@ -84,52 +86,53 @@
                             <!-- Usuarios de sistema -->
                             <li class="nav-item" v-if="permisosPorModulo.usuarios.value">
                                 <a href="#" class="nav-link d-flex justify-content-between align-items-center"
-                                    @click.prevent="toggleMenu('usuarios')">
+                                    @click.prevent="menuStore.toggleMenu('usuarios')">
                                     <span><i class="fa fa-users"></i> Usuarios de Sistema</span>
-                                    <i class="fa fa-angle-left" :class="{ 'rotate-icon-open': openMenus.usuarios }"></i>
+                                    <i class="fa fa-angle-left"
+                                        :class="{ 'rotate-icon-open': menuStore.openMenus.usuarios }"></i>
                                 </a>
-                                <ul v-show="openMenus.usuarios" class="nav flex-column ms-3">
+                                <ul v-show="menuStore.openMenus.usuarios" class="nav flex-column ms-3">
                                     <li v-if="tienePermiso('usuarios.crear')">
-                                        <Link href="/sistema/usuarios/create" class="nav-link"><i
+                                        <Link :href="route('usuarios.create')" class="nav-link"><i
                                             class="fa fa-circle-o"></i> Crear Usuario</Link>
                                     </li>
                                     <li>
-                                        <Link href="/sistema/usuarios" class="nav-link"><i class="fa fa-circle-o"></i>
+                                        <Link :href="route('usuarios.index')" class="nav-link"><i class="fa fa-circle-o"></i>
                                         Buscar</Link>
                                     </li>
                                     <li v-if="tienePermiso('usuarios.editar')">
-                                        <Link href="/sistema/usuarios/editar" class="nav-link"><i
+                                        <Link :href="route('usuarios.editarIndex')" class="nav-link"><i
                                             class="fa fa-circle-o"></i> Editar</Link>
                                     </li>
                                     <li v-if="tienePermiso('usuarios.eliminar')">
-                                        <Link href="/sistema/usuarios/delete" class="nav-link"><i
+                                        <Link :href="route('usuarios.editarDelete')" class="nav-link"><i
                                             class="fa fa-circle-o"></i> Eliminar</Link>
                                     </li>
                                 </ul>
                             </li>
 
                             <!-- Personal lecturador -->
-                            <li class="nav-item" v-if="permisosPorModulo.lecturadores.value">
+                            <li class="nav-item" v-if="permisosPorModulo.usuarios.value">
                                 <a href="#" class="nav-link d-flex justify-content-between align-items-center"
-                                    @click.prevent="toggleMenu('lecturadores')">
-                                    <span><i class="fa fa-users"></i> Lecturadores</span>
+                                    @click.prevent="menuStore.toggleMenu('lecturadores')">
+                                    <span><i class="fa fa-users"></i> lecturadores</span>
                                     <i class="fa fa-angle-left"
-                                        :class="{ 'rotate-icon-open': openMenus.lecturadores }"></i>
+                                        :class="{ 'rotate-icon-open': menuStore.openMenus.lecturadores }"></i>
                                 </a>
-                                <ul v-show="openMenus.lecturadores" class="nav flex-column ms-3">
+                                <ul v-show="menuStore.openMenus.lecturadores" class="nav flex-column ms-3">
                                     <li v-if="tienePermiso('lecturadores.crear')">
-                                        <Link href="/sistema/usuarios_lecturadores/create" class="nav-link">
+                                        <Link :href="route('usuarios_lecturadores.create')" class="nav-link">
                                         <i class="fa fa-circle-o"></i> Crear Personal
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link href="/sistema/usuarios_lecturadores" class="nav-link">
+                                        <Link :href="route('usuarios_lecturadores.index')"  class="nav-link">
                                         <i class="fa fa-circle-o"></i> Buscar
                                         </Link>
                                     </li>
 
                                     <li v-if="tienePermiso('lecturadores.eliminar')">
-                                        <Link href="/sistema/usuarios_lecturadores/eliminar" class="nav-link">
+                                        <Link :href="route('usuarios_lecturadores.eliminarIndex')" class="nav-link">
                                         <i class="fa fa-circle-o"></i> Eliminar
                                         </Link>
                                     </li>
@@ -214,8 +217,7 @@
                                 <a href="#" class="nav-link d-flex justify-content-between align-items-center"
                                     @click.prevent="toggleMenu('predios')">
                                     <span><i class="fa fa-users"></i> Predios</span>
-                                    <i class="fa fa-angle-left"
-                                        :class="{ 'rotate-icon-open': openMenus.predios }"></i>
+                                    <i class="fa fa-angle-left" :class="{ 'rotate-icon-open': openMenus.predios }"></i>
                                 </a>
                                 <ul v-show="openMenus.predios" class="nav flex-column ms-3">
                                     <li v-if="tienePermiso('predios.crear')">
@@ -334,32 +336,41 @@
     </div>
 </template>
 <script setup>
-import { ref, onMounted,computed, onBeforeUnmount } from 'vue'
+import { ref, onMounted, computed, onBeforeUnmount } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
+import { useMenuStore } from '@/stores/menuStore';
+import { route } from 'ziggy-js';
+
 
 const page = usePage()
 const user = page.props.auth.user
 const permissions = page.props.auth?.user?.permissions ?? page.props.permissions ?? []
 
+const menuStore = useMenuStore();
+
+
+
 console.log('mostrar los permisos')
 console.log(permissions)
 const dropdownOpen = ref(false)
 const sidebarCollapsed = ref(false)
-const openMenus = ref({})
+const openMenus = ref({
+    personal_interno: false
+})
 
 // Menús colapsables por key
-const menuKeys = ['usuarios', 'personal', 'configuracion', 'personal_interno', 'lecturadores', 'zona', 'zona_ruta','predios','instalaciones','asignaciones']
+const menuKeys = ['usuarios', 'personal', 'configuracion', 'personal_interno', 'lecturadores', 'zona', 'zona_ruta', 'predios', 'instalaciones', 'asignaciones']
 //const modulo=menuKeys;
 
 const tienePermisosDelModulo = (modulo) =>
-  permissions.some((p) => p.startsWith(`${modulo}.`));
+    permissions.some((p) => p.startsWith(`${modulo}.`));
 
 const permisosPorModulo = Object.fromEntries(
-  menuKeys.map((m) => [m, computed(() => tienePermisosDelModulo(m))])
+    menuKeys.map((m) => [m, computed(() => tienePermisosDelModulo(m))])
 );
 
 const tienePermiso = (permiso) =>
-  permissions.includes(permiso);
+    permissions.includes(permiso);
 
 function toggleDropdown() {
     dropdownOpen.value = !dropdownOpen.value
