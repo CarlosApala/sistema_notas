@@ -2,25 +2,18 @@ version: '3.8'
 
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
     container_name: laravel_app
     volumes:
-      - .:/var/www/html
-    environment:
-      - APP_ENV=production
-      - APP_KEY=${APP_KEY}
-    depends_on:
-      - nginx
-
-  nginx:
-    image: nginx:alpine
-    container_name: laravel_nginx
+      - /c/wamp64/www/my-app:/var/www/html
+      - ./docker/odbc/odbc.ini:/etc/odbc.ini
+      - ./docker/odbc/odbcinst.ini:/etc/odbcinst.ini
     ports:
       - "8080:80"
-    volumes:
-      - .:/var/www/html
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-    depends_on:
-      - app
+    environment:
+      - DB_CONNECTION=informix
+      - DB_HOST=10.129.1.106
+      - DB_PORT=9088
+      - DB_DATABASE=tbsai
+      - DB_USERNAME=informix
+      - DB_PASSWORD=651419abc
