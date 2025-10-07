@@ -19,7 +19,7 @@ class AvisoController extends Controller
         $mes = $request->query('mes');     // e.g., 3
 
         // Configuración de paginación
-        $perPage = 40; // Cantidad de registros por página
+        $perPage = 140; // Cantidad de registros por página
         $page = $request->query('page', 1); // Número de página
 
         // Construir query
@@ -34,13 +34,17 @@ class AvisoController extends Controller
                 'cod_per',
                 'nro_instalacion',
                 'dir_socio',
-                'consumo_promedio'
+                'consumo_promedio',
+                'cod_fijo' // Añadido para ordenar
             );
 
         // Aplicar filtros
         if ($usuario) $avisosQuery->where('usuario', $usuario);
         if ($anio) $avisosQuery->where('anio', $anio);
         if ($mes) $avisosQuery->where('mes_factura', $mes);
+
+        // Ordenar por cod_fijo
+        $avisosQuery->orderBy('cod_fijo');
 
         // Paginación
         $avisos = $avisosQuery->paginate($perPage, ['*'], 'page', $page);
@@ -68,28 +72,28 @@ class AvisoController extends Controller
             }
 
             // Determinar lado (A si impar, B si par)
-            $lado = ($aviso->nro_predio % 2 == 0) ? 'B' : 'A';
+            $lado = 'A';
             if (!isset($data[$zonaKey]['rutas'][$rutaKey]['lados'][$lado])) {
-                $data[$zonaKey]['rutas'][$rutaKey]['lados'][$lado] = [
-                    'lado' => $lado,
-                    'instalaciones' => []
-                ];
-            }
-
-            $data[$zonaKey]['rutas'][$rutaKey]['lados'][$lado]['instalaciones'][] = [
-                'id' => $aviso->nro_instalacion,
-                'numeroMedidor' => $aviso->nomb_socio,
-                'estadoInstalacion' => 'Activo',
-                'estadoAlcantarillado' => 'Funcional',
-                'estadoCorte' => 'Sin corte',
-                'promedioConsumo' => $aviso->consumo_promedio,
-                'observaciones' => trim($aviso->dir_socio),
-                'codigoUbicacion' => null,
-                'nroGrifos' => null,
-                'nroBanos' => null,
-                'fechaInstalacion' => null,
-                'idPredio' => $aviso->nro_predio
+            $data[$zonaKey]['rutas'][$rutaKey]['lados'][$lado] = [
+            'lado' => $lado,
+            'instalaciones' => []
             ];
+    }
+
+        $data[$zonaKey]['rutas'][$rutaKey]['lados'][$lado]['instalaciones'][] = [
+            'id' => $aviso->nro_instalacion,
+            'numeroMedidor' => $aviso->nomb_socio,
+            'estadoInstalacion' => 'Activo',
+            'estadoAlcantarillado' => 'Funcional',
+            'estadoCorte' => 'Sin corte',
+            'promedioConsumo' => $aviso->consumo_promedio,
+            'observaciones' => trim($aviso->dir_socio),
+            'codigoUbicacion' => null,
+            'nroGrifos' => null,
+            'nroBanos' => null,
+            'fechaInstalacion' => null,
+            'idPredio' => $aviso->nro_predio
+        ];
         }
 
         // Reindexar arrays para JSON limpio
@@ -104,6 +108,8 @@ class AvisoController extends Controller
             $zona['rutas'] = $rutas;
             $result[] = $zona;
         }
+
+        
 
         // Respuesta JSON final
         return response()->json([
