@@ -22,36 +22,36 @@ class AuthLecturadorController extends Controller
     $usuarioInput = str_pad(substr($request->usuario, 0, 5), 5, " ");
     $claveInput = str_pad(substr($request->clave, 0, 10), 10, " ");
 
-
     Log::info('Intento de login', ['usuario' => $usuarioInput]);
 
     // Buscar usuario con bpchar(5)
     $usuario = UsuarioMovil::where('usuario', $usuarioInput)
         ->where('estado', 0)
         ->first();
-    Log::info($usuario);
-    if ($usuario) {
-        Log::info('Usuario encontrado', ['usuario' => $usuario->usuario]);
-    } else {
-        Log::warning('Usuario no encontrado', ['usuario' => $usuarioInput]);
-    }
+
+    Log::info($usuario ? 'Usuario encontrado' : 'Usuario no encontrado', ['usuario' => $usuarioInput]);
 
     // Validar clave
     if (!$usuario || $claveInput !== $usuario->clave) {
-    return response()->json(['message' => 'Credenciales incorrectas'], 401);
+        return response()->json(['message' => 'Credenciales incorrectas'], 401);
     }
 
     $token = $usuario->createToken('auth_token')->plainTextToken;
 
+    // Respuesta adaptada a lo que espera Flutter
     return response()->json([
-        'message' => 'Inicio de sesión exitoso',
-        'usuario' => [
-            'usuario'=>trim($usuario->usuario),
-            'nombre'=>$usuario->nombre
+        'data' => [
+            'user' => [
+                'id' => 1, // id fijo porque no existe en la tabla
+                'username' => trim($usuario->usuario),
+                'name' => $usuario->nombre,
+            ],
+            'token' => $token,
         ],
-        'token' => $token,
+        'message' => 'Inicio de sesión exitoso',
     ]);
 }
+
 
 
 
