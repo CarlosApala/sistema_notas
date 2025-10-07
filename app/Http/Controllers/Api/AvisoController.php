@@ -14,9 +14,15 @@ class AvisoController extends Controller
         $usuario = $request->header('Usuario');
         $usuario = str_pad($usuario, 5, ' ', STR_PAD_RIGHT);
 
+        // Filtros opcionales desde la request
+        $anio = $request->query('anio');   // e.g., 2025
+        $mes = $request->query('mes');     // e.g., 3
+
+        // Configuración de paginación
         $perPage = 40; // Cantidad de registros por página
         $page = $request->query('page', 1); // Número de página
 
+        // Construir query
         $avisosQuery = DB::table('aviso')
             ->select(
                 'nombre_ruta',
@@ -28,17 +34,18 @@ class AvisoController extends Controller
                 'cod_per',
                 'nro_instalacion',
                 'dir_socio',
-                'consumo_promedio' // CORREGIDO: la columna correcta
+                'consumo_promedio'
             );
 
-        if ($usuario) {
-            $avisosQuery->where('usuario', $usuario);
-        }
+        // Aplicar filtros
+        if ($usuario) $avisosQuery->where('usuario', $usuario);
+        if ($anio) $avisosQuery->where('anio', $anio);
+        if ($mes) $avisosQuery->where('mes_factura', $mes);
 
         // Paginación
         $avisos = $avisosQuery->paginate($perPage, ['*'], 'page', $page);
 
-        // Transformación jerárquica
+        // Transformación jerárquica: Zonas -> Rutas -> Lados -> Instalaciones
         $data = [];
 
         foreach ($avisos as $aviso) {
@@ -75,7 +82,7 @@ class AvisoController extends Controller
                 'estadoInstalacion' => 'Activo',
                 'estadoAlcantarillado' => 'Funcional',
                 'estadoCorte' => 'Sin corte',
-                'promedioConsumo' => $aviso->consumo_promedio, // CORREGIDO
+                'promedioConsumo' => $aviso->consumo_promedio,
                 'observaciones' => trim($aviso->dir_socio),
                 'codigoUbicacion' => null,
                 'nroGrifos' => null,
@@ -98,6 +105,7 @@ class AvisoController extends Controller
             $result[] = $zona;
         }
 
+        // Respuesta JSON final
         return response()->json([
             'status' => 200,
             'message' => 'ok',
