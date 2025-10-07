@@ -1,0 +1,75 @@
+[90m= [39m[34;4mIlluminate\Database\Eloquent\Collection[39;24m {#6448
+    [34mall[39m: [
+      [34;4mApp\Models\UsuarioMovil[39;24m {#6450
+        [34musuario[39m: "[32mMAL  [39m",
+        [34mnombre[39m: "[32mMIGUEL ANGEL LOPEZ[39m",
+        [34mclave[39m: "[32m4655815   [39m",
+        [34mestado[39m: [35m0[39m,
+        [34mtipo[39m: "[32mA[39m",
+      },
+      [34;4mApp\Models\UsuarioMovil[39;24m {#6451
+        [34musuario[39m: "[32mSR   [39m",
+        [34mnombre[39m: "[32mSAMUEL RODRIGUEZ[39m",
+        [34mclave[39m: "[32m123456    [39m",
+        [34mestado[39m: [35m0[39m,
+        [34mtipo[39m: "[32mU[39m",
+      },
+      [34;4mApp\Models\UsuarioMovil[39;24m {#6452
+        [34musuario[39m: "[32mAH   [39m",
+        [34mnombre[39m: "[32mARMANDO HERRERA[39m",
+        [34mclave[39m: "[32m123456    [39m",
+        [34mestado[39m: [35m0[39m,
+        [34mtipo[39m: "[32mU[39m",
+      },
+      [34;4mApp\Models\UsuarioMovil[39;24m {#6453
+        [34musuario[39m: "[32mJLR  [39m",
+        [34mnombre[39m: "[32mJOSE LUIS RODRIGUEZ[39m",
+        [34mclave[39m: "[32m123456    [39m",
+        [34mestado[39m: [35m0[39m,
+        [34mtipo[39m: "[32mU[39m",
+      },
+      [34;4mApp\Models\UsuarioMovil[39;24m {#6454
+        [34musuario[39m: "[32mRL   [39m",
+        [34mnombre[39m: "[32mRAUL LAIME[39m",
+        [34mclave[39m: "[32m123456    [39m",
+        [34mestado[39m: [35m0[39m,
+        [34mtipo[39m: "[32mU[39m",
+      },
+      [34;4mApp\Models\UsuarioMovil[39;24m {#6455
+        [34musuario[39m: "[32mHM   [39m",
+        [34mnombre[39m: "[32mHECTOR MEDRANO[39m",
+        [34mclave[39m: "[32m123456    [39m",
+        [34mestado[39m: [35m0[39m,
+        [34mtipo[39m: "[32mU[39m",
+      },
+      [34;4mApp\Models\UsuarioMovil[39;24m {#6456
+        [34musuario[39m: "[32mWA   [39m",
+        [34mnombre[39m: "[32mWILFREDO ALARCON[39m",
+        [34mclave[39m: "[32m123456    [39m",
+        [34mestado[39m: [35m0[39m,
+        [34mtipo[39m: "[32mU[39m",
+      },
+      [34;4mApp\Models\UsuarioMovil[39;24m {#6457
+        [34musuario[39m: "[32mIMP  [39m",
+        [34mnombre[39m: "[32mIMPRESION[39m",
+        [34mclave[39m: "[32m123456    [39m",
+        [34mestado[39m: [35m0[39m,
+        [34mtipo[39m: "[32mI[39m",
+      },
+      [34;4mApp\Models\UsuarioMovil[39;24m {#6458
+        [34musuario[39m: "[32mDJC  [39m",
+        [34mnombre[39m: "[32mDARWIN JUSTINIANO CHAVEZ[39m",
+        [34mclave[39m: "[32m123456    [39m",
+        [34mestado[39m: [35m0[39m,
+        [34mtipo[39m: "[32mU[39m",
+      },
+      [34;4mApp\Models\UsuarioMovil[39;24m {#6459
+        [34musuario[39m: "[32mCAA  [39m",
+        [34mnombre[39m: "[32mCARLOS ALBERTO ARTEAGA VACA[39m",
+        [34mclave[39m: "[32m123456    [39m",
+        [34mestado[39m: [35m0[39m,
+        [34mtipo[39m: "[32mP[39m",
+      },
+    ],
+  }
+

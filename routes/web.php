@@ -14,6 +14,7 @@ use App\Http\Controllers\RutasLecturadorController;
 use App\Http\Controllers\UsuariosLecturadores;
 use App\Http\Controllers\UsuariosLecturadoresController;
 use App\Http\Controllers\ZonasController;
+use App\Http\Controllers\Api\AvisoController;
 use App\Http\Controllers\ZonasRutaController;
 use App\Models\Configuracion;
 use App\Models\Instalacion;
@@ -81,7 +82,7 @@ Route::middleware([
             return Inertia::render('Dashboard');
         })->name('dashboard');
 
-
+        Route::get('/api/avisos', [AvisoController::class, 'index'])->name('api.avisos');
 
         Route::get('/sistema/usuarios/editar', [UserController::class, 'indexEdit'])
             ->name('usuarios.editarIndex');

@@ -54,7 +54,7 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['single'],
+            'channels' => ['single','stderr'],
             'ignore_exceptions' => false,
         ],
 
@@ -102,6 +102,7 @@ return [
             'with' => [
                 'stream' => 'php://stderr',
             ],
+            'level' => 'debug', // todo lo que sea debug o mayor
             'processors' => [PsrLogMessageProcessor::class],
         ],
 

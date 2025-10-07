@@ -4,40 +4,39 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Rutas extends Model
+class Ruta extends Model
 {
     use HasFactory;
-    use SoftDeletes;
+
+    protected $table = 'rutas';
+    public $incrementing = false; // No hay un ID autoincremental
+    public $timestamps = false;   // No existen campos created_at / updated_at
+
+    // Clave primaria compuesta (Laravel no la maneja directamente en Eloquent)
+    protected $primaryKey = null;
 
     protected $fillable = [
-        'NombreRuta',
-        'zona_id'
+        'cod_rutazona',
+        'cod_ruta',
+        'descripcion',
     ];
-    protected $dates = ['deleted_at'];
-    protected $table = 'rutas';
 
-    public function getNombreAttribute()
-    {
-        return $this->NombreRuta;
-    }
-    public function zona()
-    {
-        return $this->belongsTo(Zonas::class, 'zona_id'); // asegúrate del nombre correcto del FK
-    }
+    // 🔧 Importante: para evitar errores al guardar o actualizar
+    protected $casts = [
+        'cod_rutazona' => 'integer',
+        'cod_ruta' => 'integer',
+    ];
 
-    public function predios()
+    // Si quieres forzar manualmente el uso de claves compuestas:
+    protected static function boot()
     {
-        return $this->belongsToMany(
-            Predio::class,
-            'ruta_instalaciones',
-            'idRuta',   // FK en ruta_instalaciones para rutas
-            'idPredio'  // FK en ruta_instalaciones para predios
-        )->withPivot('nInstalacion', 'idZona')->withTimestamps();
-    }
-     public function rutaInstalaciones()
-    {
-        return $this->hasMany(RutaInstalaciones::class, 'idRuta');
+        parent::boot();
+
+        static::saving(function ($model) {
+            if (!$model->cod_rutazona || !$model->cod_ruta) {
+                throw new \Exception('Campos cod_rutazona y cod_ruta son requeridos como clave primaria compuesta.');
+            }
+        });
     }
 }
