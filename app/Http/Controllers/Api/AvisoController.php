@@ -71,7 +71,7 @@ class AvisoController extends Controller
 
             $data[$zonaKey]['rutas'][$rutaKey]['lados'][$lado]['instalaciones'][] = [
                 'id' => $aviso->nro_instalacion,
-                'numeroMedidor' => $aviso->cod_per,
+                'numeroMedidor' => $aviso->nomb_socio,
                 'estadoInstalacion' => 'Activo',
                 'estadoAlcantarillado' => 'Funcional',
                 'estadoCorte' => 'Sin corte',
