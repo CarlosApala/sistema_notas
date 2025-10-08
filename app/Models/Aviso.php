@@ -76,6 +76,9 @@ class Aviso extends Model
         'consumo_promedio',
         'nro_identifica',
         'hora',
+        
+    ];
+     protected $hidden = [
         'bshpxnhpf',
         'bshpxanio',
         'bshpxmesf',

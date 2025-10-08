@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
+
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+use App\Models\Aviso; // ← Esto es obligatorio
+use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\Rule;
 
 class AvisoController extends Controller
 {
@@ -123,6 +126,43 @@ class AvisoController extends Controller
                 'per_page' => $avisos->perPage(),
                 'total' => $avisos->total()
             ]
+        ]);
+    }
+    public function update(Request $request, int $id): JsonResponse
+    {
+        // Buscar el aviso
+        $aviso = Aviso::find($id);
+
+        if (!$aviso) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Aviso no encontrado',
+                'data' => null,
+            ], 404);
+        }
+
+        // Validación básica (puedes ajustar según tus necesidades)
+        $validatedData = $request->validate([
+            'anio' => 'sometimes|integer',
+            'mes_factura' => 'sometimes|string|max:10',
+            'fecha_genera' => 'sometimes|date',
+            'fecha_entrega' => 'sometimes|date',
+            'fecha_vence' => 'sometimes|date',
+            'fecha_corte' => 'sometimes|date',
+            'consumo' => 'sometimes|numeric',
+            'importe_total' => 'sometimes|numeric',
+            'cod_observa' => 'sometimes|integer',
+            'estado' => ['sometimes', Rule::in(['pendiente','cobrado','anulado'])],
+            // Agrega aquí otros campos que quieras validar
+        ]);
+
+        // Actualizar el aviso con los datos validados
+        $aviso->update($validatedData);
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Aviso actualizado correctamente',
+            'data' => $aviso,
         ]);
     }
 }

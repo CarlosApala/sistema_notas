@@ -7,7 +7,6 @@ use App\Http\Controllers\Api\ConsumoController;
 use App\Http\Controllers\Api\RutasLecturadorApiController;
 use App\Http\Controllers\Api\AvisoController; // 👈 No olvides importar tu controlador
 use App\Http\Controllers\Api\AsignacionController; // 👈 Import correcto
-
 use App\Http\Controllers\Api\ObservacionController;
 
 
@@ -15,6 +14,7 @@ Route::prefix('lecturador')->group(function () {
     // Rutas que no requieren autenticación
     Route::post('/login', [AuthLecturadorController::class, 'login']);
     Route::get('/avisos', [AvisoController::class, 'index']); // 👈 Ruta libre, sin token
+    Route::put('avisos/{id}', [AvisoController::class, 'update']);
     Route::get('/asignaciones', [AsignacionController::class, 'index']);
     Route::get('/observaciones', [ObservacionController::class, 'index']);
     Route::get('/observaciones/{id}', [ObservacionController::class, 'show']);
