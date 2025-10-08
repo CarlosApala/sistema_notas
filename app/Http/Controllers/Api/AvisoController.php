@@ -20,7 +20,7 @@ class AvisoController extends Controller
         $zona = $request->query('zona');       // e.g., 3
 
         $page = $request->query('page', 1);    // Número de página
-        $perPage = $request->query('per_page', 5); // Cantidad de registros por página
+        $perPage = $request->query('per_page', 50); // Cantidad de registros por página
 
         // Construir query
         $avisosQuery = DB::table('aviso')
